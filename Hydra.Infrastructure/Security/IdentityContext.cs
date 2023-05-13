@@ -1,4 +1,5 @@
 ﻿using Hydra.Infrastructure.Security.Domain;
+using Hydra.Infrastructure.Security.EntityConfiguration;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,13 +19,13 @@ namespace Hydra.Infrastructure
             base.OnModelCreating(modelBuilder);
             #region Auth Builder
 
-            //modelBuilder.ApplyConfiguration(new UserConfiguration());
-            //modelBuilder.ApplyConfiguration(new RoleConfiguration());
-            //modelBuilder.ApplyConfiguration(new UserClaimConfiguration());
-            //modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
-            //modelBuilder.ApplyConfiguration(new UserLoginConfiguration());
-            //modelBuilder.ApplyConfiguration(new RoleClaimConfiguration());
-            //modelBuilder.ApplyConfiguration(new UserTokenConfiguration());
+            modelBuilder.ApplyConfiguration(new UserConfiguration());
+            modelBuilder.ApplyConfiguration(new RoleConfiguration());
+            modelBuilder.ApplyConfiguration(new UserClaimConfiguration());
+            modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
+            modelBuilder.ApplyConfiguration(new UserLoginConfiguration());
+            modelBuilder.ApplyConfiguration(new RoleClaimConfiguration());
+            modelBuilder.ApplyConfiguration(new UserTokenConfiguration());
 
             #endregion
 

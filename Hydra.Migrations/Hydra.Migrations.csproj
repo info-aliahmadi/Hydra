@@ -10,4 +10,8 @@
     <ProjectReference Include="..\Hydra.Infrastructure\Hydra.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

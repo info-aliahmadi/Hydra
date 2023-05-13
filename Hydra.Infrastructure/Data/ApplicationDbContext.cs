@@ -28,12 +28,7 @@ namespace Hydra.Infrastructure.Data
                 typeof(BaseEntity<>).IsAssignableFrom(i.GenericTypeArguments[0]))
                 );
 
-
             #endregion
-
-
         }
-
-
     }
 }

@@ -25,7 +25,10 @@ namespace Hydra.Infrastructure.Configuration
         public static void ConfigureApplicationServices(this IServiceCollection services,
             WebApplicationBuilder builder)
         {
+
             builder.AddSerilogConfig();
+
+            services.AddServices();
 
             services.AddCacheProvider(builder.Configuration);
 
@@ -33,33 +36,15 @@ namespace Hydra.Infrastructure.Configuration
 
             services.AddIdentityConfig();
 
-            services.AddControllerConfig();
-
             services.AddlocalizationConfig();
 
             builder.AddSettingConfig();
-
-            services.AddServices();
 
             services.AddSwaggerGenConfig();
 
 
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="services"></param>
-        public static void AddControllerConfig(this IServiceCollection services)
-        {
-            services.AddControllers(config =>
-            {
-                var policy = new AuthorizationPolicyBuilder()
-                                 .RequireAuthenticatedUser()
-                                 .Build();
-                config.Filters.Add(new AuthorizeFilter(policy));
-            });
 
-        }
         /// <summary>
         /// 
         /// </summary>
