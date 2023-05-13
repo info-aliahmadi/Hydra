@@ -2,7 +2,7 @@
 
 using Microsoft.AspNetCore.Identity;
 
-namespace Hydra.Auth.Core.Domain
+namespace Hydra.Infrastructure.Security.Domain
 {
     public class UserToken : IdentityUserToken<int>
     {

@@ -1,8 +1,8 @@
-﻿using Hydra.Auth.Core.Domain;
+﻿using Hydra.Infrastructure.Security.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Hydra.Auth.Core.EntityConfiguration
+namespace Hydra.Infrastructure.Security.EntityConfiguration
 {
     public class UserLoginConfiguration : IEntityTypeConfiguration<UserLogin>
     {

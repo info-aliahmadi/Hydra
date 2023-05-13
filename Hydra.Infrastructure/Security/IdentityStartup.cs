@@ -5,7 +5,7 @@ using Hydra.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Hydra.Auth.Core.Domain;
+using Hydra.Infrastructure.Security.Domain;
 
 namespace Hydra.Infrastructure.Security
 {

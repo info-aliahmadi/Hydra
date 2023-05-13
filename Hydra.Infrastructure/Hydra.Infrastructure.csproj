@@ -31,7 +31,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Hydra.Auth.Core\Hydra.Auth.Core.csproj" />
     <ProjectReference Include="..\Hydra.Kernel\Hydra.Kernel.csproj" />
   </ItemGroup>
 

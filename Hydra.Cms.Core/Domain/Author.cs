@@ -1,4 +1,5 @@
-﻿using Hydra.Kernel;
+﻿using Hydra.Infrastructure.Security.Domain;
+using Hydra.Kernel;
 
 namespace Hydra.Cms.Core.Domain
 {
@@ -6,7 +7,7 @@ namespace Hydra.Cms.Core.Domain
     {
         public int UserId { get; set; }
 
-        //public User User { get; set; }
+        public User User { get; set; }
 
         /// <summary>
         /// 
