@@ -1,27 +1,30 @@
+using Hydra.Infrastructure;
 using Hydra.Infrastructure.Configuration;
+using Hydra.Infrastructure.Logs;
+using Serilog;
+using System.Reflection;
 
-var builder = WebApplication.CreateBuilder(args);
+    SerilogStartup.ConfigureLogging();
 
-builder.Services.ConfigureApplicationServices(builder);
-
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-
-var app = builder.Build();
+    try
+    {
+        var builder = WebApplication.CreateBuilder(args);
 
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
+        builder.Services.ConfigureApplicationServices(builder);
 
 
-app.Run();
+        var app = builder.Build();
 
+        // Configure the HTTP request pipeline.
+        app.ConfigureRequestPipeline();
+
+
+        app.Run();
+    }
+    catch (System.Exception ex)
+    {
+        Log.Fatal($"Failed to start {Assembly.GetExecutingAssembly().GetName().Name}", ex);
+        throw;
+    }
+    public partial class Program { }

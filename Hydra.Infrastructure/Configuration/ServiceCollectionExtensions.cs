@@ -9,6 +9,7 @@ using Hydra.Infrastructure.localization;
 using Hydra.Infrastructure.ServiceRegistrar;
 using Hydra.Infrastructure.Setting;
 using Hydra.Infrastructure.Cache;
+using Hydra.Infrastructure.ModuleExtension;
 
 namespace Hydra.Infrastructure.Configuration
 {
@@ -29,6 +30,9 @@ namespace Hydra.Infrastructure.Configuration
             builder.AddSerilogConfig();
 
             services.AddServices();
+
+            // Collect the services from Modules
+            services.AddModulesService();
 
             services.AddCacheProvider(builder.Configuration);
 

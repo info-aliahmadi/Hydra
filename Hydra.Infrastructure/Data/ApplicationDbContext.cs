@@ -20,15 +20,17 @@ namespace Hydra.Infrastructure.Data
 
             #region Configuration Builder
 
-            modelBuilder.ApplyConfigurationsFromAssembly(
-                Assembly.GetExecutingAssembly(),
-                t => t.GetInterfaces().Any(i =>
-                i.IsGenericType &&
-                i.GetGenericTypeDefinition() == typeof(IEntityTypeConfiguration<>) &&
-                typeof(BaseEntity<>).IsAssignableFrom(i.GenericTypeArguments[0]))
-                );
+            var assembliesList = HydraHelper.GetAssemblies(x => x.StartsWith("Hydra") && x.Contains("Core"));
+
+            foreach (var assembly in assembliesList)
+            {
+                modelBuilder.ApplyConfigurationsFromAssembly(assembly);
+
+            }
 
             #endregion
         }
+
+
     }
 }

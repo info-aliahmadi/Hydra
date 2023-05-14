@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Hydra.Infrastructure.Security.Domain;
+using Microsoft.Identity.Web;
 
 namespace Hydra.Infrastructure.Security
 {
@@ -13,6 +14,7 @@ namespace Hydra.Infrastructure.Security
     {
         public static void AddIdentityConfig(this IServiceCollection services)
         {
+            services.AddCors();
 
             services.AddIdentityCore<User>(o => o.SignIn.RequireConfirmedAccount = false)
                  .AddRoles<Role>()
@@ -35,17 +37,19 @@ namespace Hydra.Infrastructure.Security
                     options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
                     options.SlidingExpiration = true;
                 })
-                .AddJwtBearer(options =>
-                {
-                    options.Audience = "http://localhost:5001/";
-                    options.Authority = "http://localhost:5000/";
-                });
+                .AddJwtBearer()
+                .AddJwtBearer("LocalAuthIssuer");
 
             services.AddAuthorization(options =>
             {
                 // By default, all incoming requests will be authorized according to the default policy.
                 options.FallbackPolicy = options.DefaultPolicy;
             });
+            services.AddAuthorizationBuilder()
+            .AddPolicy("admin_greetings", policy =>
+                policy
+            .RequireRole("admin")
+            .RequireScope("greetings_api"));
 
 
             services.Configure<IdentityOptions>(options =>

@@ -22,10 +22,12 @@ namespace Hydra.Cms.Api.Endpoints
             {
                 return "Hello Orders";
             });
+
             endpoints.MapPost("/orders", () =>
             {
-
+                return "Hello World!";
             });
+
             return endpoints;
         }
 

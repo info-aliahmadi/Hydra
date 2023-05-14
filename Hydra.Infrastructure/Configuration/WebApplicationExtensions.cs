@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Hydra.Infrastructure.localization;
+using Hydra.Infrastructure.ModuleExtension;
 
 namespace Hydra.Infrastructure.Configuration
 {
@@ -25,12 +26,13 @@ namespace Hydra.Infrastructure.Configuration
 
             app.UseHttpsRedirection();
 
-           
 
+
+            app.UseCors();
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.MapControllers();
+            app.MapModulesEndpoints();
 
             app.UseLocalization();
 
