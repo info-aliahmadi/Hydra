@@ -12,7 +12,7 @@ using Nitro.Migrations;
 namespace Hydra.Migrations.Migrations
 {
     [DbContext(typeof(MigrationContext))]
-    [Migration("20230513232646_dbVersion_1")]
+    [Migration("20230516203559_dbVersion_1")]
     partial class dbVersion_1
     {
         /// <inheritdoc />

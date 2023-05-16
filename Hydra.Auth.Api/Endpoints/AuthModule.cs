@@ -113,7 +113,7 @@ namespace Hydra.Cms.Api.Endpoints
                     throw;
                 }
 
-            });
+            }).AllowAnonymous();
 
             endpoints.MapGet("/login", async (IQueryRepository _repository, UserManager<User> _userManager, SignInManager<User> _signInManager, IStringLocalizer<SharedResource> _sharedlocalizer) =>
             {

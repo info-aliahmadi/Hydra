@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Hydra.Infrastructure.Security.Domain;
 using Microsoft.Identity.Web;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Hydra.Infrastructure.Security
 {
@@ -21,9 +22,9 @@ namespace Hydra.Infrastructure.Security
                  .AddEntityFrameworkStores<ApplicationDbContext>()
                  .AddDefaultTokenProviders();
 
-    
 
-            services.AddAuthentication()
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
                     options.Cookie.Name = "HydraCookie";
@@ -37,8 +38,7 @@ namespace Hydra.Infrastructure.Security
                     options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
                     options.SlidingExpiration = true;
                 })
-                .AddJwtBearer()
-                .AddJwtBearer("LocalAuthIssuer");
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme);
 
             services.AddAuthorization(options =>
             {

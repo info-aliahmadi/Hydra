@@ -11,4 +11,4 @@ Test the redis container :
 Add-Migration dbVersion_1 -Context MigrationContext -StartupProject Hydra.Web
 
 
- Update-Database -Context MigrationContext -verbose
+Update-Database -Context MigrationContext -verbose

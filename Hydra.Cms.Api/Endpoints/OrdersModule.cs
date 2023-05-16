@@ -26,7 +26,7 @@ namespace Hydra.Cms.Api.Endpoints
             endpoints.MapPost("/orders", () =>
             {
                 return "Hello World!";
-            });
+            }).AllowAnonymous();
 
             return endpoints;
         }
