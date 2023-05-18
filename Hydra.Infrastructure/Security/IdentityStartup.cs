@@ -8,12 +8,16 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Hydra.Infrastructure.Security.Domain;
 using Microsoft.Identity.Web;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.Extensions.Configuration;
 
 namespace Hydra.Infrastructure.Security
 {
     public static class DbContextStartup
     {
-        public static void AddIdentityConfig(this IServiceCollection services)
+        public static void AddIdentityConfig(this IServiceCollection services,
+            IConfiguration configuration)
         {
             services.AddCors();
 
@@ -24,32 +28,49 @@ namespace Hydra.Infrastructure.Security
 
 
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddCookie(options =>
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,options =>
                 {
-                    options.Cookie.Name = "HydraCookie";
-                    options.Cookie.HttpOnly = true;
-                    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-                    options.LoginPath = new PathString("/Account/Login");
-                    options.AccessDeniedPath = new PathString("/Account/AccessDenied");
-                    options.LogoutPath = new PathString("/Account/Logout");
-                    // ReturnUrlParameter requires 
-                    //using Microsoft.AspNetCore.Authentication.Cookies;
-                    options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
-                    options.SlidingExpiration = true;
-                })
-                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme);
+                    options.SaveToken = true;
+                    options.RequireHttpsMetadata = false;
+                    options.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidAudience = configuration["Authentication:Schemes:Bearer:ValidAudiences"],
+                        ValidIssuer = configuration["Authentication:Schemes:Bearer:ValidIssuer"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Authentication:Schemes:Bearer:Secret"]))
+                    };
+                });
+                //.AddCookie(options =>
+                //{
+                //    options.Cookie.Name = "HydraCookie";
+                //    options.Cookie.HttpOnly = true;
+                //    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+                //    options.LoginPath = new PathString("/Account/Login");
+                //    options.AccessDeniedPath = new PathString("/Account/AccessDenied");
+                //    options.LogoutPath = new PathString("/Account/Logout");
+                //    // ReturnUrlParameter requires 
+                //    //using Microsoft.AspNetCore.Authentication.Cookies;
+                //    options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+                //    options.SlidingExpiration = true;
+                //})
+                
 
             services.AddAuthorization(options =>
             {
                 // By default, all incoming requests will be authorized according to the default policy.
-                options.FallbackPolicy = options.DefaultPolicy;
+                //options.FallbackPolicy = options.DefaultPolicy;
             });
-            services.AddAuthorizationBuilder()
-            .AddPolicy("admin_greetings", policy =>
-                policy
-            .RequireRole("admin")
-            .RequireScope("greetings_api"));
+            //services.AddAuthorizationBuilder()
+            //.AddPolicy("admin_greetings", policy =>
+            //    policy
+            //.RequireRole("admin")
+            //.RequireScope("greetings_api"));
 
 
             services.Configure<IdentityOptions>(options =>

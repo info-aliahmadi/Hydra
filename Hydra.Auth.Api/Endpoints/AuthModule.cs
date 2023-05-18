@@ -5,6 +5,7 @@ using Hydra.Infrastructure.Endpoints;
 using Hydra.Infrastructure.Security.Domain;
 using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -24,6 +25,7 @@ namespace Hydra.Cms.Api.Endpoints
         {
             //services.AddSingleton(new OrderConfig());
             services.AddScoped<IQueryRepository, QueryRepository>();
+            services.AddHttpContextAccessor();
             //services.AddScoped<IPayment, PaymentService>();
             return services;
         }
@@ -31,7 +33,7 @@ namespace Hydra.Cms.Api.Endpoints
         public IEndpointRouteBuilder MapEndpoints(IEndpointRouteBuilder endpoints)
         {
 
-            endpoints.MapGet("/signup", async (IQueryRepository _repository, UserManager<User> _userManager, SignInManager<User> _signInManager, IStringLocalizer<SharedResource> _sharedlocalizer) =>
+            endpoints.MapGet("/signup", async (IQueryRepository _repository, UserManager<User> _userManager, RoleManager<Role> _roleManager, SignInManager<User> _signInManager, IStringLocalizer<SharedResource> _sharedlocalizer) =>
             {
                 try
                 {
@@ -41,10 +43,18 @@ namespace Hydra.Cms.Api.Endpoints
                     var user = new User
                     { DOB = DateTime.Now, Name = "admin", UserName = "admin", Email = "admin@admin.com" };
 
+
+                    if (!await _roleManager.RoleExistsAsync("admin"))
+                        await _roleManager.CreateAsync(new Role() { Name = "admin" });
+                    if (!await _roleManager.RoleExistsAsync("user"))
+                        await _roleManager.CreateAsync(new Role() { Name = "user" });
+
                     var isExist = _repository.Table<User>().Any(x => x.UserName == "admin");
                     if (!isExist)
                     {
                         var identityResult = await _userManager.CreateAsync(user, "admin");
+                        await _userManager.AddToRoleAsync(user, "admin");
+
                         if (identityResult.Succeeded)
                         {
                             if (_userManager.Options.SignIn.RequireConfirmedEmail)
@@ -115,15 +125,17 @@ namespace Hydra.Cms.Api.Endpoints
 
             }).AllowAnonymous();
 
-            endpoints.MapGet("/login", async (IQueryRepository _repository, UserManager<User> _userManager, SignInManager<User> _signInManager, IStringLocalizer<SharedResource> _sharedlocalizer) =>
+            endpoints.MapGet("/login", [Authorize(Roles = "admin")] async (IQueryRepository _repository, UserManager<User> _userManager, SignInManager<User> _signInManager, IStringLocalizer<SharedResource> _sharedlocalizer) =>
             {
                 try
                 {
                     var result = new AccountResult();
                     // This doesn't count login failures towards account lockout
                     // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                    var signInResult = await _signInManager.PasswordSignInAsync("admin", "admin",
-                        true, lockoutOnFailure: false);
+
+                    var user = await _userManager.FindByNameAsync("admin");
+
+                    var signInResult = await _signInManager.CheckPasswordSignInAsync(user, "admin",true);
                     if (signInResult.Succeeded)
                     {
                         result.Status = AccountStatusEnum.Succeeded;
@@ -147,12 +159,13 @@ namespace Hydra.Cms.Api.Endpoints
                     Results.BadRequest("BadRequest");
                 }
 
-            });
-
-            endpoints.MapPost("/username", (ClaimsPrincipal user) =>
-            {
-                return user.Identity.Name;
             }).AllowAnonymous();
+
+
+            endpoints.MapGet("/username",  (IHttpContextAccessor httpContextAccessor) =>
+            {
+                return httpContextAccessor?.HttpContext?.User;
+            });
 
 
             return endpoints;

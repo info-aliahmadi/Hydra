@@ -38,7 +38,7 @@ namespace Hydra.Infrastructure.Configuration
 
             services.AddDbContextConfig(builder.Configuration);
 
-            services.AddIdentityConfig();
+            services.AddIdentityConfig(builder.Configuration);
 
             services.AddlocalizationConfig();
 
