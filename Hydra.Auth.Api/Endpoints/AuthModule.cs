@@ -1,4 +1,5 @@
-﻿using Hydra.Auth.Core.Models;
+﻿using Hydra.Auth.Api.Services;
+using Hydra.Auth.Core.Models;
 using Hydra.Infrastructure;
 using Hydra.Infrastructure.Data;
 using Hydra.Infrastructure.Endpoints;
@@ -125,41 +126,7 @@ namespace Hydra.Cms.Api.Endpoints
 
             }).AllowAnonymous();
 
-            endpoints.MapGet("/login", [Authorize(Roles = "admin")] async (IQueryRepository _repository, UserManager<User> _userManager, SignInManager<User> _signInManager, IStringLocalizer<SharedResource> _sharedlocalizer) =>
-            {
-                try
-                {
-                    var result = new AccountResult();
-                    // This doesn't count login failures towards account lockout
-                    // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-
-                    var user = await _userManager.FindByNameAsync("admin");
-
-                    var signInResult = await _signInManager.CheckPasswordSignInAsync(user, "admin",true);
-                    if (signInResult.Succeeded)
-                    {
-                        result.Status = AccountStatusEnum.Succeeded;
-                        Results.Ok(result);
-                    }
-
-                    if (signInResult.RequiresTwoFactor)
-                    {
-                        result.Status = AccountStatusEnum.RequiresTwoFactor;
-                        Results.Ok(result);
-                    }
-
-                    if (signInResult.IsLockedOut)
-                    {
-                        result.Status = AccountStatusEnum.IsLockedOut;
-                        Results.Ok(result);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Results.BadRequest("BadRequest");
-                }
-
-            }).AllowAnonymous();
+            endpoints.MapGet("/login", AuthService.LoginHandler);
 
 
             endpoints.MapGet("/username",  (IHttpContextAccessor httpContextAccessor) =>

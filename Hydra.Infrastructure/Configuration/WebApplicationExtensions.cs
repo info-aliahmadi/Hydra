@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Hydra.Infrastructure.localization;
 using Hydra.Infrastructure.ModuleExtension;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Hydra.Infrastructure.Configuration
 {
@@ -30,6 +31,7 @@ namespace Hydra.Infrastructure.Configuration
 
             app.UseCors();
             app.UseAuthentication();
+
             app.UseAuthorization();
 
             app.MapModulesEndpoints();
