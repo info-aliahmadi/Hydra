@@ -1,13 +1,9 @@
-﻿using ApiWithAuth;
+﻿using Hydra.Auth.Core.Interfaces;
 using Hydra.Auth.Core.Models;
 using Hydra.Infrastructure.Security.Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Hydra.Auth.Api.Services
 {
@@ -15,7 +11,7 @@ namespace Hydra.Auth.Api.Services
     {
 
 
-        public static async Task<IResult> LoginHandler(UserManager<User> _userManager, SignInManager<User> _signInManager,bool rememberMe)
+        public static async Task<IResult> LoginHandler(ITokenService tokenService, UserManager<User> _userManager, SignInManager<User> _signInManager,bool rememberMe)
         {
             try
             {
@@ -27,27 +23,30 @@ namespace Hydra.Auth.Api.Services
 
                 var signInResult = await _signInManager.CheckPasswordSignInAsync(user, "admin", true);
                 if (signInResult.Succeeded)
-                    var token = TokenService.CreateToken(user, rememberMe);
                 {
+                    var token = tokenService.CreateToken( user, rememberMe);
                     result.Status = AccountStatusEnum.Succeeded;
-                    return Results.Ok();
+
+
+                    if (signInResult.RequiresTwoFactor)
+                    {
+                        result.Status = AccountStatusEnum.RequiresTwoFactor;
+                        return Results.Ok(result);
+                    }
+
+                    if (signInResult.IsLockedOut)
+                    {
+                        result.Status = AccountStatusEnum.IsLockedOut;
+                        return Results.Ok(result);
+                    }
+
+                    return Results.Ok(token);
                 }
                 else
                 {
                     return Results.BadRequest("BadRequest");
                 }
 
-                if (signInResult.RequiresTwoFactor)
-                {
-                    result.Status = AccountStatusEnum.RequiresTwoFactor;
-                    return Results.Ok(result);
-                }
-
-                if (signInResult.IsLockedOut)
-                {
-                    result.Status = AccountStatusEnum.IsLockedOut;
-                    return Results.Ok(result);
-                }
             }
             catch (Exception e)
             {

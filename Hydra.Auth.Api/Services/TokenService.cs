@@ -1,4 +1,5 @@
-﻿using Hydra.Infrastructure.Security.Domain;
+﻿using Hydra.Auth.Core.Interfaces;
+using Hydra.Infrastructure.Security.Domain;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Globalization;
@@ -6,28 +7,25 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace ApiWithAuth
+namespace Hydra.Auth.Api.Services
 {
-    public class TokenService
+    public class TokenService : ITokenService
     {
         private const int ExpirationMinutes = 30;
         private readonly IConfiguration _iConfiguration;
         public TokenService(IConfiguration iConfiguration)
         {
-            this._iConfiguration = iConfiguration;
+            _iConfiguration = iConfiguration;
 
         }
-        public static string CreateToken(IConfiguration iconfiguration , User user,bool rememberMe = false)
+        public string CreateToken(User user, bool rememberMe = false)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var tokenKey = Encoding.UTF8.GetBytes(_iConfiguration["JWT:Key"]);
+            var tokenKey = Encoding.UTF8.GetBytes(_iConfiguration["Authentication:Schemes:Bearer:Secret"]);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
                                               {
-                                                    new Claim(JwtRegisteredClaimNames.Sub, "TokenForTheApiWithAuth"),
-                                                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                                                    new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)),
                                                     new Claim("id", user.Id.ToString()),
                                                     new Claim(ClaimTypes.Name, user.UserName??""),
                                                     new Claim(ClaimTypes.Email, user.Email ?? "")

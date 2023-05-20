@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace Hydra.Infrastructure.Security
 {
@@ -19,47 +21,74 @@ namespace Hydra.Infrastructure.Security
         public static void AddIdentityConfig(this IServiceCollection services,
             IConfiguration configuration)
         {
-            services.AddCors();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllOrigins",
+                        builder =>
+                        {
+                            builder.AllowAnyMethod()
+                                   .AllowAnyHeader()
+                                   .AllowAnyOrigin();
+                        });
+            });
 
             services.AddIdentityCore<User>(o => o.SignIn.RequireConfirmedAccount = false)
                  .AddRoles<Role>()
                  .AddEntityFrameworkStores<ApplicationDbContext>()
                  .AddDefaultTokenProviders();
 
-
+            var sss = configuration["Authentication:Schemes:Bearer:ValidAudiences"];
+            var sss2 = configuration["Authentication:Schemes:Bearer:ValidIssuer"];
+            var sss344 = configuration["Authentication:Schemes:Bearer:Secret"];
 
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,options =>
+            }).AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
+                    options.Configuration = new OpenIdConnectConfiguration();
                     options.SaveToken = true;
                     options.RequireHttpsMetadata = false;
                     options.TokenValidationParameters = new TokenValidationParameters()
                     {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
+                        ValidateIssuer = false, // on production make it true
+                        ValidateAudience = false, // on production make it true
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
                         ValidAudience = configuration["Authentication:Schemes:Bearer:ValidAudiences"],
                         ValidIssuer = configuration["Authentication:Schemes:Bearer:ValidIssuer"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Authentication:Schemes:Bearer:Secret"]))
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Authentication:Schemes:Bearer:Secret"])),
+                        ClockSkew = TimeSpan.Zero,
+
+                    };
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnAuthenticationFailed = context =>
+                        {
+                            if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                            {
+                                context.Response.Headers.Add("IS-TOKEN-EXPIRED", "true");
+                            }
+                            return Task.CompletedTask;
+                        }
                     };
                 });
-                //.AddCookie(options =>
-                //{
-                //    options.Cookie.Name = "HydraCookie";
-                //    options.Cookie.HttpOnly = true;
-                //    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-                //    options.LoginPath = new PathString("/Account/Login");
-                //    options.AccessDeniedPath = new PathString("/Account/AccessDenied");
-                //    options.LogoutPath = new PathString("/Account/Logout");
-                //    // ReturnUrlParameter requires 
-                //    //using Microsoft.AspNetCore.Authentication.Cookies;
-                //    options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
-                //    options.SlidingExpiration = true;
-                //})
-                
+            //.AddCookie(options =>
+            //{
+            //    options.Cookie.Name = "HydraCookie";
+            //    options.Cookie.HttpOnly = true;
+            //    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+            //    options.LoginPath = new PathString("/Account/Login");
+            //    options.AccessDeniedPath = new PathString("/Account/AccessDenied");
+            //    options.LogoutPath = new PathString("/Account/Logout");
+            //    // ReturnUrlParameter requires 
+            //    //using Microsoft.AspNetCore.Authentication.Cookies;
+            //    options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+            //    options.SlidingExpiration = true;
+            //})
+
 
             services.AddAuthorization(options =>
             {

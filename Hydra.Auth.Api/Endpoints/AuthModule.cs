@@ -1,4 +1,5 @@
 ﻿using Hydra.Auth.Api.Services;
+using Hydra.Auth.Core.Interfaces;
 using Hydra.Auth.Core.Models;
 using Hydra.Infrastructure;
 using Hydra.Infrastructure.Data;
@@ -26,8 +27,8 @@ namespace Hydra.Cms.Api.Endpoints
         {
             //services.AddSingleton(new OrderConfig());
             services.AddScoped<IQueryRepository, QueryRepository>();
+            services.AddScoped<ITokenService, TokenService>();
             services.AddHttpContextAccessor();
-            //services.AddScoped<IPayment, PaymentService>();
             return services;
         }
 
@@ -129,10 +130,10 @@ namespace Hydra.Cms.Api.Endpoints
             endpoints.MapGet("/login", AuthService.LoginHandler);
 
 
-            endpoints.MapGet("/username",  (IHttpContextAccessor httpContextAccessor) =>
+            endpoints.MapGet("/username",  (IHttpContextAccessor accessor) =>
             {
-                return httpContextAccessor?.HttpContext?.User;
-            });
+                return accessor.HttpContext.User.Identity.Name;
+            }).RequireAuthorization();
 
 
             return endpoints;
