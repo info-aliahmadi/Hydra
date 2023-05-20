@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc.ApplicationParts;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Twilio.Rest;
 
 namespace Hydra.Infrastructure
 {
@@ -18,6 +20,10 @@ namespace Hydra.Infrastructure
                 .Select(x => Assembly.LoadFrom(x));
 
             return assemblies.ToArray();
+        }
+        public static string GetCurrentDomain(HttpContext context)
+        {
+            return  $"{context.Request.Scheme}://{context.Request.Host.Value}/"; ;
         }
     }
 }

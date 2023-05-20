@@ -5,13 +5,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 
-namespace Hydra.Auth.Api.Services
+namespace Hydra.Auth.Api.Handler
 {
-    public class AuthService
+    public class PermissionHandler
     {
 
 
-        public static async Task<IResult> LoginHandler(ITokenService tokenService, UserManager<User> _userManager, SignInManager<User> _signInManager,bool rememberMe)
+        public static async Task<IResult> LoginHandler(ITokenService tokenService, UserManager<User> _userManager, SignInManager<User> _signInManager, bool rememberMe)
         {
             try
             {
@@ -24,7 +24,7 @@ namespace Hydra.Auth.Api.Services
                 var signInResult = await _signInManager.CheckPasswordSignInAsync(user, "admin", true);
                 if (signInResult.Succeeded)
                 {
-                    var token = tokenService.CreateToken( user, rememberMe);
+                    var token = tokenService.CreateToken(user, rememberMe);
                     result.Status = AccountStatusEnum.Succeeded;
 
 

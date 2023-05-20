@@ -4,6 +4,11 @@ namespace Hydra.Auth.Core.Models
 {
     public record RegisterModel
     {
+        public string Name { get; set; }
+
+        [Required]
+        public string UserName { get; set; }
+
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
