@@ -297,18 +297,19 @@ namespace Hydra.Auth.Api.Handler
         }
 
 
-        public static IResult ExternalLogin(SignInManager<User> _signInManager, string provider, string? returnUrl = null)
+        public static IResult ExternalLogin(SignInManager<User> _signInManager, HttpContext context, string provider, string? returnUrl = null)
         {
             // Request a redirect to the external login provider.
 
-            var redirectUrl = TypedResults.Created("ExternalLoginCallback/Account", new { ReturnUrl = returnUrl });
+            var redirectUrl = HydraHelper.GetCurrentDomain(context) + $"ExternalLoginCallback/Account?ReturnUrl={returnUrl}";
 
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl.Value.ToString());
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
             return Results.Challenge(properties);
         }
 
 
         public static async Task<IResult> ExternalLoginCallbackHandler(SignInManager<User> _signInManager,
+            HttpContext context,
             IStringLocalizer<SharedResource> _sharedlocalizer,
              ILogger<AccountHandler> _logger, string? returnUrl = null, string? remoteError = null)
         {
@@ -362,9 +363,9 @@ namespace Hydra.Auth.Api.Handler
 
                 _logger.LogWarning(_sharedlocalizer["Redirect the user {0} to ExternalLoginConfirmation"], email);
 
-                var redirectUrl = TypedResults.Created("ExternalLoginConfirmation/Account/{0}", email);
+                var redirectUrl = HydraHelper.GetCurrentDomain(context) + $"ExternalLoginConfirmation/Account?email={email}";
 
-                return Results.Redirect(redirectUrl.Value, true);
+                return Results.Redirect(redirectUrl, true);
             }
         }
 
@@ -444,6 +445,7 @@ namespace Hydra.Auth.Api.Handler
 
 
         public static async Task<IResult> ForgotPasswordHandler(UserManager<User> _userManager,
+            HttpContext context,
             IStringLocalizer<SharedResource> _sharedlocalizer,
              ILogger<AccountHandler> _logger,
              IEmailSender _emailSender, ForgotPasswordModel model)
@@ -466,10 +468,10 @@ namespace Hydra.Auth.Api.Handler
                 //Send an email with this link
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
-                var callbackUrl = TypedResults.Created($"ConfirmEmail/Account?userId={user.Id}&code={code}&returnUrl=");
+                var callbackUrl = HydraHelper.GetCurrentDomain(context) + $"ConfirmEmail/Account?userId={user.Id}&code={code}&returnUrl=";
 
                 emailRequest.Subject = _sharedlocalizer["ConfirmEmail"];
-                emailRequest.Body = string.Format(_sharedlocalizer["Please confirm your account by clicking this link: <a href='{0}'>link</a>"]);
+                emailRequest.Body = $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>";
                 emailRequest.ToEmail = model.Email;
                 try
                 {

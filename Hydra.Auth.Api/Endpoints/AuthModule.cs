@@ -48,7 +48,7 @@ namespace Hydra.Cms.Api.Endpoints
             endpoints.MapPost("/Register", AccountHandler.RegisterHandler);
             endpoints.MapPost("/SignOut", AccountHandler.SignOutHandler);
             endpoints.MapPost("/ExternalLoginCallback", AccountHandler.ExternalLoginCallbackHandler);
-            endpoints.MapPost("/ExternalLoginConfirmation", AccountHandler.ExternalLoginConfirmationHandler);
+            endpoints.MapGet("/ExternalLoginConfirmation", AccountHandler.ExternalLoginConfirmationHandler);
 
             endpoints.MapGet("/ConfirmEmail", AccountHandler.ConfirmEmailHandler);
             endpoints.MapPost("/ForgotPassword", AccountHandler.ForgotPasswordHandler);
