@@ -1,4 +1,5 @@
 ﻿using Hydra.Auth.Core.Models;
+using Hydra.Kernel.Models;
 
 namespace Hydra.Auth.Core.Interfaces
 {
@@ -8,35 +9,59 @@ namespace Hydra.Auth.Core.Interfaces
         /// 
         /// </summary>
         /// <returns></returns>
-        Task<List<RoleModel>> GetList();
+        Task<Result<List<RoleModel>>> GetList();
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<RoleModel> GetById(int id);
+        Task<Result<RoleModel>> GetById(int id);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="roleModel"></param>
         /// <returns></returns>
-        Task<RoleModel> Add(RoleModel roleModel);
+        Task<Result<RoleModel>> Add(RoleModel roleModel);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="permissionId"></param>
+        /// <param name="roleName"></param>
+        /// <returns></returns>
+        Task<Result> AssignPermissionToRoleAsync(int permissionId, string roleName);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="permissionName"></param>
+        /// <param name="roleName"></param>
+        /// <returns></returns>
+        Task<Result> AssignPermissionToRoleAsync(string permissionName, string roleName);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="permissionId"></param>
+        /// <param name="roleId"></param>
+        /// <returns></returns>
+        Task<Result> AssignPermissionToRoleAsync(int permissionId, int roleId);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="roleModel"></param>
         /// <returns></returns>
-        Task<RoleModel> Update(RoleModel roleModel);
+        Task<Result<RoleModel>> Update(RoleModel roleModel);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<bool> Delete(int id);
+        Task<Result> Delete(int id);
 
 
     }

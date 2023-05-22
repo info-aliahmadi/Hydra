@@ -7,6 +7,7 @@ using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using MiniValidation;
@@ -134,7 +135,7 @@ namespace Hydra.Auth.Api.Handler
              SignInManager<User> _signInManager,
              IStringLocalizer<SharedResource> _sharedlocalizer,
              ILogger<AccountHandler> _logger,
-             RegisterModel registerModel
+             [FromBody] RegisterModel registerModel
              )
         {
             try
@@ -371,7 +372,7 @@ namespace Hydra.Auth.Api.Handler
 
         public static async Task<IResult> ExternalLoginConfirmationHandler(UserManager<User> _userManager,
             IStringLocalizer<SharedResource> _sharedlocalizer,
-             ILogger<AccountHandler> _logger, SignInManager<User> _signInManager, ExternalLoginConfirmationModel model)
+             ILogger<AccountHandler> _logger, SignInManager<User> _signInManager, [FromBody] ExternalLoginConfirmationModel model)
         {
             var result = new AccountResult();
             ;
@@ -448,7 +449,7 @@ namespace Hydra.Auth.Api.Handler
             HttpContext context,
             IStringLocalizer<SharedResource> _sharedlocalizer,
              ILogger<AccountHandler> _logger,
-             IEmailSender _emailSender, ForgotPasswordModel model)
+             IEmailSender _emailSender, [FromBody] ForgotPasswordModel model)
         {
             var result = new AccountResult();
             if (MiniValidator.TryValidate(model, out var errors))
@@ -499,7 +500,7 @@ namespace Hydra.Auth.Api.Handler
 
         public static async Task<IResult> ResetPasswordHandler(UserManager<User> _userManager,
             IStringLocalizer<SharedResource> _sharedlocalizer,
-             ILogger<AccountHandler> _logger, ResetPasswordModel model)
+             ILogger<AccountHandler> _logger, [FromBody] ResetPasswordModel model)
         {
             var result = new AccountResult();
             if (MiniValidator.TryValidate(model, out var errors))
@@ -555,7 +556,7 @@ namespace Hydra.Auth.Api.Handler
 
         public static async Task<IResult> SendCodeHandler(UserManager<User> _userManager, SignInManager<User> _signInManager,
             IStringLocalizer<SharedResource> _sharedlocalizer,
-             ILogger<AccountHandler> _logger, IEmailSender _emailSender, ISmsSender _smsSender, SendCodeModel model)
+             ILogger<AccountHandler> _logger, IEmailSender _emailSender, ISmsSender _smsSender, [FromBody] SendCodeModel model)
         {
             var result = new AccountResult();
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
@@ -658,7 +659,7 @@ namespace Hydra.Auth.Api.Handler
 
         public static async Task<IResult> VerifyAuthenticatorCodeHandler(SignInManager<User> _signInManager,
             IStringLocalizer<SharedResource> _sharedlocalizer,
-             ILogger<AccountHandler> _logger,ClaimsPrincipal user, VerifyAuthenticatorCodeModel model)
+             ILogger<AccountHandler> _logger,ClaimsPrincipal user, [FromBody] VerifyAuthenticatorCodeModel model)
         {
             var result = new AccountResult();
             if (MiniValidator.TryValidate(model, out var errors))
@@ -702,7 +703,7 @@ namespace Hydra.Auth.Api.Handler
 
         public static async Task<IResult> VerifyCodeHandler(SignInManager<User> _signInManager,
             IStringLocalizer<SharedResource> _sharedlocalizer,
-             ILogger<AccountHandler> _logger, VerifyCodeModel model)
+             ILogger<AccountHandler> _logger, [FromBody] VerifyCodeModel model)
         {
             var result = new AccountResult();
             if (MiniValidator.TryValidate(model, out var errors))
@@ -745,7 +746,7 @@ namespace Hydra.Auth.Api.Handler
 
         public static async Task<IResult> UseRecoveryCodeHandler(SignInManager<User> _signInManager,
             IStringLocalizer<SharedResource> _sharedlocalizer,
-             ILogger<AccountHandler> _logger, UseRecoveryCodeModel model)
+             ILogger<AccountHandler> _logger, [FromBody] UseRecoveryCodeModel model)
         {
             var result = new AccountResult();
             if (MiniValidator.TryValidate(model, out var errors))

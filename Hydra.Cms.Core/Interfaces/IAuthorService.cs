@@ -1,4 +1,6 @@
-﻿using Hydra.Cms.Core.Models;
+﻿using Hydra.Cms.Core.Domain;
+using Hydra.Cms.Core.Models;
+using Hydra.Kernel.Models;
 
 namespace Hydra.Cms.Core.Interfaces
 {
@@ -7,36 +9,43 @@ namespace Hydra.Cms.Core.Interfaces
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="id"></param>
         /// <returns></returns>
-        Task<List<AuthorModel>> GetList();
+        Task<Result<Author>> IsExist(int authorId);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        Task<Result<List<AuthorModel>>> GetList();
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<AuthorModel> GetById(int id);
+        Task<Result<AuthorModel>> GetById(int id);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="authorModel"></param>
         /// <returns></returns>
-        Task<AuthorModel> Add(AuthorModel authorModel);
+        Task<Result<AuthorModel>> Add(AuthorModel authorModel);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="authorModel"></param>
         /// <returns></returns>
-        Task<AuthorModel> Update(AuthorModel authorModel);
+        Task<Result<AuthorModel>> Update(AuthorModel authorModel);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<bool> Delete(int id);
+        Task<Result> Delete(int id);
 
 
     }

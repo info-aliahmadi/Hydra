@@ -36,6 +36,8 @@ namespace Hydra.Infrastructure.Configuration
 
             app.MapModulesEndpoints();
 
+            
+
             app.UseLocalization();
 
         }

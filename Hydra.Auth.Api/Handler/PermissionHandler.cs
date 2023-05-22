@@ -1,57 +1,87 @@
 ﻿using Hydra.Auth.Core.Interfaces;
 using Hydra.Auth.Core.Models;
-using Hydra.Infrastructure.Security.Domain;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-
+using Microsoft.AspNetCore.Mvc;
 
 namespace Hydra.Auth.Api.Handler
 {
     public class PermissionHandler
     {
-
-
-        public static async Task<IResult> LoginHandler(ITokenService tokenService, UserManager<User> _userManager, SignInManager<User> _signInManager, bool rememberMe)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_permissionService"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetList(
+            IPermissionService _permissionService
+            )
         {
-            try
-            {
-                var result = new AccountResult();
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+            var result = await _permissionService.GetList();
 
-                var user = await _userManager.FindByNameAsync("admin");
-
-                var signInResult = await _signInManager.CheckPasswordSignInAsync(user, "admin", true);
-                if (signInResult.Succeeded)
-                {
-                    var token = tokenService.CreateToken(user, rememberMe);
-                    result.Status = AccountStatusEnum.Succeeded;
-
-
-                    if (signInResult.RequiresTwoFactor)
-                    {
-                        result.Status = AccountStatusEnum.RequiresTwoFactor;
-                        return Results.Ok(result);
-                    }
-
-                    if (signInResult.IsLockedOut)
-                    {
-                        result.Status = AccountStatusEnum.IsLockedOut;
-                        return Results.Ok(result);
-                    }
-
-                    return Results.Ok(token);
-                }
-                else
-                {
-                    return Results.BadRequest("BadRequest");
-                }
-
-            }
-            catch (Exception e)
-            {
-                return Results.BadRequest("BadRequest");
-            }
+            return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_permissionService"></param>
+        /// <param name="permissionId"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetById(
+            IPermissionService _permissionService,
+            int permissionId
+            )
+        {
+            var result = await _permissionService.GetById(permissionId);
+
+            return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_permissionService"></param>
+        /// <param name="permissionModel"></param>
+        /// <returns></returns>
+        public static async Task<IResult> AddPermission(
+            IPermissionService _permissionService,
+            [FromBody] PermissionModel permissionModel
+            )
+        {
+            var result = await _permissionService.Add(permissionModel);
+
+            return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_permissionService"></param>
+        /// <param name="permissionModel"></param>
+        /// <returns></returns>
+        public static async Task<IResult> UpdatePermission(
+            IPermissionService _permissionService,
+            [FromBody] PermissionModel permissionModel
+            )
+        {
+            var result = await _permissionService.Update(permissionModel);
+
+            return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_permissionService"></param>
+        /// <param name="permissionId"></param>
+        /// <returns></returns>
+        public static async Task<IResult> DeletePermission(
+            IPermissionService _permissionService,
+            int permissionId
+            )
+        {
+            var result = await _permissionService.Delete(permissionId);
+
+            return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+        }
+
     }
 }

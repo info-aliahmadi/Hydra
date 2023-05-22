@@ -27,8 +27,10 @@ namespace Hydra.Infrastructure.ModuleExtension
         {
             foreach (var module in registeredModules)
             {
-                module.MapEndpoints(app);
+                // Add RequireAuthorization to all endpoints by MapGroup (or you can add prefix for filter endpoints you think need authentication)
+                module.MapEndpoints(app.MapGroup("").RequireAuthorization());
             }
+
             return app;
         }
 
@@ -46,11 +48,6 @@ namespace Hydra.Infrastructure.ModuleExtension
             }
 
             return modulesList;
-            //var modules = typeof(IModule).Assembly
-            //    .GetTypes()
-            //    .Where(p => p.IsClass && p.IsAssignableTo(typeof(IModule)))
-            //    .Select(Activator.CreateInstance)
-            //    .Cast<IModule>();
         }
     }
 }

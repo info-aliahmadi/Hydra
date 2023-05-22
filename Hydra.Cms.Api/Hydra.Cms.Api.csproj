@@ -10,11 +10,11 @@
   </Target>
 
   <ItemGroup>
-    <Folder Include="Endpoints\" />
     <Folder Include="Services\" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Hydra.Cms.Core\Hydra.Cms.Core.csproj" />
     <ProjectReference Include="..\Hydra.Infrastructure\Hydra.Infrastructure.csproj" />
   </ItemGroup>
 
