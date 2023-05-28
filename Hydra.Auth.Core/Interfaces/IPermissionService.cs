@@ -1,10 +1,13 @@
 ﻿using Hydra.Auth.Core.Models;
+using Hydra.Infrastructure.Security.Domain;
 using Hydra.Kernel.Models;
 
 namespace Hydra.Auth.Core.Interfaces
 {
     public interface IPermissionService
     {
+        bool CheckPermissionForUser(int userId, string permissionName);
+
         /// <summary>
         /// 
         /// </summary>

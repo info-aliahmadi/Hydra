@@ -1,10 +1,9 @@
-﻿using Hydra.Auth.Core.Domain;
+﻿using Hydra.Infrastructure.Security.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Reflection.Emit;
 
 
-namespace Hydra.Cms.Core.EntityConfiguration
+namespace Hydra.Infrastructure.Security.EntityConfiguration
 {
     public class PermissionRoleConfiguration : IEntityTypeConfiguration<PermissionRole>
     {

@@ -1,16 +1,18 @@
 ﻿using Hydra.Auth.Api.Handler;
 using Hydra.Auth.Api.Services;
-using Hydra.Auth.Core.Filters;
 using Hydra.Auth.Core.Interfaces;
 using Hydra.Infrastructure.Data;
 using Hydra.Infrastructure.Endpoints;
 using Hydra.Infrastructure.Filters;
+using Hydra.Infrastructure.Security.Filters;
 using Hydra.Kernel.Interfaces;
 using Hydra.Kernel.Interfaces.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Identity.Web;
 using Nitro.Service.MessageSender;
 using System.Security.Claims;
 
@@ -68,18 +70,18 @@ namespace Hydra.Cms.Api.Endpoints
             endpoints.MapGet(API_SCHEMA + "/DeleteRole", RoleHandler.DeleteRole);
 
 
-            endpoints.MapGet(API_SCHEMA + "/GetPermissionList", PermissionHandler.GetList);
+            endpoints.MapGet(API_SCHEMA + "/GetPermissionList", PermissionHandler.GetList).AddEndpointFilter<BeforeEndpointExecution>();
             endpoints.MapGet(API_SCHEMA + "/GetPermissionById", PermissionHandler.GetById);
             endpoints.MapPost(API_SCHEMA + "/AddPermission", PermissionHandler.AddPermission);
             endpoints.MapPost(API_SCHEMA + "/UpdatePermission", PermissionHandler.UpdatePermission).RequireAuthorization("roleName");
-            endpoints.MapGet(API_SCHEMA + "/DeletePermission", PermissionHandler.DeletePermission).AddEndpointFilter().RequirePermission("AUTH_DELETE.PERMISSION");
+            endpoints.MapGet(API_SCHEMA + "/DeletePermission", PermissionHandler.DeletePermission);
 
 
-            endpoints.MapGet(API_SCHEMA + "/username",  async (ClaimsPrincipal user, HttpContext context) =>
+            endpoints.MapGet(API_SCHEMA + "/username", async (ClaimsPrincipal user, HttpContext context) =>
             {
                 return user.Identity.Name;
 
-            }).AddEndpointFilter<PermissionFilter>();
+            }).AllowAnonymous();
 
 
             return endpoints;

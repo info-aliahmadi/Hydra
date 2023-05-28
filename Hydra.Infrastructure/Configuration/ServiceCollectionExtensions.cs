@@ -45,7 +45,7 @@ namespace Hydra.Infrastructure.Configuration
 
             builder.AddSettingConfig();
 
-            services.AddSwaggerGenConfig();
+            //services.AddSwaggerGenConfig();
 
 
         }

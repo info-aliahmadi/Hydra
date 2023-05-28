@@ -1,12 +1,4 @@
-﻿using Hydra.Infrastructure.Security.Domain;
-using Hydra.Kernel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Hydra.Auth.Core.Domain
+﻿namespace Hydra.Infrastructure.Security.Domain
 {
     public class PermissionRole
     {

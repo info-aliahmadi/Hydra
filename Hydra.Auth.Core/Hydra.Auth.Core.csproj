@@ -28,4 +28,9 @@
     <ProjectReference Include="..\Hydra.Kernel\Hydra.Kernel.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Domain\" />
+    <Folder Include="EntityConfiguration\" />
+  </ItemGroup>
+
 </Project>
