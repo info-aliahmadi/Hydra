@@ -6,8 +6,6 @@ namespace Hydra.Auth.Core.Interfaces
 {
     public interface IPermissionService
     {
-        bool CheckPermissionForUser(int userId, string permissionName);
-
         /// <summary>
         /// 
         /// </summary>

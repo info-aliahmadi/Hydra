@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Hydra.Infrastructure.Security.Service;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace Hydra.Infrastructure.Security.Filters
 {
@@ -24,7 +26,7 @@ namespace Hydra.Infrastructure.Security.Filters
             _next = next;
         }
 
-        public Task InvokeAsync(HttpContext context)
+        public Task InvokeAsync(HttpContext context, IPermissionChecker _permissionChecker)
         {
             // get the endpoint 
             var endPoint = context.GetEndpoint();
@@ -36,12 +38,19 @@ namespace Hydra.Infrastructure.Security.Filters
                 var perAttr = endPoint.Metadata.GetMetadata<PermissionAttribute>();
 
                 // if it is not serving, redirect 
-                if (null != perAttr && !perAttr.IsAuthorized)
+                if (null != perAttr && !string.IsNullOrEmpty(perAttr.PermissionName))
                 {
-                    context.Response.StatusCode = 401;
+                    var userName = int.Parse(context.User.FindFirst("identity").Value);
 
-                    // and short circuit 
-                    return Task.CompletedTask;
+                    if (!_permissionChecker.IsAuthorized(userName, perAttr.PermissionName))
+                    {
+
+                        context.Response.StatusCode = 401;
+
+                        // and short circuit 
+                        return Task.CompletedTask;
+                    }
+
                 }
             }
 

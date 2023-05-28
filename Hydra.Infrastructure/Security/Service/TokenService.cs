@@ -1,13 +1,11 @@
-﻿using Hydra.Auth.Core.Interfaces;
-using Hydra.Infrastructure.Security.Domain;
+﻿using Hydra.Infrastructure.Security.Domain;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Hydra.Auth.Api.Services
+namespace Hydra.Infrastructure.Security.Service
 {
     public class TokenService : ITokenService
     {
@@ -26,7 +24,7 @@ namespace Hydra.Auth.Api.Services
             {
                 Subject = new ClaimsIdentity(new Claim[]
                                               {
-                                                    new Claim("id", user.Id.ToString()),
+                                                    new Claim("identity", user.Id.ToString()),
                                                     new Claim(ClaimTypes.Name, user.UserName??""),
                                                     new Claim(ClaimTypes.Email, user.Email ?? "")
                                               }),

@@ -24,51 +24,6 @@ namespace Hydra.Auth.Api.Services
         /// 
         /// </summary>
         /// <returns></returns>
-        public bool CheckPermissionForUser(int userId, string permissionName)
-        {
-            var result = new Result<List<PermissionModel>>();
-
-            //var cachedPermissions = _queryRepository.Table<Permission>().Cacheable().ToList();
-
-            //var cachedRoles = _queryRepository.Table<Role>().Cacheable().ToList();
-
-            var permissionRoleQuery = (from PermissionRoleTable in _queryRepository.Table<PermissionRole>()
-
-                                       join permissionTable in _queryRepository.Table<Permission>().Cacheable()
-                                         on PermissionRoleTable.PermissionId equals permissionTable.Id
-
-                                       join roleTable in _queryRepository.Table<Role>().Cacheable()
-                                         on PermissionRoleTable.RoleId equals roleTable.Id
-
-                                       select new
-                                       {
-                                           PermissionId = PermissionRoleTable.PermissionId,
-                                           PermissionName = permissionTable.Name,
-                                           RoleId = PermissionRoleTable.RoleId,
-                                           RoleName = roleTable.Name
-                                       }).Cacheable();
-
-            var permissionsList = (from permissionRoleTable in permissionRoleQuery
-                                   join userRoleTable in _queryRepository.Table<UserRole>()
-                                    on permissionRoleTable.RoleId equals userRoleTable.RoleId
-                                   select new
-                                   {
-                                       UserId = userRoleTable.UserId,
-                                       Permissions = permissionRoleTable
-                                   }).Cacheable().ToList();
-
-            var userPermissions = permissionsList.Where(s => s.UserId == userId);
-
-
-            var checkUserPermission = permissionsList.Any(s => s.Permissions.PermissionName == permissionName);
-
-            return checkUserPermission;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
         public async Task<Result<List<PermissionModel>>> GetList()
         {
             var result = new Result<List<PermissionModel>>();

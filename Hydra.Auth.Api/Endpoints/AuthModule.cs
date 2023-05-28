@@ -5,6 +5,7 @@ using Hydra.Infrastructure.Data;
 using Hydra.Infrastructure.Endpoints;
 using Hydra.Infrastructure.Filters;
 using Hydra.Infrastructure.Security.Filters;
+using Hydra.Infrastructure.Security.Service;
 using Hydra.Kernel.Interfaces;
 using Hydra.Kernel.Interfaces.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -41,40 +42,40 @@ namespace Hydra.Cms.Api.Endpoints
             endpoints.MapGet(API_SCHEMA + "/initialize", AccountHandler.InitializeHandler).AllowAnonymous();
 
             endpoints.MapGet(API_SCHEMA + "/login", AccountHandler.LoginHandler).AllowAnonymous();
-            endpoints.MapPost(API_SCHEMA + "/Register", AccountHandler.RegisterHandler);
-            endpoints.MapPost(API_SCHEMA + "/SignOut", AccountHandler.SignOutHandler);
-            endpoints.MapPost(API_SCHEMA + "/ExternalLoginCallback", AccountHandler.ExternalLoginCallbackHandler);
-            endpoints.MapGet(API_SCHEMA + "/ExternalLoginConfirmation", AccountHandler.ExternalLoginConfirmationHandler);
+            endpoints.MapPost(API_SCHEMA + "/Register", AccountHandler.RegisterHandler).RequirePermission("AUTH_REGISTER");
+            endpoints.MapPost(API_SCHEMA + "/SignOut", AccountHandler.SignOutHandler).RequirePermission("AUTH_SIGNOUT");
+            endpoints.MapPost(API_SCHEMA + "/ExternalLoginCallback", AccountHandler.ExternalLoginCallbackHandler).RequirePermission("AUTH_GET.EXTERNAL.LOGIN.CALLBACK");
+            endpoints.MapGet(API_SCHEMA + "/ExternalLoginConfirmation", AccountHandler.ExternalLoginConfirmationHandler).RequirePermission("AUTH_EXTERNAL.LOGIN.CONFIRMATION");
 
-            endpoints.MapGet(API_SCHEMA + "/ConfirmEmail", AccountHandler.ConfirmEmailHandler);
-            endpoints.MapPost(API_SCHEMA + "/ForgotPassword", AccountHandler.ForgotPasswordHandler);
-            endpoints.MapPost(API_SCHEMA + "/ResetPassword", AccountHandler.ResetPasswordHandler);
-            endpoints.MapGet(API_SCHEMA + "/GetTwoFactorProvidersAsync", AccountHandler.GetTwoFactorProvidersAsyncHandler);
-            endpoints.MapPost(API_SCHEMA + "/SendCode", AccountHandler.SendCodeHandler);
-            endpoints.MapPost(API_SCHEMA + "/VerifyAuthenticatorCode", AccountHandler.VerifyAuthenticatorCodeHandler);
-            endpoints.MapPost(API_SCHEMA + "/VerifyCode", AccountHandler.VerifyCodeHandler);
-            endpoints.MapPost(API_SCHEMA + "/UseRecoveryCode", AccountHandler.UseRecoveryCodeHandler);
-
-
-            endpoints.MapGet(API_SCHEMA + "/AssignRoleToUserByRoleName", UserHandler.AssignRoleToUserByRoleName);
-            endpoints.MapGet(API_SCHEMA + "/AssignRoleToUserByRoleId", UserHandler.AssignRoleToUserByRoleId);
-
-            endpoints.MapGet(API_SCHEMA + "/AssignPermissionToRoleByRoleName", RoleHandler.AssignPermissionToRoleByRoleName);
-            endpoints.MapGet(API_SCHEMA + "/AssignPermissionToRoleByRoleId", RoleHandler.AssignPermissionToRoleByRoleId);
+            endpoints.MapGet(API_SCHEMA + "/ConfirmEmail", AccountHandler.ConfirmEmailHandler).RequirePermission("AUTH_CONFIRM.EMAIL");
+            endpoints.MapPost(API_SCHEMA + "/ForgotPassword", AccountHandler.ForgotPasswordHandler).RequirePermission("AUTH_FORGOT.PASSWORD");
+            endpoints.MapPost(API_SCHEMA + "/ResetPassword", AccountHandler.ResetPasswordHandler).RequirePermission("AUTH_RESET.PASSWORD");
+            endpoints.MapGet(API_SCHEMA + "/GetTwoFactorProvidersAsync", AccountHandler.GetTwoFactorProvidersAsyncHandler).RequirePermission("AUTH_GET.TWO.FACTOR.PROVIDERS.ASYNC");
+            endpoints.MapPost(API_SCHEMA + "/SendCode", AccountHandler.SendCodeHandler).RequirePermission("AUTH_SEND.CODE");
+            endpoints.MapPost(API_SCHEMA + "/VerifyAuthenticatorCode", AccountHandler.VerifyAuthenticatorCodeHandler).RequirePermission("AUTH_VERIFY.AUTHENTICATOR.CODE");
+            endpoints.MapPost(API_SCHEMA + "/VerifyCode", AccountHandler.VerifyCodeHandler).RequirePermission("AUTH_VERIFY.CODE");
+            endpoints.MapPost(API_SCHEMA + "/UseRecoveryCode", AccountHandler.UseRecoveryCodeHandler).RequirePermission("AUTH_USE.RECOVERY.CODE");
 
 
-            endpoints.MapGet(API_SCHEMA + "/GetRoleList", RoleHandler.GetList);
-            endpoints.MapGet(API_SCHEMA + "/GetRoleById", RoleHandler.GetRoleById);
-            endpoints.MapPost(API_SCHEMA + "/AddRole", RoleHandler.AddRole);
-            endpoints.MapPost(API_SCHEMA + "/UpdateRole", RoleHandler.UpdateRole);
-            endpoints.MapGet(API_SCHEMA + "/DeleteRole", RoleHandler.DeleteRole);
+            endpoints.MapGet(API_SCHEMA + "/AssignRoleToUserByRoleName", UserHandler.AssignRoleToUserByRoleName).RequirePermission("AUTH_ASSIGN.ROLE.TO.USER.BY.ROLE.NAME");
+            endpoints.MapGet(API_SCHEMA + "/AssignRoleToUserByRoleId", UserHandler.AssignRoleToUserByRoleId).RequirePermission("AUTH_ASSIGN.ROLE.TO.USER.BY.ROLE.ID");
+
+            endpoints.MapGet(API_SCHEMA + "/AssignPermissionToRoleByRoleName", RoleHandler.AssignPermissionToRoleByRoleName).RequirePermission("AUTH_ASSIGN.PERMISSION.TO.ROLE.BY.ROLE.NAME");
+            endpoints.MapGet(API_SCHEMA + "/AssignPermissionToRoleByRoleId", RoleHandler.AssignPermissionToRoleByRoleId).RequirePermission("AUTH_ASSIGN.PERMISSION.TO.ROLE.BY.ROLE.ID");
 
 
-            endpoints.MapGet(API_SCHEMA + "/GetPermissionList", PermissionHandler.GetList).AddEndpointFilter<BeforeEndpointExecution>();
-            endpoints.MapGet(API_SCHEMA + "/GetPermissionById", PermissionHandler.GetById);
-            endpoints.MapPost(API_SCHEMA + "/AddPermission", PermissionHandler.AddPermission);
-            endpoints.MapPost(API_SCHEMA + "/UpdatePermission", PermissionHandler.UpdatePermission).RequireAuthorization("roleName");
-            endpoints.MapGet(API_SCHEMA + "/DeletePermission", PermissionHandler.DeletePermission);
+            endpoints.MapGet(API_SCHEMA + "/GetRoleList", RoleHandler.GetList).RequirePermission("AUTH_GET.ROLE.LIST");
+            endpoints.MapGet(API_SCHEMA + "/GetRoleById", RoleHandler.GetRoleById).RequirePermission("AUTH_GET.ROLE.BY.ID");
+            endpoints.MapPost(API_SCHEMA + "/AddRole", RoleHandler.AddRole).RequirePermission("AUTH_ADD.ROLE");
+            endpoints.MapPost(API_SCHEMA + "/UpdateRole", RoleHandler.UpdateRole).RequirePermission("AUTH_UPDATE.ROLE");
+            endpoints.MapGet(API_SCHEMA + "/DeleteRole", RoleHandler.DeleteRole).RequirePermission("AUTH_DELETE.ROLE");
+
+
+            endpoints.MapGet(API_SCHEMA + "/GetPermissionList", PermissionHandler.GetList).RequirePermission("AUTH_GET.PERMISSION.LIST");
+            endpoints.MapGet(API_SCHEMA + "/GetPermissionById", PermissionHandler.GetById).RequirePermission("AUTH_GET.PERMISSION.BY.ID");
+            endpoints.MapPost(API_SCHEMA + "/AddPermission", PermissionHandler.AddPermission).RequirePermission("AUTH_ADD.PERMISSION");
+            endpoints.MapPost(API_SCHEMA + "/UpdatePermission", PermissionHandler.UpdatePermission).RequirePermission("AUTH_UPDATE.PERMISSION");
+            endpoints.MapGet(API_SCHEMA + "/DeletePermission", PermissionHandler.DeletePermission).RequirePermission("AUTH_DELETE.PERMISSION");
 
 
             endpoints.MapGet(API_SCHEMA + "/username", async (ClaimsPrincipal user, HttpContext context) =>

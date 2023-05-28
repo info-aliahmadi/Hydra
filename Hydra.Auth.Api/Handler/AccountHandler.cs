@@ -1,7 +1,7 @@
-﻿using Hydra.Auth.Core.Interfaces;
-using Hydra.Auth.Core.Models;
+﻿using Hydra.Auth.Core.Models;
 using Hydra.Infrastructure;
 using Hydra.Infrastructure.Security.Domain;
+using Hydra.Infrastructure.Security.Service;
 using Hydra.Kernel.Interfaces;
 using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;

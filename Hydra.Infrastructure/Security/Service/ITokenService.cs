@@ -1,7 +1,6 @@
-﻿using Hydra.Auth.Core.Models;
-using Hydra.Infrastructure.Security.Domain;
+﻿using Hydra.Infrastructure.Security.Domain;
 
-namespace Hydra.Auth.Core.Interfaces
+namespace Hydra.Infrastructure.Security.Service
 {
     public interface ITokenService
     {

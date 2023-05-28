@@ -34,7 +34,7 @@ namespace Hydra.Infrastructure.Configuration
             app.UseAuthentication();
             app.UseAuthorization();
 
-            //app.UsePermission();
+            app.UsePermission();
 
 
             app.MapModulesEndpoints();

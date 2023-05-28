@@ -32,8 +32,8 @@ namespace Hydra.Infrastructure
             #endregion
 
         }
-
-
+        public DbSet<Permission> Permissions { get; set; }
+        public DbSet<PermissionRole> PermissionRoles { get; set; }
 
     }
 }

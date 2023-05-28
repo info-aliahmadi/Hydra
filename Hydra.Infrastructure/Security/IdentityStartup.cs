@@ -1,17 +1,12 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Hydra.Infrastructure.Data;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Hydra.Infrastructure.Security.Domain;
-using Microsoft.Identity.Web;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.Extensions.Configuration;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace Hydra.Infrastructure.Security
@@ -36,10 +31,6 @@ namespace Hydra.Infrastructure.Security
                  .AddRoles<Role>()
                  .AddEntityFrameworkStores<ApplicationDbContext>()
                  .AddDefaultTokenProviders();
-
-            var sss = configuration["Authentication:Schemes:Bearer:ValidAudiences"];
-            var sss2 = configuration["Authentication:Schemes:Bearer:ValidIssuer"];
-            var sss344 = configuration["Authentication:Schemes:Bearer:Secret"];
 
             services.AddAuthentication(options =>
             {
