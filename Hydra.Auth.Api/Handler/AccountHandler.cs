@@ -46,51 +46,21 @@ namespace Hydra.Auth.Api.Handler
                 { DOB = DateTime.Now, Name = "admin", UserName = "admin", Email = "admin@admin.com" };
 
 
-                if (!await _roleManager.RoleExistsAsync("admin"))
-                    await _roleManager.CreateAsync(new Role() { Name = "admin" });
+                if (!await _roleManager.RoleExistsAsync("SuperAdmin"))
+                    await _roleManager.CreateAsync(new Role() { Name = "SuperAdmin" });
 
 
                 var isExist = _repository.Table<User>().Any(x => x.UserName == "admin");
                 if (!isExist)
                 {
                     var identityResult = await _userManager.CreateAsync(user, "admin");
-                    await _userManager.AddToRoleAsync(user, "admin");
+                    await _userManager.AddToRoleAsync(user, "SuperAdmin");
 
                     if (identityResult.Succeeded)
                     {
-                        if (_userManager.Options.SignIn.RequireConfirmedEmail)
-                        {
-                            result.Status = AccountStatusEnum.RequireConfirmedEmail;
-                            var emailRequest = new EmailRequestRecord();
-                            //For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
-                            //Send an email with this link
-                            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                            var callbackUrl = string.Format("ConfirmEmail/Account/{0}/{1}/{2}", user.Id, code, "");
-
-                            emailRequest.Subject = _sharedlocalizer["ConfirmEmail"];
-                            emailRequest.Body =
-                                string.Format(
-                                    _sharedlocalizer[
-                                        "Please confirm your account by clicking this link: <a href='{0}'>link</a>"],
-                                    callbackUrl);
-                            emailRequest.ToEmail = "admin@admin.com";
-                            try
-                            {
-                                await _emailSender.SendEmailAsync(emailRequest);
-
-                                result.Status = AccountStatusEnum.Succeeded;
-                                return Results.Ok(result);
-                            }
-                            catch (Exception e)
-                            {
-                                _logger.LogError(e.InnerException + "_" + e.Message);
-                                result.Errors.Add(string.Format(_sharedlocalizer["{0} action throws an error"]));
-
-                                return Results.BadRequest(result);
-                            }
-                        }
+                        return Results.Ok(result);
                     }
-                    if (identityResult.Errors.Any())
+                    else
                     {
                         foreach (var error in identityResult.Errors)
                         {
@@ -106,23 +76,13 @@ namespace Hydra.Auth.Api.Handler
                         return Results.BadRequest(result);
 
                     }
-                    else
-                    {
-                        return Results.Ok(result);
-                    }
                 }
-
-                await _signInManager.SignInAsync(user, isPersistent: false);
-                _logger.LogInformation(3,
-                    _sharedlocalizer["The user created a new account with the password."]);
-                result.Status = AccountStatusEnum.Succeeded;
                 return Results.Ok(result);
 
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
-                throw;
+                throw e;
             }
         }
 
@@ -154,10 +114,11 @@ namespace Hydra.Auth.Api.Handler
                 if (!isExist)
                 {
                     var identityResult = await _userManager.CreateAsync(user, registerModel.Password);
-                    await _userManager.AddToRoleAsync(user, "user");
+
 
                     if (identityResult.Succeeded)
                     {
+                        await _userManager.AddToRoleAsync(user, "User");
                         if (_userManager.Options.SignIn.RequireConfirmedEmail)
                         {
                             result.Status = AccountStatusEnum.RequireConfirmedEmail;
@@ -659,7 +620,7 @@ namespace Hydra.Auth.Api.Handler
 
         public static async Task<IResult> VerifyAuthenticatorCodeHandler(SignInManager<User> _signInManager,
             IStringLocalizer<SharedResource> _sharedlocalizer,
-             ILogger<AccountHandler> _logger,ClaimsPrincipal user, [FromBody] VerifyAuthenticatorCodeModel model)
+             ILogger<AccountHandler> _logger, ClaimsPrincipal user, [FromBody] VerifyAuthenticatorCodeModel model)
         {
             var result = new AccountResult();
             if (MiniValidator.TryValidate(model, out var errors))

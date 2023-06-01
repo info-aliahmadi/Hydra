@@ -4,7 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Hydra.Infrastructure.localization;
 using Hydra.Infrastructure.ModuleExtension;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Hydra.Infrastructure.Security.Filters;
+using Hydra.Infrastructure.Security.Extensions;
 
 namespace Hydra.Infrastructure.Configuration
 {
@@ -20,11 +20,11 @@ namespace Hydra.Infrastructure.Configuration
         public static void ConfigureRequestPipeline(this WebApplication app)
         {
             // Configure the HTTP request pipeline.
-            //if (app.Environment.IsDevelopment())
-            //{
-            //    app.UseSwagger();
-            //    app.UseSwaggerUI();
-            //}
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
 
             app.UseHttpsRedirection();
 
@@ -36,7 +36,7 @@ namespace Hydra.Infrastructure.Configuration
 
             app.UsePermission();
 
-
+            // Collect all Endpoints from Modules
             app.MapModulesEndpoints();
 
             

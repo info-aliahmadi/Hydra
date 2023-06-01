@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Builder;
 using Hydra.Infrastructure.Data;
 using Hydra.Infrastructure.Security;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Hydra.Infrastructure.Logs;
 using Hydra.Infrastructure.localization;
 using Hydra.Infrastructure.ServiceRegistrar;
@@ -32,7 +30,7 @@ namespace Hydra.Infrastructure.Configuration
 
             services.AddServices();
 
-            // Collect the services from Modules
+            // Collect all services from Modules
             services.AddModulesService();
 
             services.AddCacheProvider(builder.Configuration);
@@ -45,7 +43,7 @@ namespace Hydra.Infrastructure.Configuration
 
             builder.AddSettingConfig();
 
-            //services.AddSwaggerGenConfig();
+            services.AddSwaggerGenConfig();
 
 
         }

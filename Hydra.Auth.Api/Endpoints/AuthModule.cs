@@ -1,19 +1,14 @@
 ﻿using Hydra.Auth.Api.Handler;
 using Hydra.Auth.Api.Services;
 using Hydra.Auth.Core.Interfaces;
-using Hydra.Infrastructure.Data;
 using Hydra.Infrastructure.Endpoints;
-using Hydra.Infrastructure.Filters;
-using Hydra.Infrastructure.Security.Filters;
+using Hydra.Infrastructure.Security.Extensions;
 using Hydra.Infrastructure.Security.Service;
 using Hydra.Kernel.Interfaces;
-using Hydra.Kernel.Interfaces.Data;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Identity.Web;
 using Nitro.Service.MessageSender;
 using System.Security.Claims;
 
@@ -21,13 +16,10 @@ namespace Hydra.Cms.Api.Endpoints
 {
     public class AuthModule : IModule
     {
-
         private const string API_SCHEMA = "/Auth";
+
         public IServiceCollection RegisterModules(IServiceCollection services)
         {
-            services.AddScoped<IQueryRepository, QueryRepository>();
-            services.AddScoped<ICommandRepository, CommandRepository>();
-            services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IEmailSender, MessageSender>();
             services.AddScoped<ISmsSender, MessageSender>();
             services.AddScoped<ITokenService, TokenService>();
@@ -42,7 +34,7 @@ namespace Hydra.Cms.Api.Endpoints
             endpoints.MapGet(API_SCHEMA + "/initialize", AccountHandler.InitializeHandler).AllowAnonymous();
 
             endpoints.MapGet(API_SCHEMA + "/login", AccountHandler.LoginHandler).AllowAnonymous();
-            endpoints.MapPost(API_SCHEMA + "/Register", AccountHandler.RegisterHandler).RequirePermission("AUTH_REGISTER");
+            endpoints.MapPost(API_SCHEMA + "/Register", AccountHandler.RegisterHandler).AllowAnonymous();
             endpoints.MapPost(API_SCHEMA + "/SignOut", AccountHandler.SignOutHandler).RequirePermission("AUTH_SIGNOUT");
             endpoints.MapPost(API_SCHEMA + "/ExternalLoginCallback", AccountHandler.ExternalLoginCallbackHandler).RequirePermission("AUTH_GET.EXTERNAL.LOGIN.CALLBACK");
             endpoints.MapGet(API_SCHEMA + "/ExternalLoginConfirmation", AccountHandler.ExternalLoginConfirmationHandler).RequirePermission("AUTH_EXTERNAL.LOGIN.CONFIRMATION");

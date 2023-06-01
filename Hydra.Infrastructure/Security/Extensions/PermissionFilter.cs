@@ -1,4 +1,4 @@
-﻿namespace Hydra.Infrastructure.Security.Filters
+﻿namespace Hydra.Infrastructure.Security.Extensions
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
     public class PermissionAttribute : Attribute

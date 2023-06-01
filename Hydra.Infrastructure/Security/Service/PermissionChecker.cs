@@ -41,10 +41,15 @@ namespace Hydra.Infrastructure.Security.Service
                                        Permissions = permissionRoleTable
                                    }).Cacheable().ToList();
 
+            //SuperAdmin Role Have All Permissions
+            if (permissionsList.Any(s => s.UserId == userId && s.Permissions.RoleName == "SuperAdmin"))
+                return true;
+
+
             var userPermissions = permissionsList.Where(s => s.UserId == userId);
 
 
-            var checkUserPermission = permissionsList.Any(s => s.Permissions.PermissionName == permissionName);
+            var checkUserPermission = userPermissions.Any(s => s.Permissions.PermissionName == permissionName);
 
             return checkUserPermission;
         }

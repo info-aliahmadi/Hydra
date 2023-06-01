@@ -1,7 +1,5 @@
 ﻿using Hydra.Auth.Core.Interfaces;
 using Hydra.Auth.Core.Models;
-using Hydra.Infrastructure.Security.Filters;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,7 +12,6 @@ namespace Hydra.Auth.Api.Handler
         /// </summary>
         /// <param name="_permissionService"></param>
         /// <returns></returns>
-        [Permission("AUTH_GET.ONE.PERMISSION")]
         public static async Task<IResult> GetList(
             IPermissionService _permissionService
             )
@@ -30,7 +27,6 @@ namespace Hydra.Auth.Api.Handler
         /// <param name="_permissionService"></param>
         /// <param name="permissionId"></param>
         /// <returns></returns>
-        [Authorize("ssssss")]
         public static async Task<IResult> GetById(
             IPermissionService _permissionService,
             int permissionId

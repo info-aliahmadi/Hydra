@@ -1,9 +1,8 @@
 ﻿using Hydra.Infrastructure.Security.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
 
-namespace Hydra.Infrastructure.Security.Filters
+namespace Hydra.Infrastructure.Security.Extensions
 {
     public static class PermissionStartup
     {

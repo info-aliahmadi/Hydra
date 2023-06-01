@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 
-namespace Hydra.Infrastructure.Security.Filters
+namespace Hydra.Infrastructure.Security.Extensions
 {
     public static class PermissionEndpointConventionBuilderExtensions
     {
