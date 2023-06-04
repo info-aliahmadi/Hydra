@@ -8,7 +8,7 @@ namespace Hydra.Infrastructure.Security.Service
         /// 
         /// </summary>
         /// <returns></returns>
-        string CreateToken(User user, bool rememberMe = false);
+        string CreateToken(User user, DateTime? expirationDate = null);
 
 
     }

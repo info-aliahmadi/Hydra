@@ -18,12 +18,10 @@ namespace Hydra.Infrastructure.Security
         {
             services.AddCors(options =>
             {
-                options.AddPolicy("AllOrigins",
+                options.AddPolicy("ReactOrigin",
                         builder =>
                         {
-                            builder.AllowAnyMethod()
-                                   .AllowAnyHeader()
-                                   .AllowAnyOrigin();
+                            builder.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
                         });
             });
 

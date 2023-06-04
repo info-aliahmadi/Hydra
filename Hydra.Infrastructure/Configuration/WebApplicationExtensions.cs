@@ -30,7 +30,7 @@ namespace Hydra.Infrastructure.Configuration
 
 
 
-            app.UseCors();
+            app.UseCors("ReactOrigin");
             app.UseAuthentication();
             app.UseAuthorization();
 

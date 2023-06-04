@@ -216,7 +216,8 @@ namespace Hydra.Auth.Api.Handler
                 var signInResult = await _signInManager.CheckPasswordSignInAsync(user, password, true);
                 if (signInResult.Succeeded)
                 {
-                    var token = tokenService.CreateToken(user, rememberMe);
+                    DateTime? expireDate = rememberMe ? DateTime.Now.AddMonths(6) : null;
+                    var token = tokenService.CreateToken(user, expireDate);
                     result.Status = AccountStatusEnum.Succeeded;
 
 
@@ -245,6 +246,63 @@ namespace Hydra.Auth.Api.Handler
                 return Results.BadRequest("BadRequest");
             }
         }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public static async Task<IResult> RefreshToken(
+            ITokenService tokenService,
+            UserManager<User> _userManager,
+            ClaimsPrincipal userPrincipal)
+        {
+            try
+            {
+                var userName = userPrincipal.FindFirstValue(ClaimTypes.Name);
+                var expireDate = DateTimeOffset.FromUnixTimeSeconds(long.Parse(userPrincipal.FindFirst("exp").Value)).DateTime;
+                var user = await _userManager.FindByNameAsync(userName);
+
+                var token = tokenService.CreateToken(user, expireDate);
+
+                return Results.Ok(token);
+
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest("BadRequest");
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tokenService"></param>
+        /// <param name="_userManager"></param>
+        /// <param name="_signInManager"></param>
+        /// <param name="rememberMe"></param>
+        /// <returns></returns>
+        public static IResult GetPermissionsOfCurrentUser(
+            IPermissionChecker permission,
+            ClaimsPrincipal user)
+        {
+            try
+            {
+                var userId = int.Parse(user.FindFirst("identity").Value);
+
+                var userPermissions = permission.GetPermissionsOfUser(userId);
+
+                return Results.Ok(userPermissions);
+
+
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest("BadRequest");
+            }
+        }
+
 
         public static async Task<IResult> SignOutHandler(
             SignInManager<User> _signInManager,

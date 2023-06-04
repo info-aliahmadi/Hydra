@@ -44,7 +44,7 @@ namespace Hydra.Infrastructure.Security.Extensions
                     if (!_permissionChecker.IsAuthorized(userName, perAttr.PermissionName))
                     {
 
-                        context.Response.StatusCode = 401;
+                        context.Response.StatusCode = 403;
 
                         // and short circuit 
                         return Task.CompletedTask;

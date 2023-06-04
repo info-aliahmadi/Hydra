@@ -16,7 +16,7 @@ namespace Hydra.Infrastructure.Security.Service
             _iConfiguration = iConfiguration;
 
         }
-        public string CreateToken(User user, bool rememberMe = false)
+        public string CreateToken(User user, DateTime? expirationDate = null)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenKey = Encoding.UTF8.GetBytes(_iConfiguration["Authentication:Schemes:Bearer:Secret"]);
@@ -24,11 +24,11 @@ namespace Hydra.Infrastructure.Security.Service
             {
                 Subject = new ClaimsIdentity(new Claim[]
                                               {
-                                                    new Claim("identity", user.Id.ToString()),
-                                                    new Claim(ClaimTypes.Name, user.UserName??""),
-                                                    new Claim(ClaimTypes.Email, user.Email ?? "")
+                                                  new Claim("identity", user.Id.ToString()),
+                                                  new Claim(ClaimTypes.Name, user.UserName ?? ""),
+                                                  new Claim(ClaimTypes.Email, user.Email ?? "")
                                               }),
-                Expires = rememberMe ? DateTime.UtcNow.AddMonths(6) : DateTime.UtcNow.AddMinutes(ExpirationMinutes),
+                Expires = expirationDate != null ? expirationDate.Value : DateTime.UtcNow.AddMinutes(ExpirationMinutes) ,
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);

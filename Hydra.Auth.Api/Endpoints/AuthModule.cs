@@ -2,6 +2,7 @@
 using Hydra.Auth.Api.Services;
 using Hydra.Auth.Core.Interfaces;
 using Hydra.Infrastructure.Endpoints;
+using Hydra.Infrastructure.Security.Domain;
 using Hydra.Infrastructure.Security.Extensions;
 using Hydra.Infrastructure.Security.Service;
 using Hydra.Kernel.Interfaces;
@@ -35,7 +36,12 @@ namespace Hydra.Cms.Api.Endpoints
 
             endpoints.MapGet(API_SCHEMA + "/login", AccountHandler.LoginHandler).AllowAnonymous();
             endpoints.MapPost(API_SCHEMA + "/Register", AccountHandler.RegisterHandler).AllowAnonymous();
-            endpoints.MapPost(API_SCHEMA + "/SignOut", AccountHandler.SignOutHandler).RequirePermission("AUTH_SIGNOUT");
+            endpoints.MapPost(API_SCHEMA + "/SignOut", AccountHandler.SignOutHandler);
+
+            endpoints.MapGet(API_SCHEMA + "/RefreshToken", AccountHandler.RefreshToken);
+            endpoints.MapGet(API_SCHEMA + "/GetPermissionsOfCurrentUser", AccountHandler.GetPermissionsOfCurrentUser);
+
+
             endpoints.MapPost(API_SCHEMA + "/ExternalLoginCallback", AccountHandler.ExternalLoginCallbackHandler).RequirePermission("AUTH_GET.EXTERNAL.LOGIN.CALLBACK");
             endpoints.MapGet(API_SCHEMA + "/ExternalLoginConfirmation", AccountHandler.ExternalLoginConfirmationHandler).RequirePermission("AUTH_EXTERNAL.LOGIN.CONFIRMATION");
 
@@ -72,6 +78,7 @@ namespace Hydra.Cms.Api.Endpoints
 
             endpoints.MapGet(API_SCHEMA + "/username", async (ClaimsPrincipal user, HttpContext context) =>
             {
+                // user.FindFirst("identity").Value;
                 return user.Identity.Name;
 
             }).AllowAnonymous();
