@@ -26,9 +26,11 @@ namespace Hydra.Infrastructure.Security.Service
                                               {
                                                   new Claim("identity", user.Id.ToString()),
                                                   new Claim(ClaimTypes.Name, user.UserName ?? ""),
-                                                  new Claim(ClaimTypes.Email, user.Email ?? "")
+                                                  new Claim(ClaimTypes.Email, user.Email ?? ""),
+                                                  new Claim(ClaimTypes.Surname, user.Name ?? ""),
+                                                  new Claim("avatar", user.Avatar ?? "")
                                               }),
-                Expires = expirationDate != null ? expirationDate.Value : DateTime.UtcNow.AddMinutes(ExpirationMinutes) ,
+                Expires = expirationDate != null ? expirationDate.Value : DateTime.UtcNow.AddMinutes(ExpirationMinutes),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);

@@ -316,7 +316,69 @@ namespace Hydra.Auth.Api.Handler
             return Results.Ok(result);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetDefaultLanguage(
+            ClaimsPrincipal userClaim, UserManager<User> _userManager)
+        {
+            var userId = userClaim?.FindFirst("identity")?.Value;
+            var user = await _userManager.FindByIdAsync(userId);
 
+            return Results.Ok(user.DefaultLanguage);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="defaultLanguage"></param>
+        /// <param name="_userManager"></param>
+        /// <param name="userClaim"></param>
+        /// <returns></returns>
+        public static async Task<IResult> SetDefaultLanguage(string defaultLanguage, UserManager<User> _userManager,
+            ClaimsPrincipal userClaim)
+        {
+            var userId = userClaim?.FindFirst("identity")?.Value;
+            var user = await _userManager.FindByIdAsync(userId);
+            user.DefaultLanguage = defaultLanguage;
+            var result = await _userManager.UpdateAsync(user);
+
+            return Results.Ok(result);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetDefaultTheme(
+            ClaimsPrincipal userClaim, UserManager<User> _userManager)
+        {
+            var userId = userClaim?.FindFirst("identity")?.Value;
+            var user = await _userManager.FindByIdAsync(userId);
+
+            return Results.Ok(user.DefaultTheme);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="defaultLanguage"></param>
+        /// <param name="_userManager"></param>
+        /// <param name="userClaim"></param>
+        /// <returns></returns>
+        public static async Task<IResult> SetDefaultTheme(string defaultTheme, UserManager<User> _userManager,
+            ClaimsPrincipal userClaim)
+        {
+            var userId = userClaim?.FindFirst("identity")?.Value;
+            var user = await _userManager.FindByIdAsync(userId);
+            user.DefaultTheme = defaultTheme;
+            var result = await _userManager.UpdateAsync(user);
+
+            return Results.Ok(result);
+        }
         public static IResult ExternalLogin(SignInManager<User> _signInManager, HttpContext context, string provider, string? returnUrl = null)
         {
             // Request a redirect to the external login provider.

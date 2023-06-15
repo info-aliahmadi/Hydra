@@ -5,7 +5,7 @@ namespace Hydra.Cms.Core.Domain
 {
     public class Author : BaseEntity<int>
     {
-        public Guid UserId { get; set; }
+        public int UserId { get; set; }
 
         public User User { get; set; }
 

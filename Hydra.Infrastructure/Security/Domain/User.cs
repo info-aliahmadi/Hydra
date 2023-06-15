@@ -9,5 +9,14 @@ namespace Hydra.Infrastructure.Security.Domain
 
         [PersonalData]
         public DateTime DOB { get; set; }
+
+        [PersonalData]
+        public string? DefaultLanguage { get; set; }
+
+        [PersonalData]
+        public string? DefaultTheme { get; set; }
+
+        [PersonalData]
+        public string? Avatar { get; set; }
     }
 }

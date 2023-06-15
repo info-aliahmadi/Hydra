@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nitro.Migrations;
 
@@ -11,9 +12,11 @@ using Nitro.Migrations;
 namespace Hydra.Migrations.Migrations
 {
     [DbContext(typeof(MigrationContext))]
-    partial class MigrationContextModelSnapshot : ModelSnapshot
+    [Migration("20230611105403_dbVersion_3")]
+    partial class dbVersion_3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -204,9 +207,6 @@ namespace Hydra.Migrations.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<string>("Avatar")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -215,9 +215,6 @@ namespace Hydra.Migrations.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("DefaultLanguage")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DefaultTheme")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")

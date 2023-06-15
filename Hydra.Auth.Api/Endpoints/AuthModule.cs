@@ -42,6 +42,13 @@ namespace Hydra.Cms.Api.Endpoints
             endpoints.MapGet(API_SCHEMA + "/GetPermissionsOfCurrentUser", AccountHandler.GetPermissionsOfCurrentUser);
 
 
+            endpoints.MapGet(API_SCHEMA + "/GetDefaultLanguage", AccountHandler.GetDefaultLanguage);
+            endpoints.MapGet(API_SCHEMA + "/SetDefaultLanguage", AccountHandler.SetDefaultLanguage);
+
+            endpoints.MapGet(API_SCHEMA + "/GetDefaultTheme", AccountHandler.GetDefaultTheme);
+            endpoints.MapGet(API_SCHEMA + "/SetDefaultTheme", AccountHandler.SetDefaultTheme);
+
+
             endpoints.MapPost(API_SCHEMA + "/ExternalLoginCallback", AccountHandler.ExternalLoginCallbackHandler).RequirePermission("AUTH_GET.EXTERNAL.LOGIN.CALLBACK");
             endpoints.MapGet(API_SCHEMA + "/ExternalLoginConfirmation", AccountHandler.ExternalLoginConfirmationHandler).RequirePermission("AUTH_EXTERNAL.LOGIN.CONFIRMATION");
 
