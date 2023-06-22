@@ -5,6 +5,8 @@ using Hydra.Infrastructure.localization;
 using Hydra.Infrastructure.ModuleExtension;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Hydra.Infrastructure.Security.Extensions;
+using Microsoft.Extensions.FileProviders;
+using System.Reflection.PortableExecutable;
 
 namespace Hydra.Infrastructure.Configuration
 {
@@ -27,8 +29,12 @@ namespace Hydra.Infrastructure.Configuration
             }
 
             app.UseHttpsRedirection();
-
-
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+           Path.Combine(app.Environment.ContentRootPath, "avatar")),
+                RequestPath = "/avatar"
+            });
 
             app.UseCors("ReactOrigin");
             app.UseAuthentication();

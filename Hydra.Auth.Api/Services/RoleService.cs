@@ -77,6 +77,7 @@ namespace Hydra.Auth.Api.Services
             {
                 result.Status = ResultStatusEnum.ItsDuplicate;
                 result.Message = "The role existed";
+                result.Errors.Add(new Error("Duplicate", "The role existed"));
                 return result;
             }
 
@@ -110,6 +111,7 @@ namespace Hydra.Auth.Api.Services
             {
                 result.Status = ResultStatusEnum.NotFound;
                 result.Message = "The permission Not Found";
+                result.Errors.Add(new Error("roleName", "The role existed"));
                 return result;
             }
 

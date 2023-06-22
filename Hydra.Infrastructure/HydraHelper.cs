@@ -23,7 +23,15 @@ namespace Hydra.Infrastructure
         }
         public static string GetCurrentDomain(HttpContext context)
         {
-            return  $"{context.Request.Scheme}://{context.Request.Host.Value}/"; ;
+            return $"{context.Request.Scheme}://{context.Request.Host.Value}/"; ;
+        }
+        public static string GetApplicationDirectory()
+        {
+            return Directory.GetCurrentDirectory();
+        }
+        public static string GetAvatarDirectory()
+        {
+            return Directory.GetCurrentDirectory() + @"\\avatar\\";
         }
     }
 }

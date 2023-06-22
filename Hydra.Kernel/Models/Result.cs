@@ -5,8 +5,8 @@ namespace Hydra.Kernel.Models
     /// <summary>
     /// for simple use we add default generic type
     /// </summary>
-    public class  Result : Result<string> { }
-    
+    public class Result : Result<string> { }
+
     /// <summary>
     /// 
     /// </summary>
@@ -26,7 +26,7 @@ namespace Hydra.Kernel.Models
 
         public string Message { get; set; }
 
-        public List<string> Errors { get; set; }
+        public List<Error> Errors { get; set; }
 
         public T DataResult { get; set; }
     }
@@ -69,5 +69,32 @@ namespace Hydra.Kernel.Models
             return attributes.Length > 0 ? attributes[0].Description : string.Empty;
 
         }
+    }
+    public class Error
+    {
+        public Error()
+        {
+
+        }
+        public Error(string property, string description)
+        {
+            this.Property = property;
+            this.Description = description;
+        }
+        /// <summary>
+        /// Gets or sets the code for this error.
+        /// </summary>
+        /// <value>
+        /// The code for this error.
+        /// </value>
+        public string Property { get; set; } = default!;
+
+        /// <summary>
+        /// Gets or sets the description for this error.
+        /// </summary>
+        /// <value>
+        /// The description for this error.
+        /// </value>
+        public string Description { get; set; } = default!;
     }
 }

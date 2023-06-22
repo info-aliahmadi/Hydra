@@ -2,15 +2,19 @@
 using Hydra.Infrastructure;
 using Hydra.Infrastructure.Security.Domain;
 using Hydra.Infrastructure.Security.Service;
+using Hydra.Kernel.Extensions;
 using Hydra.Kernel.Interfaces;
 using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using MiniValidation;
+using System.IO;
 using System.Security.Claims;
 
 namespace Hydra.Auth.Api.Handler
@@ -43,7 +47,7 @@ namespace Hydra.Auth.Api.Handler
                 var result = new AccountResult();
 
                 var user = new User
-                { DOB = DateTime.Now, Name = "admin", UserName = "admin", Email = "admin@admin.com" };
+                { DOB = DateTime.Now, Name = "admin", UserName = "admin", Email = "admin@admin.com", EmailConfirmed = true };
 
 
                 if (!await _roleManager.RoleExistsAsync("SuperAdmin"))
@@ -321,7 +325,72 @@ namespace Hydra.Auth.Api.Handler
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        public static async Task<IResult> GetDefaultLanguage(
+        public static async Task<IResult> GetCurrentUserHandler(
+            ClaimsPrincipal userClaim, UserManager<User> _userManager)
+        {
+            var userId = userClaim?.FindFirst("identity")?.Value;
+            var user = await _userManager.FindByIdAsync(userId);
+            var userModel = new UserModel()
+            {
+                UserName = user.UserName,
+                Email = user.Email,
+                FullName = user.Name,
+                PhoneNumber = user.PhoneNumber,
+                Avatar = user.Avatar
+            };
+            return Results.Ok(userModel);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_userManager"></param>
+        /// <param name="userClaim"></param>
+        /// <param name="userModel"></param>
+        /// <returns></returns>
+        public static async Task<IResult> UpdateCurrentUserHandler(HttpContext httpContext, UserManager<User> _userManager,
+            ClaimsPrincipal userClaim, UserModel userModel)
+        {
+            try
+            {
+                var userId = userClaim?.FindFirst("identity")?.Value;
+                var user = await _userManager.FindByIdAsync(userId);
+                user.Name = userModel.FullName;
+                user.UserName = userModel.UserName;
+                user.Email = userModel.Email;
+                user.PhoneNumber = userModel.PhoneNumber;
+                if (!string.IsNullOrEmpty(userModel.AvatarFile))
+                {
+                    var fileBytes = userModel.AvatarFile.Base64FileToBytes();
+                    var fileName = fileBytes.RandomFileName;
+                    var avatarPath = HydraHelper.GetAvatarDirectory() + "{0}";
+                    File.WriteAllBytes(string.Format(avatarPath, fileName), fileBytes.FileBytes);
+                    if (!string.IsNullOrEmpty(user.Avatar))
+                    {
+                        if (File.Exists(string.Format(avatarPath, user.Avatar)))
+                        {
+                            File.Delete(string.Format(avatarPath, user.Avatar));
+                        }
+                    }
+                    user.Avatar = fileName;
+                }
+
+                var result = await _userManager.UpdateAsync(user);
+
+                return Results.Ok(result);
+
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e);
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetDefaultLanguageHandler(
             ClaimsPrincipal userClaim, UserManager<User> _userManager)
         {
             var userId = userClaim?.FindFirst("identity")?.Value;
@@ -337,7 +406,7 @@ namespace Hydra.Auth.Api.Handler
         /// <param name="_userManager"></param>
         /// <param name="userClaim"></param>
         /// <returns></returns>
-        public static async Task<IResult> SetDefaultLanguage(string defaultLanguage, UserManager<User> _userManager,
+        public static async Task<IResult> SetDefaultLanguageHandler(string defaultLanguage, UserManager<User> _userManager,
             ClaimsPrincipal userClaim)
         {
             var userId = userClaim?.FindFirst("identity")?.Value;
@@ -353,7 +422,7 @@ namespace Hydra.Auth.Api.Handler
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        public static async Task<IResult> GetDefaultTheme(
+        public static async Task<IResult> GetDefaultThemeHandler(
             ClaimsPrincipal userClaim, UserManager<User> _userManager)
         {
             var userId = userClaim?.FindFirst("identity")?.Value;
@@ -369,7 +438,7 @@ namespace Hydra.Auth.Api.Handler
         /// <param name="_userManager"></param>
         /// <param name="userClaim"></param>
         /// <returns></returns>
-        public static async Task<IResult> SetDefaultTheme(string defaultTheme, UserManager<User> _userManager,
+        public static async Task<IResult> SetDefaultThemeHandler(string defaultTheme, UserManager<User> _userManager,
             ClaimsPrincipal userClaim)
         {
             var userId = userClaim?.FindFirst("identity")?.Value;
@@ -379,6 +448,7 @@ namespace Hydra.Auth.Api.Handler
 
             return Results.Ok(result);
         }
+
         public static IResult ExternalLogin(SignInManager<User> _signInManager, HttpContext context, string provider, string? returnUrl = null)
         {
             // Request a redirect to the external login provider.
@@ -525,6 +595,43 @@ namespace Hydra.Auth.Api.Handler
             return Results.Redirect(returnUrl + "&status" + (result.Succeeded ? "succeeded" : "error"));
         }
 
+
+        public static async Task<IResult> ChangePasswordHandler(UserManager<User> _userManager,
+            HttpContext context,
+            IStringLocalizer<SharedResource> _sharedlocalizer,
+             ILogger<AccountHandler> _logger,
+             IEmailSender _emailSender, ClaimsPrincipal userClaim, ChangePasswordModel model)
+        {
+
+            var result = new AccountResult();
+            if (MiniValidator.TryValidate(model, out var errors))
+            {
+                var userId = userClaim?.FindFirst("identity")?.Value;
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+                {
+                    // Don't reveal that the user does not exist or is not confirmed
+                    result.Status = AccountStatusEnum.Failed;
+                    return Results.BadRequest(result);
+                }
+
+                var identityResult = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+
+                if (identityResult.Succeeded)
+                {
+                    _logger.LogWarning(_sharedlocalizer["Successfully changed password; Requested By: "] + user.Email);
+                    return Results.Ok(identityResult);
+                }
+                else
+                {
+                    _logger.LogWarning(_sharedlocalizer["Failed to chnage password; Requested By: "] + user.Email);
+                    return Results.BadRequest(identityResult);
+                }
+            }
+
+            // If we got this far, something failed, redisplay form
+            return Results.BadRequest(errors);
+        }
 
         public static async Task<IResult> ForgotPasswordHandler(UserManager<User> _userManager,
             HttpContext context,
