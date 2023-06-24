@@ -30,7 +30,7 @@ namespace Hydra.Auth.Api.Services
 
             var list = await _queryRepository.Table<Permission>().ToListAsync();
 
-            result.DataResult = list.Select(x => new PermissionModel()
+            result.Data = list.Select(x => new PermissionModel()
             {
                 Id = x.Id,
                 Name = x.Name,
@@ -58,7 +58,7 @@ namespace Hydra.Auth.Api.Services
                 permission.Name = record.Name;
                 permission.NormalizedName = record.NormalizedName;
             }
-            result.DataResult = permission;
+            result.Data = permission;
             return result;
         }
 
@@ -89,7 +89,7 @@ namespace Hydra.Auth.Api.Services
             await _commandRepository.SaveChangesAsync();
 
             permissionModel.Id = permission.Id;
-            result.DataResult = permissionModel;
+            result.Data = permissionModel;
             return result;
         }
 
@@ -117,7 +117,7 @@ namespace Hydra.Auth.Api.Services
 
             await _commandRepository.SaveChangesAsync();
 
-            result.DataResult = permissionModel;
+            result.Data = permissionModel;
             return result;
         }
 

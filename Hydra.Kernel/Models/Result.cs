@@ -28,7 +28,7 @@ namespace Hydra.Kernel.Models
 
         public List<Error> Errors { get; set; }
 
-        public T DataResult { get; set; }
+        public T Data { get; set; }
     }
 
     public enum ResultStatusEnum

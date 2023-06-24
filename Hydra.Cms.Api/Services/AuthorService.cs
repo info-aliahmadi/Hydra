@@ -38,7 +38,7 @@ namespace Hydra.Cms.Api.Services
                 result.Message = "The Author not found";
                 return result;
             }
-            result.DataResult = author;
+            result.Data = author;
             return result;
         }
 
@@ -49,7 +49,7 @@ namespace Hydra.Cms.Api.Services
         public async Task<Result<List<AuthorModel>>> GetList()
         {
             var result = new Result<List<AuthorModel>>();
-            result.DataResult = await _queryRepository.Table<Author>().Select(x => new AuthorModel()
+            result.Data = await _queryRepository.Table<Author>().Select(x => new AuthorModel()
             {
                 Id = x.Id,
                 UserId = x.UserId,
@@ -80,7 +80,7 @@ namespace Hydra.Cms.Api.Services
                 FirstName = record.FirstName,
                 LastName = record.LastName
             };
-            result.DataResult = author;
+            result.Data = author;
 
             return result;
         }
@@ -105,7 +105,7 @@ namespace Hydra.Cms.Api.Services
 
             authorModel.Id = author.Id;
 
-            result.DataResult = authorModel;
+            result.Data = authorModel;
 
             return result;
         }
@@ -121,12 +121,12 @@ namespace Hydra.Cms.Api.Services
             var isExistResult = await IsExist(authorModel.Id);
             if (!isExistResult.Succeeded)
             {
-                result.DataResult = authorModel;
+                result.Data = authorModel;
                 result.Status = ResultStatusEnum.NotFound;
                 result.Message = "The Author not found";
                 return result;
             }
-            var author = isExistResult.DataResult;
+            var author = isExistResult.Data;
 
             author.FirstName = authorModel.FirstName;
             author.LastName = authorModel.LastName;
@@ -135,7 +135,7 @@ namespace Hydra.Cms.Api.Services
 
             await _commandRepository.SaveChangesAsync();
 
-            result.DataResult = authorModel;
+            result.Data = authorModel;
 
             return result;
         }
@@ -155,7 +155,7 @@ namespace Hydra.Cms.Api.Services
                 return result;
             }
 
-            _commandRepository.DeleteAsync(isExistResult.DataResult);
+            _commandRepository.DeleteAsync(isExistResult.Data);
 
             await _commandRepository.SaveChangesAsync();
 

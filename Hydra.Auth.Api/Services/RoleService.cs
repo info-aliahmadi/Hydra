@@ -29,7 +29,7 @@ namespace Hydra.Auth.Api.Services
 
             var list = await _queryRepository.Table<Role>().ToListAsync();
 
-            result.DataResult = list.Select(x => new RoleModel()
+            result.Data = list.Select(x => new RoleModel()
             {
                 Id = x.Id,
                 Name = x.Name,
@@ -59,7 +59,7 @@ namespace Hydra.Auth.Api.Services
                 role.ConcurrencyStamp = record.ConcurrencyStamp;
                 role.NormalizedName = record.NormalizedName;
             }
-            result.DataResult = role;
+            result.Data = role;
             return result;
         }
 
@@ -91,7 +91,7 @@ namespace Hydra.Auth.Api.Services
             await _commandRepository.SaveChangesAsync();
 
             roleModel.Id = role.Id;
-            result.DataResult = roleModel;
+            result.Data = roleModel;
             return result;
         }
 
@@ -208,7 +208,7 @@ namespace Hydra.Auth.Api.Services
 
             await _commandRepository.SaveChangesAsync();
 
-            result.DataResult = roleModel;
+            result.Data = roleModel;
             return result;
         }
 
