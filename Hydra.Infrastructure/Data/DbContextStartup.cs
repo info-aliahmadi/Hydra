@@ -25,7 +25,7 @@ namespace Hydra.Infrastructure.Data
                 //}
                 )
                     .AddInterceptors(serviceProvider.GetRequiredService<SecondLevelCacheInterceptor>())
-            ); // the default pool size in 1024 
+            , ServiceLifetime.Transient); // the default pool size in 1024 
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 

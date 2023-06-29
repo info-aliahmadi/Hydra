@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Hydra.Kernel.Models
+namespace Hydra.Kernel.Extensions
 {
     public class DataGrid
     {

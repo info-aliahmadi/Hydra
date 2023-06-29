@@ -1,4 +1,5 @@
 ﻿using Hydra.Auth.Core.Models;
+using Hydra.Kernel.Extensions;
 using Hydra.Kernel.Models;
 
 namespace Hydra.Auth.Core.Interfaces
@@ -9,7 +10,7 @@ namespace Hydra.Auth.Core.Interfaces
         /// 
         /// </summary>
         /// <returns></returns>
-        Task<Result<List<RoleModel>>> GetList();
+        Task<Result<PaginatedList<RoleModel>>> GetList(GridDataBound dataGrid);
 
         /// <summary>
         /// 

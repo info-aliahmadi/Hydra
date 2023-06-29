@@ -12,8 +12,8 @@ namespace Hydra.Infrastructure.ServiceRegistrar
 
 
             // services
-            services.AddScoped<ICommandRepository, CommandRepository>();
-            services.AddScoped<IQueryRepository, QueryRepository>();
+            services.AddTransient<ICommandRepository, CommandRepository>();
+            services.AddTransient<IQueryRepository, QueryRepository>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IPermissionChecker, PermissionChecker>();
 

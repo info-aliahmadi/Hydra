@@ -1,7 +1,9 @@
 ﻿using Hydra.Auth.Core.Interfaces;
 using Hydra.Auth.Core.Models;
 using Hydra.Infrastructure.Data;
+using Hydra.Infrastructure.Data.Extension;
 using Hydra.Infrastructure.Security.Domain;
+using Hydra.Kernel.Extensions;
 using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;
 using Microsoft.EntityFrameworkCore;
@@ -23,19 +25,19 @@ namespace Hydra.Auth.Api.Services
         /// 
         /// </summary>
         /// <returns></returns>
-        public async Task<Result<List<RoleModel>>> GetList()
+        public async Task<Result<PaginatedList<RoleModel>>> GetList(GridDataBound dataGrid)
         {
-            var result = new Result<List<RoleModel>>();
+            var result = new Result<PaginatedList<RoleModel>>();
 
-            var list = await _queryRepository.Table<Role>().ToListAsync();
-
-            result.Data = list.Select(x => new RoleModel()
+            var list = await _queryRepository.Table<Role>().Select(x => new RoleModel()
             {
                 Id = x.Id,
                 Name = x.Name,
                 ConcurrencyStamp = x.ConcurrencyStamp,
                 NormalizedName = x.NormalizedName
-            }).ToList();
+            }).ToPaginatedListAsync(dataGrid);
+
+            result.Data = list;
 
             return result;
         }
@@ -152,7 +154,7 @@ namespace Hydra.Auth.Api.Services
                 return result;
             }
 
-            return await AssignPermissionToRoleAsync(permission.Id,role.Id);
+            return await AssignPermissionToRoleAsync(permission.Id, role.Id);
         }
         /// <summary>
         /// 
@@ -218,36 +220,45 @@ namespace Hydra.Auth.Api.Services
         /// <returns></returns>
         public async Task<Result> Delete(int id)
         {
-            var result = new Result();
-            var role = _queryRepository.Table<Role>().FirstOrDefaultAsync(x => x.Id == id);
-            if (role is null)
+            try
             {
-                result.Status = ResultStatusEnum.NotFound;
-                result.Message = "The role not found";
+                var result = new Result();
+                var role = await _queryRepository.GetAsync<Role>(x => x.Id == id);
+                if (role is null)
+                {
+                    result.Status = ResultStatusEnum.NotFound;
+                    result.Message = "The role not found";
+                    return result;
+                }
+
+                var havePermission = await _queryRepository.Table<PermissionRole>().AnyAsync(x => x.RoleId == id);
+                if (havePermission)
+                {
+                    result.Status = ResultStatusEnum.IsNotAllowed;
+                    result.Message = "Is Not Allowed. because this role have permission";
+                    return result;
+                }
+
+                var haveUser = await _queryRepository.Table<UserRole>().AnyAsync(x => x.RoleId == id);
+                if (haveUser)
+                {
+                    result.Status = ResultStatusEnum.IsNotAllowed;
+                    result.Message = "Is Not Allowed. because this role have User";
+                    return result;
+                }
+
+                _commandRepository.DeleteAsync(role);
+
+                await _commandRepository.SaveChangesAsync();
+
                 return result;
             }
-
-            var havePermission = await _queryRepository.Table<PermissionRole>().AnyAsync(x => x.RoleId == id);
-            if (havePermission)
+            catch (Exception e)
             {
-                result.Status = ResultStatusEnum.IsNotAllowed;
-                result.Message = "Is Not Allowed. because this role have permission";
-                return result;
+
+                throw e;
             }
 
-            var haveUser = await _queryRepository.Table<UserRole>().AnyAsync(x => x.RoleId == id);
-            if (haveUser)
-            {
-                result.Status = ResultStatusEnum.IsNotAllowed;
-                result.Message = "Is Not Allowed. because this role have User";
-                return result;
-            }
-
-            _commandRepository.DeleteAsync(role);
-
-            await _commandRepository.SaveChangesAsync();
-
-            return result;
         }
     }
 }

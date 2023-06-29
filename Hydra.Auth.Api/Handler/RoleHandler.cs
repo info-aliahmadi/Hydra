@@ -1,6 +1,6 @@
 ﻿using Hydra.Auth.Core.Interfaces;
 using Hydra.Auth.Core.Models;
-using Hydra.Kernel.Models;
+using Hydra.Kernel.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -51,12 +51,12 @@ namespace Hydra.Auth.Api.Handler
         /// <param name="roleModel"></param>
         /// <returns></returns>
         public static async Task<IResult> GetList(
-             IRoleService _roleService,  DataGrid dataGrid
+             IRoleService _roleService,  GridDataBound dataGrid
 
             )
         {
             string sss = dataGrid.GlobalFilter;
-            var result = await _roleService.GetList();
+            var result = await _roleService.GetList(dataGrid);
 
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }

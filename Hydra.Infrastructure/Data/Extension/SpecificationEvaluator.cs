@@ -3,6 +3,7 @@
 // </copyright>
 
 using Hydra.Kernel.Extensions;
+using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 
@@ -59,7 +60,7 @@ namespace Hydra.Infrastructure.Data.Extension
 
             if (specification.PageSize < 1)
             {
-                throw new ArgumentOutOfRangeException(nameof(specification.PageSize), "The value of pageSize must be greater than 0.");
+                throw new ArgumentOutOfRangeException(nameof(specification.PageSize), "The value of pagePageSize must be greater than 0.");
             }
 
             IQueryable<T> query = inputQuery.GetSpecifiedQuery((SpecificationBase<T>)specification);
@@ -123,6 +124,44 @@ namespace Hydra.Infrastructure.Data.Extension
                     query = query.OrderBy(item.ColumnName + " " + item.SortDirection);
                 }
             }
+
+            return query;
+        }
+
+        public static IQueryable<T> GetSpecifiedQuery<T>(this IQueryable<T> inputQuery, SpecificationBaseDynamic<T> specification)
+            where T : class
+        {
+            if (inputQuery == null)
+            {
+                throw new ArgumentNullException(nameof(inputQuery));
+            }
+
+            if (specification == null)
+            {
+                throw new ArgumentNullException(nameof(specification));
+            }
+
+            IQueryable<T> query = inputQuery;
+
+            // modify the IQueryable using the specification's criteria expression
+            if (specification.Conditions != null && specification.Conditions.Any())
+            {
+                foreach (string specificationCondition in specification.Conditions)
+                {
+                    query = query.Where(specificationCondition);
+                }
+            }
+
+
+            // Apply ordering if expressions are set
+            if (specification.OrderBys != null && specification.OrderBys.Any())
+            {
+                foreach (string order in specification.OrderBys)
+                {
+                    query = query.OrderBy(order);
+                }
+            }
+
 
             return query;
         }

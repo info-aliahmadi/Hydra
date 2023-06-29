@@ -3,6 +3,8 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Hydra.Kernel.Extensions;
+using Microsoft.EntityFrameworkCore.Storage;
+using System.Data;
 
 namespace Hydra.Kernel.Interfaces.Data
 {
@@ -734,7 +736,7 @@ namespace Hydra.Kernel.Interfaces.Data
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="sql"/> is <see langword="null"/>.</exception>
         Task<List<T>> GetFromRawSqlAsync<T>(string sql, IEnumerable<object> parameters, CancellationToken cancellationToken = default);
-
+      
         /// <summary>
         /// 
         /// </summary>

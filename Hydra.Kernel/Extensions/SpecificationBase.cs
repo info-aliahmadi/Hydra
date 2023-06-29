@@ -39,4 +39,26 @@ namespace Hydra.Kernel.Extensions
         /// </summary>
         public IList<(string ColumnName, string SortDirection)> OrderByDynamic { get; set; } =new List<(string ColumnName,string SortDirection)>();
     }
+
+    /// <summary>
+    /// This object hold the query specifications.
+    /// </summary>
+    /// <typeparam name="T">The database entity.</typeparam>
+    public class SpecificationBaseDynamic<T>
+        where T : class
+    {
+        /// <summary>
+        /// Gets or sets the <see cref="Expression{TDelegate}"/> list you want to pass with your EF Core query.
+        /// </summary>
+        public IList<string> Conditions { get; set; } = new List<string>();
+
+
+        /// <summary>
+        /// Gets or sets the <see cref="Expression{TDelegate}"/> list you want to pass with your EF Core query.
+        /// </summary>
+        public IList<string> OrderBys { get; set; } = new List<string>();
+
+
+
+    }
 }
