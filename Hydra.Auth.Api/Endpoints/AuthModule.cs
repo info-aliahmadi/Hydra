@@ -79,7 +79,7 @@ namespace Hydra.Cms.Api.Endpoints
             endpoints.MapGet(API_SCHEMA + "/DeleteRole", RoleHandler.DeleteRole).RequirePermission("AUTH_DELETE.ROLE");
 
 
-            endpoints.MapGet(API_SCHEMA + "/GetPermissionList", PermissionHandler.GetList).RequirePermission("AUTH_GET.PERMISSION.LIST");
+            endpoints.MapPost(API_SCHEMA + "/GetPermissionList", PermissionHandler.GetList).RequirePermission("AUTH_GET.PERMISSION.LIST");
             endpoints.MapGet(API_SCHEMA + "/GetPermissionById", PermissionHandler.GetById).RequirePermission("AUTH_GET.PERMISSION.BY.ID");
             endpoints.MapPost(API_SCHEMA + "/AddPermission", PermissionHandler.AddPermission).RequirePermission("AUTH_ADD.PERMISSION");
             endpoints.MapPost(API_SCHEMA + "/UpdatePermission", PermissionHandler.UpdatePermission).RequirePermission("AUTH_UPDATE.PERMISSION");

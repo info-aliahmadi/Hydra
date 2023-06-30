@@ -1,7 +1,9 @@
 ﻿using EFCoreSecondLevelCacheInterceptor;
 using Hydra.Auth.Core.Interfaces;
 using Hydra.Auth.Core.Models;
+using Hydra.Infrastructure.Data.Extension;
 using Hydra.Infrastructure.Security.Domain;
+using Hydra.Kernel.Extensions;
 using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;
 using Microsoft.EntityFrameworkCore;
@@ -24,18 +26,18 @@ namespace Hydra.Auth.Api.Services
         /// 
         /// </summary>
         /// <returns></returns>
-        public async Task<Result<List<PermissionModel>>> GetList()
+        public async Task<Result<PaginatedList<PermissionModel>>> GetList(GridDataBound dataGrid)
         {
-            var result = new Result<List<PermissionModel>>();
+            var result = new Result<PaginatedList<PermissionModel>>();
 
-            var list = await _queryRepository.Table<Permission>().ToListAsync();
-
-            result.Data = list.Select(x => new PermissionModel()
+            var list = await _queryRepository.Table<Permission>().Select(x => new PermissionModel()
             {
                 Id = x.Id,
                 Name = x.Name,
                 NormalizedName = x.NormalizedName
-            }).ToList();
+            }).ToPaginatedListAsync(dataGrid);
+
+            result.Data = list;
 
             return result;
         }
@@ -128,7 +130,7 @@ namespace Hydra.Auth.Api.Services
         public async Task<Result> Delete(int id)
         {
             var result = new Result();
-            var permission = _queryRepository.Table<Permission>().FirstOrDefaultAsync(x => x.Id == id);
+            var permission = await _queryRepository.Table<Permission>().FirstOrDefaultAsync(x => x.Id == id);
             if (permission == null)
             {
                 result.Status = ResultStatusEnum.NotFound;

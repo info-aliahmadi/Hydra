@@ -55,7 +55,6 @@ namespace Hydra.Auth.Api.Handler
 
             )
         {
-            string sss = dataGrid.GlobalFilter;
             var result = await _roleService.GetList(dataGrid);
 
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);

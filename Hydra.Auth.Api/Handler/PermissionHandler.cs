@@ -1,5 +1,6 @@
 ﻿using Hydra.Auth.Core.Interfaces;
 using Hydra.Auth.Core.Models;
+using Hydra.Kernel.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,10 +14,10 @@ namespace Hydra.Auth.Api.Handler
         /// <param name="_permissionService"></param>
         /// <returns></returns>
         public static async Task<IResult> GetList(
-            IPermissionService _permissionService
+            IPermissionService _permissionService, GridDataBound dataGrid
             )
         {
-            var result = await _permissionService.GetList();
+            var result = await _permissionService.GetList(dataGrid);
 
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
