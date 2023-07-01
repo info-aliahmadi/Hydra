@@ -22,34 +22,35 @@ namespace Hydra.Infrastructure.Security.Service
         public bool IsAuthorized(int userId, string permissionName)
         {
 
-            var permissionRoleQuery = (from PermissionRoleTable in _queryRepository.Table<PermissionRole>()
+            //var permissionRoleQuery = (from PermissionRoleTable in _queryRepository.Table<PermissionRole>()
 
-                                       select new
-                                       {
-                                           PermissionRoleTable.PermissionId,
-                                           PermissionName = PermissionRoleTable.Permission.Name,
-                                           PermissionRoleTable.RoleId,
-                                           RoleName = PermissionRoleTable.Role.Name
-                                       }).Cacheable();
+            //                           select new
+            //                           {
+            //                               PermissionRoleTable.PermissionId,
+            //                               PermissionName = PermissionRoleTable.Permission.Name,
+            //                               PermissionRoleTable.RoleId,
+            //                               RoleName = PermissionRoleTable.Role.Name
+            //                           }).Cacheable();
 
-            var permissionsList = (from permissionRoleTable in permissionRoleQuery
-                                   join userRoleTable in _queryRepository.Table<UserRole>()
-                                    on permissionRoleTable.RoleId equals userRoleTable.RoleId
+            var permissionsList = (from  userRoleTable in _queryRepository.Table<UserRole>()
+                                   join role in _queryRepository.Table<Role>() 
+                                   on userRoleTable.RoleId equals role.Id
                                    select new
                                    {
                                        userRoleTable.UserId,
-                                       Permissions = permissionRoleTable
+                                       RoleName = role.Name,
+                                       role.Permissions
                                    }).Cacheable().ToList();
 
             //SuperAdmin Role Have All Permissions
-            if (permissionsList.Any(s => s.UserId == userId && s.Permissions.RoleName == "SuperAdmin"))
+            if (permissionsList.Any(s => s.UserId == userId && s.RoleName == "SuperAdmin"))
                 return true;
 
 
-            var userPermissions = permissionsList.Where(s => s.UserId == userId);
+            var userPermissions = permissionsList.Where(s => s.UserId == userId).SelectMany(x=>x.Permissions);
 
 
-            var checkUserPermission = userPermissions.Any(s => s.Permissions.PermissionName == permissionName);
+            var checkUserPermission = userPermissions.Any(s => s.Name == permissionName);
 
             return checkUserPermission;
         }
@@ -62,27 +63,19 @@ namespace Hydra.Infrastructure.Security.Service
         public IList<PermissionModel> GetPermissionsOfUser(int userId)
         {
 
-            var permissionRoleQuery = (from PermissionRoleTable in _queryRepository.Table<PermissionRole>()
-
-                                       select new
-                                       {
-                                           PermissionRoleTable.PermissionId,
-                                           PermissionName = PermissionRoleTable.Permission.Name,
-                                           PermissionRoleTable.RoleId,
-                                           RoleName = PermissionRoleTable.Role.Name
-                                       }).Cacheable();
-
-            var permissionsList = (from permissionRoleTable in permissionRoleQuery
-                                   join userRoleTable in _queryRepository.Table<UserRole>()
-                                    on permissionRoleTable.RoleId equals userRoleTable.RoleId
+  
+            var permissionsList = (from  userRoleTable in _queryRepository.Table<UserRole>()
+                                   join role in _queryRepository.Table<Role>()
+                                   on userRoleTable.RoleId equals role.Id
                                    select new
                                    {
                                        userRoleTable.UserId,
-                                       Permissions = permissionRoleTable
+                                       RoleName = role.Name,
+                                       role.Permissions
                                    }).Cacheable().ToList();
 
             //SuperAdmin Role Have All Permissions
-            if (permissionsList.Any(s => s.UserId == userId && s.Permissions.RoleName == "SuperAdmin"))
+            if (permissionsList.Any(s => s.UserId == userId && s.RoleName == "SuperAdmin"))
                 return _queryRepository.Table<Permission>().Select(x => new PermissionModel()
                 {
                     Id = x.Id,
@@ -90,10 +83,10 @@ namespace Hydra.Infrastructure.Security.Service
                 }).Cacheable().ToList();
 
 
-            var userPermissions = permissionsList.Where(s => s.UserId == userId).Select(x => new PermissionModel()
+            var userPermissions = permissionsList.Where(s => s.UserId == userId).SelectMany(x=>x.Permissions).Select(x => new PermissionModel()
             {
-                Id = x.Permissions.PermissionId,
-                Name = x.Permissions.PermissionName
+                Id = x.Id,
+                Name = x.Name
             }).Distinct().ToList();
 
             return userPermissions;

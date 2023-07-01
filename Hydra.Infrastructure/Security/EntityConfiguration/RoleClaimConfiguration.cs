@@ -10,6 +10,8 @@ namespace Hydra.Infrastructure.Security.EntityConfiguration
         public void Configure(EntityTypeBuilder<RoleClaim> builder)
         {
             builder.ToTable("RoleClaim", "Auth");
+            builder.HasKey(o => o.Id);
+
         }
     }
 }

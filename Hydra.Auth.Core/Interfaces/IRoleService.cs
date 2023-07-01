@@ -53,6 +53,14 @@ namespace Hydra.Auth.Core.Interfaces
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="permissionName"></param>
+        /// <param name="roleName"></param>
+        /// <returns></returns>
+        Task<Result> DismissPermissionToRoleAsync(int permissionId, int roleId);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="roleModel"></param>
         /// <returns></returns>
         Task<Result<RoleModel>> Update(RoleModel roleModel);

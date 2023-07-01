@@ -7,6 +7,6 @@ namespace Hydra.Infrastructure.Security.Domain
         public required string Name { get; set; }
         public string? NormalizedName { get; set; }
 
-        public IList<PermissionRole> PermissionRoles { get; set; }
+        public IList<Role> Roles { get; set; }
     }
 }

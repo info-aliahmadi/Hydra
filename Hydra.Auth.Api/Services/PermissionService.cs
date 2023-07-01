@@ -138,8 +138,7 @@ namespace Hydra.Auth.Api.Services
                 return result;
             }
 
-            var haveUser = await _queryRepository.Table<PermissionRole>().AnyAsync(x => x.PermissionId == id);
-            if (haveUser)
+            if (permission.Roles.Any())
             {
                 result.Status = ResultStatusEnum.IsNotAllowed;
                 result.Message = "Is Not Allowed. because this permission have role";

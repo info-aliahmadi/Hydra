@@ -27,13 +27,11 @@ namespace Hydra.Infrastructure
             modelBuilder.ApplyConfiguration(new RoleClaimConfiguration());
             modelBuilder.ApplyConfiguration(new UserTokenConfiguration());
             modelBuilder.ApplyConfiguration(new PermissionConfiguration());
-            modelBuilder.ApplyConfiguration(new PermissionRoleConfiguration());
 
             #endregion
 
         }
         public DbSet<Permission> Permissions { get; set; }
-        public DbSet<PermissionRole> PermissionRoles { get; set; }
 
     }
 }

@@ -16,6 +16,6 @@ namespace Hydra.Auth.Core.Models
         //
         // Summary:
         //     Gets or sets the normalized name for this permission.
-        public string NormalizedName { get; set; }
+        public string? NormalizedName { get; set; }
     }
 }

@@ -43,7 +43,23 @@ namespace Hydra.Auth.Api.Handler
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_roleService"></param>
+        /// <param name="permissionId"></param>
+        /// <param name="roleId"></param>
+        /// <returns></returns>
+        public static async Task<IResult> DismissPermissionToRoleByRoleId(
+            IRoleService _roleService,
+            int roleId,
+            int permissionId
+            )
+        {
+            var result = await _roleService.DismissPermissionToRoleAsync(permissionId, roleId);
 
+            return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+        }
         /// <summary>
         /// 
         /// </summary>

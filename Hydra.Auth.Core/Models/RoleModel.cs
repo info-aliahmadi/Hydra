@@ -38,5 +38,6 @@ namespace Hydra.Auth.Core.Models
             get;
             set;
         }
+        public IEnumerable<PermissionModel> Permissions { get; set; }
     }
 }
