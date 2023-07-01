@@ -12,6 +12,11 @@ namespace Hydra.Auth.Core.Interfaces
         /// </summary>
         /// <returns></returns>
         Task<Result<PaginatedList<PermissionModel>>> GetList(GridDataBound dataGrid);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        Task<Result<List<PermissionModel>>> GetPermissionsByName(string name);
 
         /// <summary>
         /// 

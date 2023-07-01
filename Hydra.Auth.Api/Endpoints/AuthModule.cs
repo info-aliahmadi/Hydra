@@ -68,7 +68,6 @@ namespace Hydra.Cms.Api.Endpoints
             endpoints.MapGet(API_SCHEMA + "/AssignRoleToUserByRoleName", UserHandler.AssignRoleToUserByRoleName).RequirePermission("AUTH.ASSIGN_ROLE_TO_USER_BY_ROLE_NAME");
             endpoints.MapGet(API_SCHEMA + "/AssignRoleToUserByRoleId", UserHandler.AssignRoleToUserByRoleId).RequirePermission("AUTH.ASSIGN_ROLE_TO_USER_BY_ROLE_ID");
 
-            endpoints.MapGet(API_SCHEMA + "/AssignPermissionToRoleByRoleName", RoleHandler.AssignPermissionToRoleByRoleName).RequirePermission("AUTH.ASSIGN_PERMISSION_TO_ROLE_BY_ROLE_NAME");
             endpoints.MapGet(API_SCHEMA + "/AssignPermissionToRoleByRoleId", RoleHandler.AssignPermissionToRoleByRoleId).RequirePermission("AUTH.ASSIGN_PERMISSION_TO_ROLE_BY_ROLE_ID");
             endpoints.MapGet(API_SCHEMA + "/DismissPermissionToRoleByRoleId", RoleHandler.DismissPermissionToRoleByRoleId).RequirePermission("AUTH.ASSIGN_PERMISSION_TO_ROLE_BY_ROLE_ID");
 
@@ -81,6 +80,7 @@ namespace Hydra.Cms.Api.Endpoints
 
 
             endpoints.MapPost(API_SCHEMA + "/GetPermissionList", PermissionHandler.GetList).RequirePermission("AUTH.GET_PERMISSION_LIST");
+            endpoints.MapGet(API_SCHEMA + "/GetPermissionsByName", PermissionHandler.GetPermissionsByName).RequirePermission("AUTH.GET_PERMISSION_LIST");
             endpoints.MapGet(API_SCHEMA + "/GetPermissionById", PermissionHandler.GetById).RequirePermission("AUTH.GET_PERMISSION_BY_ID");
             endpoints.MapPost(API_SCHEMA + "/AddPermission", PermissionHandler.AddPermission).RequirePermission("AUTH.ADD_PERMISSION");
             endpoints.MapPost(API_SCHEMA + "/UpdatePermission", PermissionHandler.UpdatePermission).RequirePermission("AUTH.UPDATE_PERMISSION");

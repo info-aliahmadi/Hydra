@@ -45,6 +45,26 @@ namespace Hydra.Auth.Api.Services
         /// <summary>
         /// 
         /// </summary>
+        /// <returns></returns>
+        public async Task<Result<List<PermissionModel>>> GetPermissionsByName(string name)
+        {
+            var result = new Result<List<PermissionModel>>();
+
+            var list = _queryRepository.Table<Permission>().Where(x => x.Name.Contains(name) || x.NormalizedName.Contains(name)).Take(10).Select(x => new PermissionModel()
+            {
+                Id = x.Id,
+                Name = x.Name,
+                NormalizedName = x.NormalizedName
+            }).ToList();
+
+            result.Data = list;
+
+            return result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         public async Task<Result<PermissionModel>> GetById(int id)

@@ -987,6 +987,7 @@ namespace Hydra.Infrastructure.Data
             List<T> items = await _dbContext.GetFromQueryAsync<T>(sql, parameters, cancellationToken);
             return items;
         }
+        public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken)) => _dbContext.SaveChangesAsync(cancellationToken);
         public void Dispose()
         {
             _dbContext.Dispose();

@@ -25,23 +25,7 @@ namespace Hydra.Auth.Api.Handler
 
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="_roleService"></param>
-        /// <param name="permissionId"></param>
-        /// <param name="roleName"></param>
-        /// <returns></returns>
-        public static async Task<IResult> AssignPermissionToRoleByRoleName(
-            IRoleService _roleService,
-            string roleName,
-            int permissionId
-            )
-        {
-            var result = await _roleService.AssignPermissionToRoleAsync(permissionId, roleName);
-
-            return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
-        }
+     
 
         /// <summary>
         /// 

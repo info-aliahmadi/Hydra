@@ -21,6 +21,19 @@ namespace Hydra.Auth.Api.Handler
 
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_permissionService"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetPermissionsByName(
+            IPermissionService _permissionService, string name
+            )
+        {
+            var result = await _permissionService.GetPermissionsByName(name);
+
+            return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+        }
 
         /// <summary>
         /// 

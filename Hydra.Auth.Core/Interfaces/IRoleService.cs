@@ -30,25 +30,9 @@ namespace Hydra.Auth.Core.Interfaces
         /// 
         /// </summary>
         /// <param name="permissionId"></param>
-        /// <param name="roleName"></param>
-        /// <returns></returns>
-        Task<Result> AssignPermissionToRoleAsync(int permissionId, string roleName);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="permissionName"></param>
-        /// <param name="roleName"></param>
-        /// <returns></returns>
-        Task<Result> AssignPermissionToRoleAsync(string permissionName, string roleName);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="permissionId"></param>
         /// <param name="roleId"></param>
         /// <returns></returns>
-        Task<Result> AssignPermissionToRoleAsync(int permissionId, int roleId);
+        Task<Result<PermissionModel>> AssignPermissionToRoleAsync(int permissionId, int roleId);
 
         /// <summary>
         /// 

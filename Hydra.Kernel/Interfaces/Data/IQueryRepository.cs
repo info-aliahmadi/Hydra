@@ -736,7 +736,9 @@ namespace Hydra.Kernel.Interfaces.Data
         /// <returns>Returns <see cref="Task{TResult}"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="sql"/> is <see langword="null"/>.</exception>
         Task<List<T>> GetFromRawSqlAsync<T>(string sql, IEnumerable<object> parameters, CancellationToken cancellationToken = default);
-      
+
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken));
+
         /// <summary>
         /// 
         /// </summary>

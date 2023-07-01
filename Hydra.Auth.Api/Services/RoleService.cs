@@ -110,64 +110,6 @@ namespace Hydra.Auth.Api.Services
         /// <param name="permissionName"></param>
         /// <param name="roleName"></param>
         /// <returns></returns>
-        public async Task<Result> AssignPermissionToRoleAsync(int permissionId, string roleName)
-        {
-            var result = new Result();
-
-            var permission = await _queryRepository.Table<Permission>().FirstOrDefaultAsync(x => x.Id == permissionId);
-            if (permission is null)
-            {
-                result.Status = ResultStatusEnum.NotFound;
-                result.Message = "The permission Not Found";
-                result.Errors.Add(new Error("roleName", "The role existed"));
-                return result;
-            }
-
-            var role = await _queryRepository.Table<Role>().FirstOrDefaultAsync(x => x.Name == roleName);
-            if (role is null)
-            {
-                result.Status = ResultStatusEnum.NotFound;
-                result.Message = "The role Not Found";
-                return result;
-            }
-
-            return await AssignPermissionToRoleAsync(permissionId, role.Id);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="permissionName"></param>
-        /// <param name="roleName"></param>
-        /// <returns></returns>
-        public async Task<Result> AssignPermissionToRoleAsync(string permissionName, string roleName)
-        {
-            var result = new Result();
-
-            var permission = await _queryRepository.Table<Permission>().FirstOrDefaultAsync(x => x.Name == permissionName);
-            if (permission is null)
-            {
-                result.Status = ResultStatusEnum.NotFound;
-                result.Message = "The permission Not Found";
-                return result;
-            }
-
-            var role = await _queryRepository.Table<Role>().FirstOrDefaultAsync(x => x.Name == roleName);
-            if (role is null)
-            {
-                result.Status = ResultStatusEnum.NotFound;
-                result.Message = "The role Not Found";
-                return result;
-            }
-
-            return await AssignPermissionToRoleAsync(permission.Id, role.Id);
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="permissionName"></param>
-        /// <param name="roleName"></param>
-        /// <returns></returns>
         public async Task<Result> DismissPermissionToRoleAsync(int permissionId, int roleId)
         {
             var result = new Result();
@@ -181,7 +123,7 @@ namespace Hydra.Auth.Api.Services
                 return result;
             }
 
-            var role = await _queryRepository.Table<Role>().Include(x=>x.Permissions).FirstOrDefaultAsync(x => x.Id == roleId);
+            var role = await _queryRepository.Table<Role>().Include(x => x.Permissions).FirstOrDefaultAsync(x => x.Id == roleId);
             if (role is null)
             {
                 result.Status = ResultStatusEnum.NotFound;
@@ -191,7 +133,7 @@ namespace Hydra.Auth.Api.Services
 
             role.Permissions.Remove(permission);
 
-            await _commandRepository.SaveChangesAsync();
+            await _queryRepository.SaveChangesAsync();
 
             return result;
         }
@@ -201,11 +143,11 @@ namespace Hydra.Auth.Api.Services
         /// <param name="permissionId"></param>
         /// <param name="roleId"></param>
         /// <returns></returns>
-        public async Task<Result> AssignPermissionToRoleAsync(int permissionId, int roleId)
+        public async Task<Result<PermissionModel>> AssignPermissionToRoleAsync(int permissionId, int roleId)
         {
-            var result = new Result();
+            var result = new Result<PermissionModel>();
 
-            var role = await _queryRepository.Table<Role>().FirstOrDefaultAsync(x => x.Id == roleId);
+            var role = await _queryRepository.Table<Role>().Include(x=>x.Permissions).FirstOrDefaultAsync(x => x.Id == roleId);
 
             var permission = await _queryRepository.Table<Permission>().FirstOrDefaultAsync(x => x.Id == permissionId);
 
@@ -219,8 +161,13 @@ namespace Hydra.Auth.Api.Services
                 return result;
             }
             role.Permissions.Add(permission);
-            await _commandRepository.SaveChangesAsync();
-
+            await _queryRepository.SaveChangesAsync();
+            result.Data = new PermissionModel()
+            {
+                Name = permission.Name,
+                Id = permission.Id,
+                NormalizedName = permission.NormalizedName
+            };
 
             return result;
         }
