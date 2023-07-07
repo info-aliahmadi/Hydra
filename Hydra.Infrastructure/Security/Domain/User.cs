@@ -7,8 +7,11 @@ namespace Hydra.Infrastructure.Security.Domain
         [PersonalData]
         public string Name { get; set; }
 
+        //[PersonalData]
+        //public DateTime DOB { get; set; }
+
         [PersonalData]
-        public DateTime DOB { get; set; }
+        public DateTime? RegisterDate { get; set; }
 
         [PersonalData]
         public string? DefaultLanguage { get; set; }
@@ -18,5 +21,6 @@ namespace Hydra.Infrastructure.Security.Domain
 
         [PersonalData]
         public string? Avatar { get; set; }
+
     }
 }

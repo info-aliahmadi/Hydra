@@ -2,7 +2,6 @@
 using Hydra.Auth.Api.Services;
 using Hydra.Auth.Core.Interfaces;
 using Hydra.Infrastructure.Endpoints;
-using Hydra.Infrastructure.Security.Domain;
 using Hydra.Infrastructure.Security.Extensions;
 using Hydra.Infrastructure.Security.Service;
 using Hydra.Kernel.Interfaces;
@@ -25,6 +24,7 @@ namespace Hydra.Cms.Api.Endpoints
             services.AddScoped<ISmsSender, MessageSender>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IPermissionService, PermissionService>();
             return services;
         }
@@ -64,8 +64,11 @@ namespace Hydra.Cms.Api.Endpoints
             endpoints.MapPost(API_SCHEMA + "/VerifyCode", AccountHandler.VerifyCodeHandler).RequirePermission("AUTH.VERIFY_CODE");
             endpoints.MapPost(API_SCHEMA + "/UseRecoveryCode", AccountHandler.UseRecoveryCodeHandler).RequirePermission("AUTH.USE_RECOVERY_CODE");
 
-
-            endpoints.MapGet(API_SCHEMA + "/AssignRoleToUserByRoleName", UserHandler.AssignRoleToUserByRoleName).RequirePermission("AUTH.ASSIGN_ROLE_TO_USER_BY_ROLE_NAME");
+            endpoints.MapPost(API_SCHEMA + "/GetUserList", UserHandler.GetList).RequirePermission("AUTH.GET_USER_LIST");
+            endpoints.MapGet(API_SCHEMA + "/GetUserById", UserHandler.GetUserById).RequirePermission("AUTH.GET_USER_BY_ID");
+            endpoints.MapPost(API_SCHEMA + "/AddUser", UserHandler.AddUser).RequirePermission("AUTH.ADD_USER");
+            endpoints.MapPost(API_SCHEMA + "/UpdateUser", UserHandler.UpdateUser).RequirePermission("AUTH.UPDATE_USER");
+            endpoints.MapGet(API_SCHEMA + "/DeleteUser", UserHandler.DeleteUser).RequirePermission("AUTH.DELETE_USER");
             endpoints.MapGet(API_SCHEMA + "/AssignRoleToUserByRoleId", UserHandler.AssignRoleToUserByRoleId).RequirePermission("AUTH.ASSIGN_ROLE_TO_USER_BY_ROLE_ID");
 
             endpoints.MapGet(API_SCHEMA + "/AssignPermissionToRoleByRoleId", RoleHandler.AssignPermissionToRoleByRoleId).RequirePermission("AUTH.ASSIGN_PERMISSION_TO_ROLE_BY_ROLE_ID");

@@ -47,7 +47,7 @@ namespace Hydra.Auth.Api.Handler
                 var result = new AccountResult();
 
                 var user = new User
-                { DOB = DateTime.Now, Name = "admin", UserName = "admin", Email = "admin@admin.com", EmailConfirmed = true };
+                { RegisterDate = DateTime.UtcNow, Name = "admin", UserName = "admin", Email = "admin@admin.com", EmailConfirmed = true };
 
 
                 if (!await _roleManager.RoleExistsAsync("SuperAdmin"))
@@ -107,7 +107,7 @@ namespace Hydra.Auth.Api.Handler
                 var result = new AccountResult();
 
                 var user = new User
-                { DOB = DateTime.Now, Name = registerModel.Name, UserName = registerModel.UserName, Email = registerModel.Email };
+                { RegisterDate = DateTime.UtcNow, Name = registerModel.Name, UserName = registerModel.UserName, Email = registerModel.Email };
 
 
                 if (!await _roleManager.RoleExistsAsync("user"))
@@ -334,7 +334,7 @@ namespace Hydra.Auth.Api.Handler
             {
                 UserName = user.UserName,
                 Email = user.Email,
-                FullName = user.Name,
+                Name = user.Name,
                 PhoneNumber = user.PhoneNumber,
                 Avatar = user.Avatar
             };
@@ -355,7 +355,7 @@ namespace Hydra.Auth.Api.Handler
             {
                 var userId = userClaim?.FindFirst("identity")?.Value;
                 var user = await _userManager.FindByIdAsync(userId);
-                user.Name = userModel.FullName;
+                user.Name = userModel.Name;
                 user.UserName = userModel.UserName;
                 user.Email = userModel.Email;
                 user.PhoneNumber = userModel.PhoneNumber;

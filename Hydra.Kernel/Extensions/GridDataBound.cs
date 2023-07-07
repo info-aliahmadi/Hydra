@@ -36,6 +36,8 @@ namespace Hydra.Kernel.Extensions
     {
         public string id { get; set; }
 
+        public string type { get; set; }
+
         public string operation { get; set; }
 
         public object value { get; set; }
@@ -55,7 +57,16 @@ namespace Hydra.Kernel.Extensions
                     case "endsWith":
                         return id + ".EndsWith(\"" + value + "\")";
                     case "equals":
-                        return id + " == \"" + value + "\"";
+                        if (type == "date" || type == "dateTime")
+                        {
+                            // for increase performance and let sql server using Index in the field, we don't use cast or trancate the time
+                            var dateValue = DateTime.Parse(value.ToString());
+                            return id + " >= \"" + dateValue.Date + "\" AND " + id + " < \"" + dateValue.AddDays(1) + "\"";
+                        }
+                        else
+                        {
+                            return id + " == \"" + value + "\"";
+                        }
                     case "notEquals":
                         return id + " != \"" + value + "\"";
                     case "greaterThan":
@@ -75,11 +86,11 @@ namespace Hydra.Kernel.Extensions
                             if (value.GetType() == typeof(JsonElement))
                             {
                                 var valueArray = JsonSerializer.Deserialize<string[]>(value.ToString());
-                                var res = !string.IsNullOrEmpty(valueArray[0]) ? 
+                                var res = !string.IsNullOrEmpty(valueArray[0]) ?
                                                 !string.IsNullOrEmpty(valueArray[1]) ?
-                                                        (id + " >= " + valueArray[0] + " AND " + id + " <= " + valueArray[1]) : (id + " >= " + valueArray[0]) :
+                                                        (id + " >= \"" + valueArray[0] + "\" AND " + id + " <= \"" + valueArray[1]) + "\"" : (id + " >= \"" + valueArray[0]) + "\"" :
                                                 !string.IsNullOrEmpty(valueArray[1]) ?
-                                                        (id + " <= " + valueArray[1]) : "";
+                                                        (id + " <= \"" + valueArray[1]) + "\"" : "";
                                 return res;
                             }
                             return id + " <= \"" + value + "\"";
@@ -90,7 +101,7 @@ namespace Hydra.Kernel.Extensions
                             {
                                 var valueArray = JsonSerializer.Deserialize<string[]>(value.ToString());
                                 var res = !string.IsNullOrEmpty(valueArray[0]) && !string.IsNullOrEmpty(valueArray[1]) ?
-                                                        (id + " < " + valueArray[0] + " OR " + id + " > " + valueArray[1]) :  "";
+                                                        (id + " < \"" + valueArray[0] + "\" OR " + id + " > \"" + valueArray[1]) + "\"" : "";
                                 return res;
                             }
                             return id + " <= \"" + value + "\"";
