@@ -13,6 +13,7 @@ namespace Hydra.Infrastructure.Security.EntityConfiguration
             builder.ToTable("Role", "Auth");
             builder.HasKey(o => o.Id);
             builder.HasMany(e => e.Permissions).WithMany(x=>x.Roles);
+            builder.HasMany(x => x.UserRoles).WithOne(x => x.Role).HasForeignKey(x => x.RoleId);
 
         }
     }

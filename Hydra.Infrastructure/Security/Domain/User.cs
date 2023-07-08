@@ -5,7 +5,7 @@ namespace Hydra.Infrastructure.Security.Domain
     public class User : IdentityUser<int>
     {
         [PersonalData]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         //[PersonalData]
         //public DateTime DOB { get; set; }
@@ -21,6 +21,8 @@ namespace Hydra.Infrastructure.Security.Domain
 
         [PersonalData]
         public string? Avatar { get; set; }
+
+        public ICollection<UserRole> UserRoles { get; set; }
 
     }
 }

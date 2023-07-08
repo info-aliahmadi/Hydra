@@ -16,6 +16,7 @@ namespace Hydra.Kernel.Models
         public Result()
         {
             Status = ResultStatusEnum.Succeeded;
+            Errors = new List<Error>();
         }
 
         public bool Succeeded => Status == ResultStatusEnum.Succeeded;
@@ -87,7 +88,7 @@ namespace Hydra.Kernel.Models
         /// <value>
         /// The code for this error.
         /// </value>
-        public string Property { get; set; } = default!;
+        public string Property { get; set; } 
 
         /// <summary>
         /// Gets or sets the description for this error.
@@ -95,6 +96,6 @@ namespace Hydra.Kernel.Models
         /// <value>
         /// The description for this error.
         /// </value>
-        public string Description { get; set; } = default!;
+        public string Description { get; set; } 
     }
 }

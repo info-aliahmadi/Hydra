@@ -104,30 +104,5 @@ namespace Hydra.Auth.Api.Handler
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="_userService"></param>
-        /// <param name="roleId"></param>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        public static async Task<IResult> AssignRoleToUserByRoleId(
-            IUserService _userService,
-            int roleId,
-            int userId
-            )
-        {
-            try
-            {
-                var result = await _userService.AssignRoleToUserByRoleId(roleId, userId);
-
-                return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
-
-            }
-            catch (Exception e)
-            {
-                return Results.BadRequest(e.Message);
-            }
-        }
     }
 }

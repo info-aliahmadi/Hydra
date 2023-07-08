@@ -108,7 +108,7 @@ namespace Hydra.Auth.Api.Services
             {
                 result.Status = ResultStatusEnum.ItsDuplicate;
                 result.Message = "The role existed";
-                result.Errors.Add(new Error("Duplicate", "The role existed"));
+                result.Errors.Add(new Error(nameof(roleModel.Name), "The role existed"));
                 return result;
             }
 
@@ -142,7 +142,7 @@ namespace Hydra.Auth.Api.Services
             {
                 result.Status = ResultStatusEnum.NotFound;
                 result.Message = "The permission Not Found";
-                result.Errors.Add(new Error("roleName", "The role existed"));
+                result.Errors.Add(new Error(nameof(roleId), "The role existed"));
                 return result;
             }
 
@@ -180,6 +180,7 @@ namespace Hydra.Auth.Api.Services
             if (isExist)
             {
                 result.Status = ResultStatusEnum.ItsDuplicate;
+                result.Errors.Add(new Error(nameof(permissionId), "The role and permission assigned already"));
                 result.Message = "The role and permission assigned already";
                 return result;
             }
@@ -208,6 +209,16 @@ namespace Hydra.Auth.Api.Services
             {
                 result.Status = ResultStatusEnum.NotFound;
                 result.Message = "The role not found";
+                return result;
+            }
+
+
+            var isExist = await _queryRepository.Table<Role>().AnyAsync(x => x.Id != roleModel.Id && (x.Name == roleModel.Name || (x.NormalizedName == roleModel.NormalizedName && x.NormalizedName != null)));
+            if (isExist)
+            {
+                result.Status = ResultStatusEnum.ItsDuplicate;
+                result.Errors.Add(new Error(nameof(roleModel.Name), "The role name existed"));
+                result.Message = "The role name existed";
                 return result;
             }
 

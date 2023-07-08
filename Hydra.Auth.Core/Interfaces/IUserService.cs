@@ -46,10 +46,18 @@ namespace Hydra.Auth.Core.Interfaces
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="roleId"></param>
         /// <param name="userId"></param>
+        /// <param name="roleId"></param>
         /// <returns></returns>
-        Task<Result> AssignRoleToUserByRoleId(int roleId, int userId);
+        Task<Result> AssignRoleToUser(int userId, int roleId);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="roleIds"></param>
+        /// <returns></returns>
+        Task<Result<UserModel>> AssignRolesToUser(int userId, int[] roleIds);
 
         /// <summary>
         /// 

@@ -84,6 +84,15 @@ namespace Hydra.Auth.Api.Services
         {
             var result = new Result<UserModel>();
 
+            var isExist = await _queryRepository.Table<User>().AnyAsync(x => x.Id == id);
+            if (!isExist)
+            {
+                result.Status = ResultStatusEnum.ItsDuplicate;
+                result.Message = "The User Not Found";
+                result.Errors.Add(new Error(nameof(id), "The User Not Found"));
+                return result;
+            }
+
             var user = await _queryRepository.Table<User>().Where(x => x.Id == id)
                 .FirstOrDefaultAsync();
 
@@ -122,56 +131,79 @@ namespace Hydra.Auth.Api.Services
         public async Task<Result<UserModel>> Add(UserModel userModel)
         {
             var result = new Result<UserModel>();
-            bool isExist = false;
-            isExist = await _queryRepository.Table<User>().AnyAsync(x => x.UserName == userModel.UserName);
-            if (isExist)
+            try
             {
-                result.Status = ResultStatusEnum.ItsDuplicate;
-                result.Message = "The Username already exist";
-                result.Errors.Add(new Error("Duplicate", "The Username already exist"));
-                return result;
-            }
-            isExist = await _queryRepository.Table<User>().AnyAsync(x => x.Email == userModel.Email);
-            if (isExist)
-            {
-                result.Status = ResultStatusEnum.ItsDuplicate;
-                result.Message = "The Email already exist";
-                result.Errors.Add(new Error("Duplicate", "The Email already exist"));
-                return result;
-            }
-            if (!string.IsNullOrEmpty(userModel.PhoneNumber))
-            {
-                isExist = await _queryRepository.Table<User>().AnyAsync(x => x.PhoneNumber == x.PhoneNumber);
+                bool isExist = false;
+                isExist = await _queryRepository.Table<User>().AnyAsync(x => x.UserName == userModel.UserName);
                 if (isExist)
                 {
                     result.Status = ResultStatusEnum.ItsDuplicate;
-                    result.Message = "The PhoneNumber already exist";
-                    result.Errors.Add(new Error("Duplicate", "The PhoneNumber already exist"));
+                    result.Message = "The Username already exist";
+                    result.Errors.Add(new Error(nameof(userModel.UserName), "The Username already exist"));
                     return result;
                 }
+                isExist = await _queryRepository.Table<User>().AnyAsync(x => x.Email == userModel.Email);
+                if (isExist)
+                {
+                    result.Status = ResultStatusEnum.ItsDuplicate;
+                    result.Message = "The Email already exist";
+                    result.Errors.Add(new Error(nameof(userModel.Email), "The Email already exist"));
+                    return result;
+                }
+                if (!string.IsNullOrEmpty(userModel.PhoneNumber))
+                {
+                    isExist = await _queryRepository.Table<User>().AnyAsync(x => x.PhoneNumber == userModel.PhoneNumber);
+                    if (isExist)
+                    {
+                        result.Status = ResultStatusEnum.ItsDuplicate;
+                        result.Message = "The PhoneNumber already exist";
+                        result.Errors.Add(new Error(nameof(userModel.PhoneNumber), "The PhoneNumber already exist"));
+                        return result;
+                    }
+                }
+
+                var user = new User()
+                {
+                    Name = userModel.Name,
+                    UserName = userModel.UserName,
+                    Email = userModel.Email,
+                    PhoneNumber = userModel.PhoneNumber,
+                    DefaultLanguage = userModel.DefaultLanguage,
+                    RegisterDate = DateTime.UtcNow
+                };
+
+                if (!string.IsNullOrEmpty(userModel.AvatarFile))
+                {
+                    var saveFileResult = SaveAvatarFile(userModel.AvatarFile);
+                    if (saveFileResult.Succeeded)
+                    {
+                        user.Avatar = saveFileResult.Data;
+                    }
+                }
+
+                await _userManager.CreateAsync(user, userModel.Password);
+
+                await _commandRepository.SaveChangesAsync();
+
+                var assigntResult = await AssignRolesToUser(user.Id, userModel.RoleIds.ToArray());
+
+                if (!assigntResult.Succeeded)
+                {
+                    return assigntResult;
+                }
+
+
+                userModel.Id = user.Id;
+                result.Data = userModel;
+                return result;
+
             }
-
-            var user = new User()
+            catch (Exception e)
             {
-                UserName = userModel.UserName,
-                Email = userModel.Email,
-                Name = userModel.Name,
-                PhoneNumber = userModel.PhoneNumber,
-                Avatar = userModel.Avatar,
-                AccessFailedCount = userModel.AccessFailedCount,
-                DefaultLanguage = userModel.DefaultLanguage,
-                RegisterDate = userModel.RegisterDate,
-                EmailConfirmed = userModel.EmailConfirmed,
-                Id = userModel.Id,
-                LockoutEnabled = userModel.LockoutEnabled,
-                PhoneNumberConfirmed = userModel.PhoneNumberConfirmed,
-            };
-            await _commandRepository.InsertAsync(user);
-            await _commandRepository.SaveChangesAsync();
-
-            userModel.Id = user.Id;
-            result.Data = userModel;
-            return result;
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                result.Message = e.Message;
+                return result;
+            }
         }
 
 
@@ -189,10 +221,12 @@ namespace Hydra.Auth.Api.Services
 
                 bool isExist = false;
 
-                var user = await _queryRepository.Table<User>().FirstOrDefaultAsync(x => x.Id == userModel.Id);
+                var user = await _queryRepository.Table<User>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == userModel.Id);
                 if (user is null)
                 {
                     result.Status = ResultStatusEnum.NotFound;
+
+                    result.Errors.Add(new Error(nameof(userModel.Id), "The User Not Found"));
                     result.Message = "The user not found";
                     return result;
                 }
@@ -202,7 +236,7 @@ namespace Hydra.Auth.Api.Services
                 {
                     result.Status = ResultStatusEnum.ItsDuplicate;
                     result.Message = "The Username already exist";
-                    result.Errors.Add(new Error("Duplicate", "The Username already exist"));
+                    result.Errors.Add(new Error(nameof(userModel.UserName), "The Username already exist"));
                     return result;
                 }
                 isExist = await _queryRepository.Table<User>().AnyAsync(x => x.Id != userModel.Id && x.Email == userModel.Email);
@@ -210,7 +244,7 @@ namespace Hydra.Auth.Api.Services
                 {
                     result.Status = ResultStatusEnum.ItsDuplicate;
                     result.Message = "The Email already exist";
-                    result.Errors.Add(new Error("Duplicate", "The Email already exist"));
+                    result.Errors.Add(new Error(nameof(userModel.Email), "The Email already exist"));
                     return result;
                 }
                 if (!string.IsNullOrEmpty(userModel.PhoneNumber))
@@ -220,7 +254,7 @@ namespace Hydra.Auth.Api.Services
                     {
                         result.Status = ResultStatusEnum.ItsDuplicate;
                         result.Message = "The PhoneNumber already exist";
-                        result.Errors.Add(new Error("Duplicate", "The PhoneNumber already exist"));
+                        result.Errors.Add(new Error(nameof(userModel.PhoneNumber), "The PhoneNumber already exist"));
                         return result;
                     }
                 }
@@ -229,7 +263,7 @@ namespace Hydra.Auth.Api.Services
                 user.UserName = userModel.UserName;
                 user.Email = userModel.Email;
                 user.Name = userModel.UserName;
-                user.PhoneNumber = user.PhoneNumber;
+                user.PhoneNumber = userModel.PhoneNumber;
                 user.Avatar = userModel.Avatar;
                 user.AccessFailedCount = userModel.AccessFailedCount;
                 user.DefaultLanguage = userModel.DefaultLanguage;
@@ -238,38 +272,30 @@ namespace Hydra.Auth.Api.Services
                 user.LockoutEnd = userModel.LockoutEnd;
                 user.PhoneNumberConfirmed = userModel.PhoneNumberConfirmed;
 
-
-                var saveFileResult = SaveAvatarFile(userModel.AvatarFile, user.Avatar);
-                if (saveFileResult.Succeeded)
+                if (!string.IsNullOrEmpty(userModel.AvatarFile))
                 {
-                    user.Avatar = saveFileResult.Data;
+                    var saveFileResult = SaveAvatarFile(userModel.AvatarFile, user.Avatar);
+                    if (saveFileResult.Succeeded)
+                    {
+                        user.Avatar = saveFileResult.Data;
+                    }
                 }
 
                 _commandRepository.UpdateAsync(user);
-
-                var userRoles = await _userManager.GetRolesAsync(user);
-
-                //var mergedCount = userRoles.Count(x => userModel.RoleIds.Contains(x));
-
-                //var inputRoleIdsCount = userModel.RoleIds.Count();
-
-                //var existedRolesCount = userRoles.Count();
-
-                //if (inputRoleIdsCount > existedRolesCount || inputRoleIdsCount < existedRolesCount || mergedCount != existedRolesCount)
-                //{
-                var roles = _queryRepository.Table<Role>().ToList();
-
-                    //var oldRoleNames = roles.Where(x => userRoles.Select(c => c.RoleId).Contains(x.Id)).Select(x => x.Name).ToList();
-
-                    await _userManager.RemoveFromRolesAsync(user, userRoles);
-
-                    var newRoleNames = roles.Where(x => userModel.RoleIds.Contains(x.Id)).Select(c => c.Name).ToList();
-
-                    await _userManager.AddToRolesAsync(user, newRoleNames);
-
-                //}
-
                 await _commandRepository.SaveChangesAsync();
+
+
+                var assigntResult = await AssignRolesToUser(userModel.Id, userModel.RoleIds.ToArray());
+
+                if (!assigntResult.Succeeded)
+                {
+                    return assigntResult;
+                }
+
+                if (!string.IsNullOrEmpty(userModel.Password))
+                {
+                    await _userManager.AddPasswordAsync(user, userModel.Password);
+                }
 
                 result.Data = userModel;
                 return result;
@@ -278,7 +304,6 @@ namespace Hydra.Auth.Api.Services
             catch (Exception e)
             {
                 result.Status = ResultStatusEnum.ExceptionThrowed;
-
                 result.Message = e.Message;
                 return result;
             }
@@ -286,40 +311,49 @@ namespace Hydra.Auth.Api.Services
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="_userManager"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<Result> DeleteUser(
-            int userId
-            )
+        public async Task<Result> DeleteUser(int userId)
         {
+            var result = new Result();
             try
             {
-                var result = new Result();
-                var user = await _userManager.FindByIdAsync(userId.ToString());
-                var identityResult = await _userManager.DeleteAsync(user);
+                var user = await _queryRepository.Table<User>().FirstOrDefaultAsync(x => x.Id == userId);
+                if (user != null)
+                {
+                    var identityResult = await _userManager.DeleteAsync(user);
 
-                result.Status = identityResult.Succeeded ? ResultStatusEnum.Succeeded : ResultStatusEnum.Failed;
-                result.Message = identityResult.Errors.First().Description;
-                return result;
+                    if (identityResult.Succeeded)
+                    {
+                        DeleteAvatarFile(user.Avatar);
+                    }
+
+                    result.Status = identityResult.Succeeded ? ResultStatusEnum.Succeeded : ResultStatusEnum.Failed;
+                    result.Message = identityResult.Succeeded == false ? identityResult.Errors.First().Description : "";
+                    return result;
+                }
+                else
+                {
+                    result.Status = ResultStatusEnum.NotFound;
+                    result.Message = "The user not found";
+                    return result;
+                }
 
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
-                throw;
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                result.Message = e.Message;
+                return result;
             }
         }
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="_repository"></param>
-        /// <param name="_userManager"></param>
-        /// <param name="_roleManager"></param>
-        /// <param name="roleId"></param>
         /// <param name="userId"></param>
+        /// <param name="roleId"></param>
         /// <returns></returns>
-        public async Task<Result> AssignRoleToUserByRoleId(int roleId, int userId)
+        public async Task<Result> AssignRoleToUser(int userId, int roleId)
         {
             try
             {
@@ -348,6 +382,64 @@ namespace Hydra.Auth.Api.Services
                 throw;
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="roleIds"></param>
+        /// <returns></returns>
+        public async Task<Result<UserModel>> AssignRolesToUser(int userId, int[] roleIds)
+        {
+            var result = new Result<UserModel>();
+            try
+            {
+                var userRoles = _queryRepository.Table<UserRole>().Where(x => x.UserId == userId).ToList();
+
+                var mergedCount = userRoles.Count(x => roleIds.Contains(x.RoleId));
+
+                var inputRoleIdsCount = roleIds.Count();
+
+                var existedRolesCount = userRoles.Count();
+
+                if (inputRoleIdsCount > existedRolesCount || inputRoleIdsCount < existedRolesCount || mergedCount != existedRolesCount)
+                {
+                    foreach (var userRole in userRoles)
+                    {
+                        _commandRepository.DeleteAsync<UserRole>(userRole);
+                    }
+
+                    var newRoles = _queryRepository.Table<Role>().Where(x => roleIds.Contains(x.Id)).ToList();
+
+                    foreach (var roleid in roleIds)
+                    {
+                        await _commandRepository.InsertAsync(new UserRole()
+                        {
+                            UserId = userId,
+                            RoleId = roleid
+                        });
+                    }
+
+                    await _commandRepository.SaveChangesAsync();
+                }
+
+                return result;
+
+            }
+            catch (Exception e)
+            {
+
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                result.Message = e.Message;
+                return result;
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="avatarFile"></param>
+        /// <param name="oldAvatarName"></param>
+        /// <returns></returns>
         public Result<string> SaveAvatarFile(string avatarFile, string oldAvatarName = null)
         {
             var result = new Result();
@@ -380,6 +472,36 @@ namespace Hydra.Auth.Api.Services
                 return result;
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="avatarFile"></param>
+        /// <param name="oldAvatarName"></param>
+        /// <returns></returns>
+        public Result<string> DeleteAvatarFile(string avatarName)
+        {
+            var result = new Result();
+            try
+            {
+                if (!string.IsNullOrEmpty(avatarName))
+                {
+                    var avatarPath = HydraHelper.GetAvatarDirectory() + "{0}";
+                    if (File.Exists(string.Format(avatarPath, avatarName)))
+                    {
+                        File.Delete(string.Format(avatarPath, avatarName));
+                    }
+                    return result;
+                }
+                result.Status = ResultStatusEnum.NotFound;
+                return result;
 
+            }
+            catch (Exception e)
+            {
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                result.Message = e.Message;
+                return result;
+            }
+        }
     }
 }

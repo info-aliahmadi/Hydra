@@ -97,6 +97,7 @@ namespace Hydra.Auth.Api.Services
             if (isExist)
             {
                 result.Status = ResultStatusEnum.ItsDuplicate;
+                result.Errors.Add(new Error(nameof(permissionModel.Name), "The permission name existed"));
                 result.Message = "The permission existed";
                 return result;
             }
@@ -131,6 +132,16 @@ namespace Hydra.Auth.Api.Services
                 result.Message = "The permission not found";
                 return result;
             }
+
+            var isExist = await _queryRepository.Table<Permission>().AnyAsync(x => x.Id != permissionModel.Id && (x.Name == permissionModel.Name || (x.NormalizedName == permissionModel.NormalizedName && x.NormalizedName != null)));
+            if (isExist)
+            {
+                result.Status = ResultStatusEnum.ItsDuplicate;
+                result.Errors.Add(new Error(nameof(permissionModel.Name), "The permission name existed"));
+                result.Message = "The permission existed";
+                return result;
+            }
+
 
             permission.Name = permissionModel.Name;
             permission.NormalizedName = permissionModel.NormalizedName;

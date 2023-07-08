@@ -5,7 +5,7 @@ namespace Hydra.Auth.Core.Models
     public class UserModel
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public string UserName { get; set; }
 
         public string Email { get; set; }
@@ -14,6 +14,7 @@ namespace Hydra.Auth.Core.Models
         public string? AvatarFile { get; set; }
         public DateTime? RegisterDate { get; set; }
         public string? DefaultLanguage { get; set; }
+        public string? Password { get; set; }
 
         public bool EmailConfirmed { get; set; }
 

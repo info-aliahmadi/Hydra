@@ -9,6 +9,8 @@ namespace Hydra.Infrastructure.Security.Domain
         /// <summary>
         /// 
         /// </summary>
-        public IList<Permission> Permissions { get; set; }
+        public ICollection<Permission> Permissions { get; set; }
+
+        public ICollection<UserRole> UserRoles { get; set; }
     }
 }
