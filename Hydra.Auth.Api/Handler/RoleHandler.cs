@@ -25,7 +25,7 @@ namespace Hydra.Auth.Api.Handler
 
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
-     
+
 
         /// <summary>
         /// 
@@ -51,11 +51,22 @@ namespace Hydra.Auth.Api.Handler
         /// <param name="roleModel"></param>
         /// <returns></returns>
         public static async Task<IResult> GetList(
-             IRoleService _roleService,  GridDataBound dataGrid
-
-            )
+             IRoleService _roleService, GridDataBound dataGrid)
         {
             var result = await _roleService.GetList(dataGrid);
+
+            return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_roleService"></param>
+        /// <param name="roleModel"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetAllRoles(IRoleService _roleService)
+        {
+            var result = await _roleService.GetAllRoles();
 
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }

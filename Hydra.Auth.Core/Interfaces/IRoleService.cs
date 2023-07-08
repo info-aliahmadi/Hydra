@@ -15,6 +15,12 @@ namespace Hydra.Auth.Core.Interfaces
         /// <summary>
         /// 
         /// </summary>
+        /// <returns></returns>
+        Task<Result<List<RoleModel>>> GetAllRoles();
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         Task<Result<RoleModel>> GetById(int id);

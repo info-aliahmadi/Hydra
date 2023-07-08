@@ -24,7 +24,7 @@ namespace Hydra.Auth.Core.Models
         public bool LockoutEnabled { get; set; }
 
         public int AccessFailedCount { get; set; }
-        public IEnumerable<RoleModel> Roles { get; set; }
+        public List<int> RoleIds { get; set; }
 
     }
 }

@@ -76,6 +76,7 @@ namespace Hydra.Cms.Api.Endpoints
 
 
             endpoints.MapPost(API_SCHEMA + "/GetRoleList", RoleHandler.GetList).RequirePermission("AUTH.GET_ROLE_LIST");
+            endpoints.MapGet(API_SCHEMA + "/GetAllRoles", RoleHandler.GetAllRoles).RequirePermission("AUTH.GET_ROLE_LIST");
             endpoints.MapGet(API_SCHEMA + "/GetRoleById", RoleHandler.GetRoleById).RequirePermission("AUTH.GET_ROLE_BY_ID");
             endpoints.MapPost(API_SCHEMA + "/AddRole", RoleHandler.AddRole).RequirePermission("AUTH.ADD_ROLE");
             endpoints.MapPost(API_SCHEMA + "/UpdateRole", RoleHandler.UpdateRole).RequirePermission("AUTH.UPDATE_ROLE");

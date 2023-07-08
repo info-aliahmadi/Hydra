@@ -51,6 +51,14 @@ namespace Hydra.Auth.Core.Interfaces
         /// <returns></returns>
         Task<Result> AssignRoleToUserByRoleId(int roleId, int userId);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="avatarFile"></param>
+        /// <param name="oldAvatarName"></param>
+        /// <returns></returns>
+        Result<string> SaveAvatarFile(string avatarFile, string oldAvatarName = null);
+
 
     }
 }

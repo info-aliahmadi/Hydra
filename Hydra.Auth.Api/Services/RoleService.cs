@@ -1,4 +1,5 @@
-﻿using Hydra.Auth.Core.Interfaces;
+﻿using EFCoreSecondLevelCacheInterceptor;
+using Hydra.Auth.Core.Interfaces;
 using Hydra.Auth.Core.Models;
 using Hydra.Infrastructure.Data;
 using Hydra.Infrastructure.Data.Extension;
@@ -42,6 +43,28 @@ namespace Hydra.Auth.Api.Services
                     NormalizedName = c.NormalizedName
                 })
             }).ToPaginatedListAsync(dataGrid);
+
+            result.Data = list;
+
+            return result;
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Result<List<RoleModel>>> GetAllRoles()
+        {
+            var result = new Result<List<RoleModel>>();
+
+            var list = _queryRepository.Table<Role>().Select(x => new RoleModel()
+            {
+                Id = x.Id,
+                Name = x.Name,
+                ConcurrencyStamp = x.ConcurrencyStamp,
+                NormalizedName = x.NormalizedName,
+            }).Cacheable().ToList();
 
             result.Data = list;
 
@@ -147,7 +170,7 @@ namespace Hydra.Auth.Api.Services
         {
             var result = new Result<PermissionModel>();
 
-            var role = await _queryRepository.Table<Role>().Include(x=>x.Permissions).FirstOrDefaultAsync(x => x.Id == roleId);
+            var role = await _queryRepository.Table<Role>().Include(x => x.Permissions).FirstOrDefaultAsync(x => x.Id == roleId);
 
             var permission = await _queryRepository.Table<Permission>().FirstOrDefaultAsync(x => x.Id == permissionId);
 

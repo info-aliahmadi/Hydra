@@ -1,4 +1,5 @@
-﻿using Hydra.Auth.Core.Models;
+﻿using Hydra.Auth.Core.Interfaces;
+using Hydra.Auth.Core.Models;
 using Hydra.Infrastructure;
 using Hydra.Infrastructure.Security.Domain;
 using Hydra.Infrastructure.Security.Service;
@@ -349,7 +350,7 @@ namespace Hydra.Auth.Api.Handler
         /// <param name="userModel"></param>
         /// <returns></returns>
         public static async Task<IResult> UpdateCurrentUserHandler(HttpContext httpContext, UserManager<User> _userManager,
-            ClaimsPrincipal userClaim, UserModel userModel)
+            ClaimsPrincipal userClaim, IUserService userService, UserModel userModel)
         {
             try
             {
@@ -359,20 +360,11 @@ namespace Hydra.Auth.Api.Handler
                 user.UserName = userModel.UserName;
                 user.Email = userModel.Email;
                 user.PhoneNumber = userModel.PhoneNumber;
-                if (!string.IsNullOrEmpty(userModel.AvatarFile))
+
+                var saveFileResult = userService.SaveAvatarFile(userModel.AvatarFile, user.Avatar);
+                if (saveFileResult.Succeeded)
                 {
-                    var fileBytes = userModel.AvatarFile.Base64FileToBytes();
-                    var fileName = fileBytes.RandomFileName;
-                    var avatarPath = HydraHelper.GetAvatarDirectory() + "{0}";
-                    File.WriteAllBytes(string.Format(avatarPath, fileName), fileBytes.FileBytes);
-                    if (!string.IsNullOrEmpty(user.Avatar))
-                    {
-                        if (File.Exists(string.Format(avatarPath, user.Avatar)))
-                        {
-                            File.Delete(string.Format(avatarPath, user.Avatar));
-                        }
-                    }
-                    user.Avatar = fileName;
+                    user.Avatar = saveFileResult.Data;
                 }
 
                 var result = await _userManager.UpdateAsync(user);

@@ -1,6 +1,8 @@
 ﻿using EFCoreSecondLevelCacheInterceptor;
 using Hydra.Auth.Core.Interfaces;
 using Hydra.Auth.Core.Models;
+using Hydra.Infrastructure;
+using Hydra.Infrastructure.Data;
 using Hydra.Infrastructure.Data.Extension;
 using Hydra.Infrastructure.Security.Domain;
 using Hydra.Kernel.Extensions;
@@ -8,6 +10,7 @@ using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace Hydra.Auth.Api.Services
 {
@@ -60,12 +63,11 @@ namespace Hydra.Auth.Api.Services
                                 select new
                                 {
                                     role.Id,
-                                    role.Name,
                                     userRole.UserId,
                                 };
             foreach (var item in list.Items)
             {
-                item.Roles = userRoleTable.Where(x => x.UserId == item.Id).Select(x => new RoleModel() { Id = x.Id, Name = x.Name }).ToList();
+                item.RoleIds = userRoleTable.Where(x => x.UserId == item.Id).Select(x => x.Id).ToList();
             }
 
             result.Data = list;
@@ -84,6 +86,7 @@ namespace Hydra.Auth.Api.Services
 
             var user = await _queryRepository.Table<User>().Where(x => x.Id == id)
                 .FirstOrDefaultAsync();
+
             var userModel = new UserModel();
             if (user != null)
             {
@@ -100,6 +103,12 @@ namespace Hydra.Auth.Api.Services
                 userModel.LockoutEnabled = user.LockoutEnabled;
                 userModel.LockoutEnd = user.LockoutEnd;
                 userModel.PhoneNumberConfirmed = user.PhoneNumberConfirmed;
+
+                userModel.RoleIds = (from userRole in _queryRepository.Table<UserRole>()
+                                     join role in _queryRepository.Table<Role>() on userRole.RoleId equals role.Id
+                                     where userRole.UserId == id
+                                     select role.Id
+                                   ).ToList();
             }
             result.Data = userModel;
             return result;
@@ -174,63 +183,105 @@ namespace Hydra.Auth.Api.Services
         public async Task<Result<UserModel>> Update(UserModel userModel)
         {
             var result = new Result<UserModel>();
-            bool isExist = false;
-            isExist = await _queryRepository.Table<User>().AnyAsync(x => x.Id != userModel.Id && x.UserName == userModel.UserName);
-            if (isExist)
+
+            try
             {
-                result.Status = ResultStatusEnum.ItsDuplicate;
-                result.Message = "The Username already exist";
-                result.Errors.Add(new Error("Duplicate", "The Username already exist"));
-                return result;
-            }
-            isExist = await _queryRepository.Table<User>().AnyAsync(x => x.Id != userModel.Id && x.Email == userModel.Email);
-            if (isExist)
-            {
-                result.Status = ResultStatusEnum.ItsDuplicate;
-                result.Message = "The Email already exist";
-                result.Errors.Add(new Error("Duplicate", "The Email already exist"));
-                return result;
-            }
-            if (!string.IsNullOrEmpty(userModel.PhoneNumber))
-            {
-                isExist = await _queryRepository.Table<User>().AnyAsync(x => x.Id != userModel.Id && x.PhoneNumber == x.PhoneNumber);
+
+                bool isExist = false;
+
+                var user = await _queryRepository.Table<User>().FirstOrDefaultAsync(x => x.Id == userModel.Id);
+                if (user is null)
+                {
+                    result.Status = ResultStatusEnum.NotFound;
+                    result.Message = "The user not found";
+                    return result;
+                }
+
+                isExist = await _queryRepository.Table<User>().AnyAsync(x => x.Id != userModel.Id && x.UserName == userModel.UserName);
                 if (isExist)
                 {
                     result.Status = ResultStatusEnum.ItsDuplicate;
-                    result.Message = "The PhoneNumber already exist";
-                    result.Errors.Add(new Error("Duplicate", "The PhoneNumber already exist"));
+                    result.Message = "The Username already exist";
+                    result.Errors.Add(new Error("Duplicate", "The Username already exist"));
                     return result;
                 }
-            }
+                isExist = await _queryRepository.Table<User>().AnyAsync(x => x.Id != userModel.Id && x.Email == userModel.Email);
+                if (isExist)
+                {
+                    result.Status = ResultStatusEnum.ItsDuplicate;
+                    result.Message = "The Email already exist";
+                    result.Errors.Add(new Error("Duplicate", "The Email already exist"));
+                    return result;
+                }
+                if (!string.IsNullOrEmpty(userModel.PhoneNumber))
+                {
+                    isExist = await _queryRepository.Table<User>().AnyAsync(x => x.Id != userModel.Id && x.PhoneNumber == userModel.PhoneNumber);
+                    if (isExist)
+                    {
+                        result.Status = ResultStatusEnum.ItsDuplicate;
+                        result.Message = "The PhoneNumber already exist";
+                        result.Errors.Add(new Error("Duplicate", "The PhoneNumber already exist"));
+                        return result;
+                    }
+                }
 
-            var user = await _queryRepository.Table<User>().FirstOrDefaultAsync(x => x.Id == userModel.Id);
-            if (user is null)
+                user.Id = userModel.Id;
+                user.UserName = userModel.UserName;
+                user.Email = userModel.Email;
+                user.Name = userModel.UserName;
+                user.PhoneNumber = user.PhoneNumber;
+                user.Avatar = userModel.Avatar;
+                user.AccessFailedCount = userModel.AccessFailedCount;
+                user.DefaultLanguage = userModel.DefaultLanguage;
+                user.EmailConfirmed = userModel.EmailConfirmed;
+                user.LockoutEnabled = userModel.LockoutEnabled;
+                user.LockoutEnd = userModel.LockoutEnd;
+                user.PhoneNumberConfirmed = userModel.PhoneNumberConfirmed;
+
+
+                var saveFileResult = SaveAvatarFile(userModel.AvatarFile, user.Avatar);
+                if (saveFileResult.Succeeded)
+                {
+                    user.Avatar = saveFileResult.Data;
+                }
+
+                _commandRepository.UpdateAsync(user);
+
+                var userRoles = await _userManager.GetRolesAsync(user);
+
+                //var mergedCount = userRoles.Count(x => userModel.RoleIds.Contains(x));
+
+                //var inputRoleIdsCount = userModel.RoleIds.Count();
+
+                //var existedRolesCount = userRoles.Count();
+
+                //if (inputRoleIdsCount > existedRolesCount || inputRoleIdsCount < existedRolesCount || mergedCount != existedRolesCount)
+                //{
+                var roles = _queryRepository.Table<Role>().ToList();
+
+                    //var oldRoleNames = roles.Where(x => userRoles.Select(c => c.RoleId).Contains(x.Id)).Select(x => x.Name).ToList();
+
+                    await _userManager.RemoveFromRolesAsync(user, userRoles);
+
+                    var newRoleNames = roles.Where(x => userModel.RoleIds.Contains(x.Id)).Select(c => c.Name).ToList();
+
+                    await _userManager.AddToRolesAsync(user, newRoleNames);
+
+                //}
+
+                await _commandRepository.SaveChangesAsync();
+
+                result.Data = userModel;
+                return result;
+
+            }
+            catch (Exception e)
             {
-                result.Status = ResultStatusEnum.NotFound;
-                result.Message = "The user not found";
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+
+                result.Message = e.Message;
                 return result;
             }
-
-            user.Id = userModel.Id;
-            user.UserName = userModel.UserName;
-            user.Email = userModel.Email;
-            user.Name = userModel.UserName;
-            user.PhoneNumber = user.PhoneNumber;
-            user.Avatar = userModel.Avatar;
-            user.AccessFailedCount = userModel.AccessFailedCount;
-            user.DefaultLanguage = userModel.DefaultLanguage;
-            user.RegisterDate = userModel.RegisterDate;
-            user.EmailConfirmed = userModel.EmailConfirmed;
-            user.LockoutEnabled = userModel.LockoutEnabled;
-            user.LockoutEnd = userModel.LockoutEnd;
-            user.PhoneNumberConfirmed = userModel.PhoneNumberConfirmed;
-
-            _commandRepository.UpdateAsync(user);
-
-            await _commandRepository.SaveChangesAsync();
-
-            result.Data = userModel;
-            return result;
         }
         /// <summary>
         /// 
@@ -295,6 +346,38 @@ namespace Hydra.Auth.Api.Services
             {
 
                 throw;
+            }
+        }
+        public Result<string> SaveAvatarFile(string avatarFile, string oldAvatarName = null)
+        {
+            var result = new Result();
+            try
+            {
+                if (!string.IsNullOrEmpty(avatarFile))
+                {
+                    var fileBytes = avatarFile.Base64FileToBytes();
+                    var fileName = fileBytes.RandomFileName;
+                    var avatarPath = HydraHelper.GetAvatarDirectory() + "{0}";
+                    File.WriteAllBytes(string.Format(avatarPath, fileName), fileBytes.FileBytes);
+                    if (!string.IsNullOrEmpty(oldAvatarName))
+                    {
+                        if (File.Exists(string.Format(avatarPath, oldAvatarName)))
+                        {
+                            File.Delete(string.Format(avatarPath, oldAvatarName));
+                        }
+                    }
+                    result.Data = fileName;
+                    return result;
+                }
+                result.Status = ResultStatusEnum.NotFound;
+                return result;
+
+            }
+            catch (Exception e)
+            {
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                result.Message = e.Message;
+                return result;
             }
         }
 
