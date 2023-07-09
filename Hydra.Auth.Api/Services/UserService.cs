@@ -264,7 +264,6 @@ namespace Hydra.Auth.Api.Services
                 user.Email = userModel.Email;
                 user.Name = userModel.UserName;
                 user.PhoneNumber = userModel.PhoneNumber;
-                user.Avatar = userModel.Avatar;
                 user.AccessFailedCount = userModel.AccessFailedCount;
                 user.DefaultLanguage = userModel.DefaultLanguage;
                 user.EmailConfirmed = userModel.EmailConfirmed;
@@ -272,6 +271,11 @@ namespace Hydra.Auth.Api.Services
                 user.LockoutEnd = userModel.LockoutEnd;
                 user.PhoneNumberConfirmed = userModel.PhoneNumberConfirmed;
 
+                if (string.IsNullOrEmpty(userModel.Avatar) && !string.IsNullOrEmpty(user.Avatar))
+                {
+                    DeleteAvatarFile(user.Avatar);
+                    user.Avatar = null;
+                }
                 if (!string.IsNullOrEmpty(userModel.AvatarFile))
                 {
                     var saveFileResult = SaveAvatarFile(userModel.AvatarFile, user.Avatar);

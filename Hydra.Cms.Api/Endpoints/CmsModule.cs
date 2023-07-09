@@ -16,19 +16,19 @@ namespace Hydra.Cms.Api.Endpoints
         private const string API_SCHEMA = "/Cms";
         public IServiceCollection RegisterModules(IServiceCollection services)
         {
-            services.AddScoped<IAuthorService, AuthorService>();
+            services.AddScoped<IContentService, ContentService>();
 
             return services;
         }
 
         public IEndpointRouteBuilder MapEndpoints(IEndpointRouteBuilder endpoints)
         {
-            endpoints.MapGet(API_SCHEMA + "/GetList", AuthorHandler.GetList).RequirePermission("CMS_GET.LIST");
-            endpoints.MapGet(API_SCHEMA + "/GetById", AuthorHandler.GetById).RequirePermission("CMS_GET.BY.ID");
-            endpoints.MapPost(API_SCHEMA + "/AddAuthor", AuthorHandler.AddAuthor).RequirePermission("CMS_ADD.AUTHOR");
-            endpoints.MapPost(API_SCHEMA + "/UpdateAuthor", AuthorHandler.UpdateAuthor).RequirePermission("CMS_UPDATE.AUTHOR");
-            endpoints.MapGet(API_SCHEMA + "/DeleteAuthor", AuthorHandler.DeleteAuthor).RequirePermission("CMS_DELETE.AUTHOR");
 
+            endpoints.MapPost(API_SCHEMA + "/GetContentList", ContentHandler.GetList).RequirePermission("CMS.GET_CONTENT_LIST");
+            endpoints.MapGet(API_SCHEMA + "/GetContentById", ContentHandler.GetContentById).RequirePermission("CMS.GET_CONTENT_BY_ID");
+            endpoints.MapPost(API_SCHEMA + "/AddContent", ContentHandler.AddContent).RequirePermission("CMS.ADD_CONTENT");
+            endpoints.MapPost(API_SCHEMA + "/UpdateContent", ContentHandler.UpdateContent).RequirePermission("CMS.UPDATE_CONTENT");
+            endpoints.MapGet(API_SCHEMA + "/DeleteContent", ContentHandler.DeleteContent).RequirePermission("v.DELETE_CONTENT");
 
             return endpoints;
         }

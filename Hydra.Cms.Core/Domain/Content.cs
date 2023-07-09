@@ -1,4 +1,5 @@
 ﻿
+using Hydra.Infrastructure.Security.Domain;
 using Hydra.Kernel;
 
 namespace Hydra.Cms.Core.Domain
@@ -18,17 +19,51 @@ namespace Hydra.Cms.Core.Domain
         /// <summary>
         /// 
         /// </summary>
-        public Author Author { get; set; }
+        public string SmallThumbnail { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public int AuthorId { get; set; }
+        public string LargeThumbnail { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public IList<Category> Category { get; set; }
+        public DateTime RegisterDate { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime PublishDate { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public User Writer { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public int WriterId { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public User? Editor { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public int? EditorId { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime? EditDate { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public IList<Category> Categories { get; set; }
 
     }
 
