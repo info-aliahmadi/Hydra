@@ -1,39 +1,38 @@
-﻿using Hydra.Cms.Core.Domain;
-using Hydra.Cms.Core.Models;
+﻿using Hydra.Cms.Core.Models;
 using Hydra.Kernel.Extensions;
 using Hydra.Kernel.Models;
 
 namespace Hydra.Cms.Core.Interfaces
 {
-    public interface IContentService
+    public interface IArticleService
     {
         /// <summary>
         /// 
         /// </summary>
         /// <param name="dataGrid"></param>
         /// <returns></returns>
-        Task<Result<PaginatedList<ContentModel>>> GetList(GridDataBound dataGrid);
+        Task<Result<PaginatedList<ArticleModel>>> GetList(GridDataBound dataGrid);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<Result<ContentModel>> GetById(int id);
+        Task<Result<ArticleModel>> GetById(int id);
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="contentModel"></param>
+        /// <param name="articleModel"></param>
         /// <returns></returns>
-        Task<Result<ContentModel>> Add(ContentModel contentModel);
+        Task<Result<ArticleModel>> Add(ArticleModel articleModel);
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="contentModel"></param>
+        /// <param name="articleModel"></param>
         /// <returns></returns>
-        Task<Result<ContentModel>> Update(ContentModel contentModel);
+        Task<Result<ArticleModel>> Update(ArticleModel articleModel);
 
         /// <summary>
         /// 
@@ -46,11 +45,11 @@ namespace Hydra.Cms.Core.Interfaces
         /// 
         /// </summary>
         /// <param name="thumbnailFile"></param>
-        /// <param name="contentId"></param>
+        /// <param name="articleId"></param>
         /// <param name="size"></param>
         /// <param name="oldthumbnailName"></param>
         /// <returns></returns>
-        Result<string> SaveThumbnailFile(string thumbnailFile, int contentId, string size, string oldthumbnailName = null);
+        Result<string> SaveThumbnailFile(string thumbnailFile, int articleId, string size, string oldthumbnailName = null);
 
         /// <summary>
         /// 

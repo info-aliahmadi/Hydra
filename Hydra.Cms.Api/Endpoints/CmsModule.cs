@@ -16,7 +16,8 @@ namespace Hydra.Cms.Api.Endpoints
         private const string API_SCHEMA = "/Cms";
         public IServiceCollection RegisterModules(IServiceCollection services)
         {
-            services.AddScoped<IContentService, ContentService>();
+            services.AddScoped<IArticleService, ArticleService>();
+            services.AddScoped<ITopicService, TopicService>();
 
             return services;
         }
@@ -24,11 +25,17 @@ namespace Hydra.Cms.Api.Endpoints
         public IEndpointRouteBuilder MapEndpoints(IEndpointRouteBuilder endpoints)
         {
 
-            endpoints.MapPost(API_SCHEMA + "/GetContentList", ContentHandler.GetList).RequirePermission("CMS.GET_CONTENT_LIST");
-            endpoints.MapGet(API_SCHEMA + "/GetContentById", ContentHandler.GetContentById).RequirePermission("CMS.GET_CONTENT_BY_ID");
-            endpoints.MapPost(API_SCHEMA + "/AddContent", ContentHandler.AddContent).RequirePermission("CMS.ADD_CONTENT");
-            endpoints.MapPost(API_SCHEMA + "/UpdateContent", ContentHandler.UpdateContent).RequirePermission("CMS.UPDATE_CONTENT");
-            endpoints.MapGet(API_SCHEMA + "/DeleteContent", ContentHandler.DeleteContent).RequirePermission("v.DELETE_CONTENT");
+            endpoints.MapGet(API_SCHEMA + "/GetTopicList", TopicHandler.GetList).RequirePermission("CMS.GET_TOPIC_LIST");
+            endpoints.MapGet(API_SCHEMA + "/GetTopicById", TopicHandler.GetTopicById).RequirePermission("CMS.GET_TOPIC_BY_ID");
+            endpoints.MapPost(API_SCHEMA + "/AddTopic", TopicHandler.AddTopic).RequirePermission("CMS.ADD_TOPIC");
+            endpoints.MapPost(API_SCHEMA + "/UpdateTopic", TopicHandler.UpdateTopic).RequirePermission("CMS.UPDATE_TOPIC");
+            endpoints.MapGet(API_SCHEMA + "/DeleteTopic", TopicHandler.DeleteTopic).RequirePermission("v.DELETE_TOPIC");
+
+            endpoints.MapPost(API_SCHEMA + "/GetArticleList", ArticleHandler.GetList).RequirePermission("CMS.GET_ARTICLE_LIST");
+            endpoints.MapGet(API_SCHEMA + "/GetArticleById", ArticleHandler.GetArticleById).RequirePermission("CMS.GET_ARTICLE_BY_ID");
+            endpoints.MapPost(API_SCHEMA + "/AddArticle", ArticleHandler.AddArticle).RequirePermission("CMS.ADD_ARTICLE");
+            endpoints.MapPost(API_SCHEMA + "/UpdateArticle", ArticleHandler.UpdateArticle).RequirePermission("CMS.UPDATE_ARTICLE");
+            endpoints.MapGet(API_SCHEMA + "/DeleteArticle", ArticleHandler.DeleteArticle).RequirePermission("v.DELETE_ARTICLE");
 
             return endpoints;
         }

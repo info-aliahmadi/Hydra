@@ -8,20 +8,20 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hydra.Cms.Api.Handler
 {
-    public static class ContentHandler
+    public static class ArticleHandler
     {
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="_contentService"></param>
-        /// <param name="contentModel"></param>
+        /// <param name="_articleService"></param>
+        /// <param name="articleModel"></param>
         /// <returns></returns>
         public static async Task<IResult> GetList(
-             IContentService _contentService, GridDataBound dataGrid)
+             IArticleService _articleService, GridDataBound dataGrid)
         {
             try
             {
-                var result = await _contentService.GetList(dataGrid);
+                var result = await _articleService.GetList(dataGrid);
 
                 return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
 
@@ -36,15 +36,15 @@ namespace Hydra.Cms.Api.Handler
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="_contentService"></param>
-        /// <param name="contentModel"></param>
+        /// <param name="_articleService"></param>
+        /// <param name="articleModel"></param>
         /// <returns></returns>
-        public static async Task<IResult> GetContentById(
-            IContentService _contentService,
-            int contentId
+        public static async Task<IResult> GetArticleById(
+            IArticleService _articleService,
+            int articleId
             )
         {
-            var result = await _contentService.GetById(contentId);
+            var result = await _articleService.GetById(articleId);
 
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
@@ -52,15 +52,15 @@ namespace Hydra.Cms.Api.Handler
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="_contentService"></param>
-        /// <param name="contentModel"></param>
+        /// <param name="_articleService"></param>
+        /// <param name="articleModel"></param>
         /// <returns></returns>
-        public static async Task<IResult> AddContent(
-            IContentService _contentService,
-            [FromBody] ContentModel contentModel
+        public static async Task<IResult> AddArticle(
+            IArticleService _articleService,
+            [FromBody] ArticleModel articleModel
             )
         {
-            var result = await _contentService.Add(contentModel);
+            var result = await _articleService.Add(articleModel);
 
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
@@ -68,32 +68,32 @@ namespace Hydra.Cms.Api.Handler
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="_contentService"></param>
-        /// <param name="contentModel"></param>
+        /// <param name="_articleService"></param>
+        /// <param name="articleModel"></param>
         /// <returns></returns>
-        public static async Task<IResult> UpdateContent(
-            IContentService _contentService,
-            [FromBody] ContentModel contentModel
+        public static async Task<IResult> UpdateArticle(
+            IArticleService _articleService,
+            [FromBody] ArticleModel articleModel
             )
         {
-            var result = await _contentService.Update(contentModel);
+            var result = await _articleService.Update(articleModel);
 
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="_contentService"></param>
-        /// <param name="contentId"></param>
+        /// <param name="_articleService"></param>
+        /// <param name="articleId"></param>
         /// <returns></returns>
-        public static async Task<IResult> DeleteContent(
-            IContentService _contentService,
-            int contentId
+        public static async Task<IResult> DeleteArticle(
+            IArticleService _articleService,
+            int articleId
             )
         {
             try
             {
-                var result = await _contentService.Delete(contentId);
+                var result = await _articleService.Delete(articleId);
 
                 return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
 

@@ -5,12 +5,15 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Hydra.Cms.Core.EntityConfiguration
 {
-    public class CategoryConfiguration : IEntityTypeConfiguration<Category>
+    public class TopicConfiguration : IEntityTypeConfiguration<Topic>
     {
-        public void Configure(EntityTypeBuilder<Category> builder)
+        public void Configure(EntityTypeBuilder<Topic> builder)
         {
-            builder.ToTable("Category", "Cms");
+            builder.ToTable("Topic", "Cms");
+
             builder.HasKey(o => o.Id);
+
+
         }
     }
 }

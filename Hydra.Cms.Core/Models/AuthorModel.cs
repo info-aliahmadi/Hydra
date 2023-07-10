@@ -5,22 +5,15 @@ namespace Hydra.Cms.Core.Models
     public record AuthorModel
     {
         public int Id { get; set; }
-        public int UserId { get; set; }
+
+        public string? Name { get; set; }
+
         public string UserName { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public string? FirstName { get; set; }
+        public string Email { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public string? LastName { get; set; }
+        public string? Avatar { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public string? FullName => FirstName + " " + LastName;
+
     }
 }

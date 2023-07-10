@@ -1,11 +1,15 @@
 ﻿
+using Hydra.Auth.Core.Models;
+using Hydra.Cms.Core.Domain;
 using Hydra.Infrastructure.Security.Domain;
-using Hydra.Kernel;
 
-namespace Hydra.Cms.Core.Domain
+namespace Hydra.Cms.Core.Models
 {
-    public class Content : BaseEntity<int>
+    public record ArticleModel
     {
+
+        public int Id { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
@@ -20,11 +24,24 @@ namespace Hydra.Cms.Core.Domain
         /// 
         /// </summary>
         public string SmallThumbnail { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string SmallThumbnailFile { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
         public string LargeThumbnail { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string LargeThumbnailFile { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Tags { get; set; }
 
         /// <summary>
         /// 
@@ -39,7 +56,7 @@ namespace Hydra.Cms.Core.Domain
         /// <summary>
         /// 
         /// </summary>
-        public User Writer { get; set; }
+        public AuthorModel Writer { get; set; }
 
         /// <summary>
         /// 
@@ -49,7 +66,7 @@ namespace Hydra.Cms.Core.Domain
         /// <summary>
         /// 
         /// </summary>
-        public User? Editor { get; set; }
+        public AuthorModel? Editor { get; set; }
 
         /// <summary>
         /// 
@@ -63,7 +80,13 @@ namespace Hydra.Cms.Core.Domain
         /// <summary>
         /// 
         /// </summary>
-        public IList<Category> Categories { get; set; }
+        public bool IsDraft { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<int> TopicsIds { get; set; } = new List<int>();
+
 
     }
 
