@@ -12,6 +12,7 @@ namespace Hydra.Cms.Core.EntityConfiguration
             builder.ToTable("Topic", "Cms");
 
             builder.HasKey(o => o.Id);
+            builder.Property(o => o.Title).HasMaxLength(100);
 
 
         }

@@ -9,6 +9,10 @@ namespace Hydra.Infrastructure.Security.EntityConfiguration
         public void Configure(EntityTypeBuilder<UserClaim> builder)
         {
             builder.ToTable("UserClaim", "Auth");
+
+            builder.Property(o => o.ClaimType).HasMaxLength(50);
+
+            builder.Property(o => o.ClaimValue).HasMaxLength(50);
         }
     }
 }

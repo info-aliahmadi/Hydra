@@ -11,6 +11,8 @@ namespace Hydra.Infrastructure.Security.EntityConfiguration
         {
             builder.ToTable("RoleClaim", "Auth");
             builder.HasKey(o => o.Id);
+            builder.Property(o => o.ClaimType).HasMaxLength(150);
+            builder.Property(o => o.ClaimType).HasMaxLength(150);
 
         }
     }

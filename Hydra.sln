@@ -23,7 +23,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hydra.Infrastructure", "Hyd
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hydra.Kernel", "Hydra.Kernel\Hydra.Kernel.csproj", "{F45036A9-B156-489C-B37A-30C7FDECE8A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hydra.Migrations", "Hydra.Migrations\Hydra.Migrations.csproj", "{3B406EA3-3D40-4A65-9F51-9042320917E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hydra.Migrations", "Hydra.Migrations\Hydra.Migrations.csproj", "{3B406EA3-3D40-4A65-9F51-9042320917E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hydra.FileStorage", "Hydra.FileStorage\Hydra.FileStorage.csproj", "{CDE37A1F-7A2B-464B-8337-A5C6077E33F2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{3B406EA3-3D40-4A65-9F51-9042320917E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B406EA3-3D40-4A65-9F51-9042320917E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B406EA3-3D40-4A65-9F51-9042320917E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDE37A1F-7A2B-464B-8337-A5C6077E33F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDE37A1F-7A2B-464B-8337-A5C6077E33F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDE37A1F-7A2B-464B-8337-A5C6077E33F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDE37A1F-7A2B-464B-8337-A5C6077E33F2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

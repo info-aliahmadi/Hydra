@@ -12,6 +12,9 @@ namespace Hydra.Infrastructure.Security.EntityConfiguration
         {
             builder.ToTable("Role", "Auth");
             builder.HasKey(o => o.Id);
+            builder.Property(o => o.Name).HasMaxLength(70);
+            builder.Property(o => o.NormalizedName).HasMaxLength(50);
+            builder.Property(o => o.ConcurrencyStamp).HasMaxLength(50);
             builder.HasMany(e => e.Permissions).WithMany(x=>x.Roles);
             builder.HasMany(x => x.UserRoles).WithOne(x => x.Role).HasForeignKey(x => x.RoleId);
 

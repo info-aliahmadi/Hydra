@@ -9,6 +9,7 @@ namespace Hydra.Infrastructure.Security.EntityConfiguration
         public void Configure(EntityTypeBuilder<UserToken> builder)
         {
             builder.ToTable("UserToken", "Auth");
+            builder.Property(o => o.Value).HasMaxLength(450);
         }
     }
 }

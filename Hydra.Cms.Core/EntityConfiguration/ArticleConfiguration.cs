@@ -13,6 +13,10 @@ namespace Hydra.Cms.Core.EntityConfiguration
 
             builder.HasKey(o => o.Id);
 
+            builder.Property(o => o.Subject).HasMaxLength(250);
+            builder.Property(o => o.Tags).HasMaxLength(300);
+
+
             builder.HasMany(o => o.Topics).WithMany(c=>c.Articles);
 
         }

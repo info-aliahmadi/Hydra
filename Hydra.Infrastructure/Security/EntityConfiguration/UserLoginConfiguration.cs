@@ -9,6 +9,8 @@ namespace Hydra.Infrastructure.Security.EntityConfiguration
         public void Configure(EntityTypeBuilder<UserLogin> builder)
         {
             builder.ToTable("UserLogin", "Auth");
+
+            builder.Property(o => o.ProviderDisplayName).HasMaxLength(50);
         }
     }
 }

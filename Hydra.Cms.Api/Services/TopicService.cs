@@ -31,7 +31,8 @@ namespace Hydra.Cms.Api.Services
             {
                 Id = x.Id,
                 Title = x.Title,
-                ParentId = x.ParentId,
+                //Parent = x.Parent != null ? new TopicModel() { Id = x.ParentId ?? 0, Title = x.Parent.Title } : new TopicModel(),
+                ParentId = x.ParentId
             }).ToListAsync();
 
             var parents = list.Where(x => x.ParentId == null).ToList();
