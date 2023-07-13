@@ -41,23 +41,5 @@ namespace Hydra.Cms.Core.Interfaces
         /// <returns></returns>
         Task<Result> Delete(int id);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="thumbnailFile"></param>
-        /// <param name="articleId"></param>
-        /// <param name="size"></param>
-        /// <param name="oldthumbnailName"></param>
-        /// <returns></returns>
-        Result<string> SaveThumbnailFile(string thumbnailFile, int articleId, string size, string oldthumbnailName = null);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="thumbnailName"></param>
-        /// <returns></returns>
-        Result<string> DeleteThumbnailFile(string thumbnailName);
-
-
     }
 }

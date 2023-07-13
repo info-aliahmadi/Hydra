@@ -159,6 +159,8 @@ namespace Hydra.Cms.Api.Services
                 WriterId = articleModel.WriterId,
                 IsDraft = articleModel.IsDraft,
                 Tags = articleModel.Tags,
+                SmallThumbnail = articleModel.SmallThumbnail,
+                LargeThumbnail = articleModel.LargeThumbnail,
                 Topics = _queryRepository.Table<Topic>().Where(x => articleModel.TopicsIds.Contains(x.Id)).ToList()
             };
 
@@ -166,23 +168,23 @@ namespace Hydra.Cms.Api.Services
 
             await _commandRepository.SaveChangesAsync();
 
-            if (!string.IsNullOrEmpty(articleModel.SmallThumbnailFile))
-            {
-                var saveFileResult = SaveThumbnailFile(articleModel.SmallThumbnailFile, article.Id, "small");
-                if (saveFileResult.Succeeded)
-                {
-                    article.SmallThumbnail = saveFileResult.Data;
-                }
-            }
+            //if (!string.IsNullOrEmpty(articleModel.SmallThumbnailFile))
+            //{
+            //    var saveFileResult = SaveThumbnailFile(articleModel.SmallThumbnailFile, article.Id, "small");
+            //    if (saveFileResult.Succeeded)
+            //    {
+            //        article.SmallThumbnail = saveFileResult.Data;
+            //    }
+            //}
 
-            if (!string.IsNullOrEmpty(articleModel.LargeThumbnailFile))
-            {
-                var saveFileResult = SaveThumbnailFile(articleModel.LargeThumbnailFile, article.Id, "large");
-                if (saveFileResult.Succeeded)
-                {
-                    article.LargeThumbnail = saveFileResult.Data;
-                }
-            }
+            //if (!string.IsNullOrEmpty(articleModel.LargeThumbnailFile))
+            //{
+            //    var saveFileResult = SaveThumbnailFile(articleModel.LargeThumbnailFile, article.Id, "large");
+            //    if (saveFileResult.Succeeded)
+            //    {
+            //        article.LargeThumbnail = saveFileResult.Data;
+            //    }
+            //}
             _commandRepository.UpdateAsync(article);
 
             await _commandRepository.SaveChangesAsync();
@@ -226,35 +228,11 @@ namespace Hydra.Cms.Api.Services
             article.EditDate = DateTime.UtcNow;
             article.IsDraft = articleModel.IsDraft;
             article.Tags = articleModel.Tags;
+            article.SmallThumbnail = articleModel.SmallThumbnail;
+            article.LargeThumbnail = articleModel.LargeThumbnail;
             article.Topics = _queryRepository.Table<Topic>().Where(x => articleModel.TopicsIds.Contains(x.Id)).ToList();
 
-            if (string.IsNullOrEmpty(articleModel.SmallThumbnail) && !string.IsNullOrEmpty(article.SmallThumbnail))
-            {
-                DeleteThumbnailFile(article.SmallThumbnail);
-                article.SmallThumbnail = null;
-            }
-            if (!string.IsNullOrEmpty(articleModel.SmallThumbnailFile))
-            {
-                var saveFileResult = SaveThumbnailFile(articleModel.SmallThumbnail, article.Id, "small", article.SmallThumbnail);
-                if (saveFileResult.Succeeded)
-                {
-                    article.SmallThumbnail = saveFileResult.Data;
-                }
-            }
-
-            if (string.IsNullOrEmpty(articleModel.LargeThumbnail) && !string.IsNullOrEmpty(article.LargeThumbnail))
-            {
-                DeleteThumbnailFile(article.LargeThumbnail);
-                article.LargeThumbnail = null;
-            }
-            if (!string.IsNullOrEmpty(articleModel.LargeThumbnailFile))
-            {
-                var saveFileResult = SaveThumbnailFile(article.LargeThumbnail, article.Id, "large", article.LargeThumbnail);
-                if (saveFileResult.Succeeded)
-                {
-                    article.LargeThumbnail = saveFileResult.Data;
-                }
-            }
+        
 
             _commandRepository.UpdateAsync(article);
 
@@ -288,76 +266,5 @@ namespace Hydra.Cms.Api.Services
             return result;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="thumbnailFile"></param>
-        /// <param name="articleId"></param>
-        /// <param name="size"></param>
-        /// <param name="oldthumbnailName"></param>
-        /// <returns></returns>
-        public Result<string> SaveThumbnailFile(string thumbnailFile, int articleId, string size, string oldthumbnailName = null)
-        {
-            var result = new Result();
-            try
-            {
-                if (!string.IsNullOrEmpty(thumbnailFile))
-                {
-                    var fileBytes = thumbnailFile.Base64FileToBytes();
-                    var fileName = articleId + "-" + size + "." + fileBytes.Extension;
-                    var thumbnailPath = HydraHelper.GetThumbnailDirectory() + "{0}";
-                    File.WriteAllBytes(string.Format(thumbnailPath, fileName), fileBytes.FileBytes);
-                    if (!string.IsNullOrEmpty(oldthumbnailName))
-                    {
-                        if (File.Exists(string.Format(thumbnailPath, oldthumbnailName)))
-                        {
-                            File.Delete(string.Format(thumbnailPath, oldthumbnailName));
-                        }
-                    }
-                    result.Data = fileName;
-                    return result;
-                }
-                result.Status = ResultStatusEnum.NotFound;
-                return result;
-
-            }
-            catch (Exception e)
-            {
-                result.Status = ResultStatusEnum.ExceptionThrowed;
-                result.Message = e.Message;
-                return result;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="thumbnailName"></param>
-        /// <returns></returns>
-        public Result<string> DeleteThumbnailFile(string thumbnailName)
-        {
-            var result = new Result();
-            try
-            {
-                if (!string.IsNullOrEmpty(thumbnailName))
-                {
-                    var thumbnailPath = HydraHelper.GetThumbnailDirectory() + "{0}";
-                    if (File.Exists(string.Format(thumbnailPath, thumbnailName)))
-                    {
-                        File.Delete(string.Format(thumbnailPath, thumbnailName));
-                    }
-                    return result;
-                }
-                result.Status = ResultStatusEnum.NotFound;
-                return result;
-
-            }
-            catch (Exception e)
-            {
-                result.Status = ResultStatusEnum.ExceptionThrowed;
-                result.Message = e.Message;
-                return result;
-            }
-        }
     }
 }

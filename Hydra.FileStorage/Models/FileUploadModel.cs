@@ -16,12 +16,11 @@ namespace Hydra.FileStorage.Models
 
         public string Extension { get; set; }
 
-        public int Size { get; set; }
+        public string Size { get; set; }
 
         public string? Tags { get; set; }
 
         public string? Alt { get; set; }
-
-
+        public DateTime UploadDate { get; set; }
     }
 }

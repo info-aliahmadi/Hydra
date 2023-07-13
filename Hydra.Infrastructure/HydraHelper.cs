@@ -28,13 +28,9 @@ namespace Hydra.Infrastructure
         {
             return Directory.GetCurrentDirectory() + @"\\images\\avatar\\";
         }
-        public static string GetThumbnailDirectory()
-        {
-            return Directory.GetCurrentDirectory() + @"\\images\\thumbnail\\";
-        }
         public static string GetDriveDirectory()
         {
-            return Directory.GetCurrentDirectory() + @"\\images\\Drive\\";
+            return Directory.GetCurrentDirectory() + @"\\Drive\\";
         }
     }
 }

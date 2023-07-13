@@ -18,7 +18,6 @@ namespace Hydra.Cms.Api.Endpoints
         {
             services.AddScoped<IArticleService, ArticleService>();
             services.AddScoped<ITopicService, TopicService>();
-            services.AddScoped<IDriveService, DriveService>();
 
             return services;
         }
@@ -38,8 +37,6 @@ namespace Hydra.Cms.Api.Endpoints
             endpoints.MapPost(API_SCHEMA + "/UpdateArticle", ArticleHandler.UpdateArticle).RequirePermission("CMS.UPDATE_ARTICLE");
             endpoints.MapGet(API_SCHEMA + "/DeleteArticle", ArticleHandler.DeleteArticle).RequirePermission("CMS.DELETE_ARTICLE");
 
-            endpoints.MapGet(API_SCHEMA + "/GetDriveFiles", DriveHandler.GetFiles).RequirePermission("CMS.DELETE_ARTICLE");
-            endpoints.MapPost(API_SCHEMA + "/AddFileToDrive", DriveHandler.Add).RequirePermission("CMS.DELETE_ARTICLE");
 
             return endpoints;
         }

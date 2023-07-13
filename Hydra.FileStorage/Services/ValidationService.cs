@@ -1,5 +1,6 @@
 ﻿using Hydra.FileStorage.Infrastructure.Settings;
 using Hydra.FileStorage.Infrastructure.SignatureVerify;
+using Hydra.Infrastructure.Setting;
 
 namespace Nitro.FileStorage.Services
 {

@@ -3,10 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Hydra.Infrastructure.localization;
 using Hydra.Infrastructure.ModuleExtension;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Hydra.Infrastructure.Security.Extensions;
 using Microsoft.Extensions.FileProviders;
-using System.Reflection.PortableExecutable;
 
 namespace Hydra.Infrastructure.Configuration
 {
@@ -29,6 +27,7 @@ namespace Hydra.Infrastructure.Configuration
             }
 
             app.UseHttpsRedirection();
+
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(
@@ -38,8 +37,8 @@ namespace Hydra.Infrastructure.Configuration
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(
-               Path.Combine(app.Environment.ContentRootPath, "images/uploads")),
-                RequestPath = "/images"
+               Path.Combine(app.Environment.ContentRootPath, "Drive")),
+                RequestPath = "/Drive"
             });
 
             app.UseCors("ReactOrigin");

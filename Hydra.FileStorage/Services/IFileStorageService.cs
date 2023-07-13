@@ -1,35 +1,114 @@
-﻿using Hydra.FileStorage.Infrastructure.Settings;
+﻿using Hydra.Cms.Core.Models;
+using Hydra.FileStorage.Infrastructure.Settings;
+using Hydra.FileStorage.Models;
+using Hydra.Kernel.Models;
+using Microsoft.AspNetCore.Http;
 using Nitro.FileStorage.Models;
 
 namespace Nitro.FileStorage.Services
 {
     public interface IFileStorageService
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        bool IsExist(string fileName);
 
-        Task<GridFSFileInfo?> GetFileInfoById(int fileId);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        string ConvertSizeToString(long bytes);
 
-        string GetMd5HashCode(byte[] bytes);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fileId"></param>
+        /// <returns></returns>
+        Task<FileUploadModel> GetFileInfoById(int fileId);
 
-        Task<FileUploadResultModel> UploadFromBytesAsync(string? fileName, string? contentType, byte[] bytes,
-            CancellationToken cancellationToken = default);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        Task<Result<List<FileUploadModel>>> GetFilesList();
 
-        Task<FileUploadResultModel> UploadSmallFileFromStreamAsync(string? fileName, string? contentType, Stream stream,
-            CancellationToken cancellationToken = default);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        Task<GalleryResultModel> GetGalleyFiles(HttpContext context);
 
-        Task<FileUploadResultModel> UploadLargeFileFromStreamAsync(string? fileName, string? contentType, Stream stream,
-            CancellationToken cancellationToken = default);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uploadModel"></param>
+        /// <param name="bytes"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<Result<FileUploadModel>> UploadFromBytesAsync(FileUploadModel uploadModel, byte[] bytes, CancellationToken cancellationToken = default);
 
-        Task<FileUploadResultModel> UploadFromStreamAsync(
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fileForm"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<Result<FileUploadModel>> UploadSmallFileFromFormFile(IFormFile fileForm, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="contentType"></param>
+        /// <param name="stream"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<Result<FileUploadModel>> UploadSmallFileFromStreamAsync(string? fileName, string? contentType, Stream stream, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="contentType"></param>
+        /// <param name="stream"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<Result<FileUploadModel>> UploadLargeFileFromStreamAsync(string? fileName, string? contentType, Stream stream, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="fileSize"></param>
+        /// <param name="fileStream"></param>
+        /// <param name="contentType"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<Result<FileUploadModel>> UploadFromStreamAsync(
             string? fileName,
-            string newFileName,
             FileSizeEnum fileSize,
-            Stream source,
+            Stream fileStream,
+            string contentType,
             CancellationToken cancellationToken = default(CancellationToken));
 
-        Task<byte[]> DownloadAsBytesAsync(int fileId, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fileInfo"></param>
+        /// <returns></returns>
+        string? GenerateThumbnail(FileInfo fileInfo);
 
-        Task DownloadToStreamAsync(int fileId, Stream destination,
-            CancellationToken cancellationToken = default);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fileId"></param>
+        /// <returns></returns>
+        Task<Result> Delete(int fileId);
 
 
     }

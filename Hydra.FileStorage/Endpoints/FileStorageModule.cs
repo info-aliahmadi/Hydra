@@ -1,21 +1,24 @@
-﻿using Hydra.Cms.Api.Handler;
-using Hydra.Cms.Api.Services;
-using Hydra.Cms.Core.Interfaces;
-using Hydra.Infrastructure.Data;
+﻿using Hydra.FileStorage.Handler;
+using Hydra.FileStorage.Infrastructure.SignatureVerify;
+using Hydra.FileStorage.Services;
 using Hydra.Infrastructure.Endpoints;
 using Hydra.Infrastructure.Security.Extensions;
-using Hydra.Kernel.Interfaces.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Nitro.FileStorage.Services;
 
-namespace Hydra.Cms.Api.Endpoints
+namespace Hydra.FileStorage.Endpoints
 {
     public class FileStorageModule : IModule
     {
-        private const string API_SCHEMA = "/Cms";
+        private const string API_SCHEMA = "/FileStorage";
         public IServiceCollection RegisterModules(IServiceCollection services)
         {
+
+            services.AddScoped<IFileTypeVerifier, FileTypeVerifier>();
+            services.AddScoped<IValidationService, ValidationService>();
+            services.AddScoped<IFileStorageService, FileStorageService>();
 
             return services;
         }
@@ -23,9 +26,15 @@ namespace Hydra.Cms.Api.Endpoints
         public IEndpointRouteBuilder MapEndpoints(IEndpointRouteBuilder endpoints)
         {
 
+            endpoints.MapGet(API_SCHEMA + "/GetFileInfo", FileStorageHandler.GetFileInfo).RequirePermission("CMS.DELETE_ARTICLE");
+            endpoints.MapGet(API_SCHEMA + "/GetFilesList", FileStorageHandler.GetFilesList).RequirePermission("CMS.DELETE_ARTICLE");
+            endpoints.MapGet(API_SCHEMA + "/GetGalleyFiles", FileStorageHandler.GetGalleyFiles).RequirePermission("CMS.DELETE_ARTICLE");
 
-            endpoints.MapGet(API_SCHEMA + "/GetDriveFiles", FileStorageHandler.GetFiles).RequirePermission("CMS.DELETE_ARTICLE");
-            endpoints.MapPost(API_SCHEMA + "/AddFileToDrive", FileStorageHandler.Add).RequirePermission("CMS.DELETE_ARTICLE");
+            endpoints.MapPost(API_SCHEMA + "/UploadFile", FileStorageHandler.UploadFile).RequirePermission("CMS.DELETE_ARTICLE");
+            endpoints.MapPost(API_SCHEMA + "/UploadFileAsStream", FileStorageHandler.UploadFileAsStream).RequirePermission("CMS.DELETE_ARTICLE");
+            endpoints.MapPost(API_SCHEMA + "/UploadLargeFile", FileStorageHandler.UploadLargeFile).RequirePermission("CMS.DELETE_ARTICLE");
+
+            endpoints.MapGet(API_SCHEMA + "/DeleteFile", FileStorageHandler.DeleteFile).RequirePermission("CMS.DELETE_ARTICLE");
 
             return endpoints;
         }

@@ -58,6 +58,11 @@ namespace Hydra.Kernel.Models
         [Description("Exception Throwed")]
         ExceptionThrowed = 7,
 
+        [Description("File Is Too Large")]
+        FileIsTooLarge = 8,
+        [Description("File Is Too Small")]
+        FileIsTooSmall = 9
+
     }
     public static class EnumExtensions
     {

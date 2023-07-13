@@ -9,6 +9,8 @@ using Hydra.Infrastructure.Setting;
 using Hydra.Infrastructure.Cache;
 using Hydra.Infrastructure.ModuleExtension;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 
 namespace Hydra.Infrastructure.Configuration
 {
@@ -27,6 +29,16 @@ namespace Hydra.Infrastructure.Configuration
         {
 
             builder.AddSerilogConfig();
+
+
+            // Allow large file upload
+            builder.WebHost.ConfigureKestrel(serverOptions =>
+            {
+                serverOptions.Limits.MaxRequestBodySize = long.MaxValue;
+            });
+            services.AddSingleton<IUploadFileSetting>((serviceProvider) =>
+                    builder.Configuration.GetSection("UploadFileSetting").Get<UploadFileSetting>());
+
 
             services.AddServices();
 

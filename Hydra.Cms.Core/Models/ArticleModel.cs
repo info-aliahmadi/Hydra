@@ -24,19 +24,11 @@ namespace Hydra.Cms.Core.Models
         /// 
         /// </summary>
         public string SmallThumbnail { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public string SmallThumbnailFile { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
         public string LargeThumbnail { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public string LargeThumbnailFile { get; set; }
 
         /// <summary>
         /// 
