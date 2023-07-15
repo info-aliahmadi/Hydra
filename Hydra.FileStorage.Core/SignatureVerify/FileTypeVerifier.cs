@@ -67,6 +67,12 @@ namespace Hydra.FileStorage.Core.SignatureVerify
                 case ".mp4":
                     fileType = new Mp4();
                     return fileType;
+                case ".avi":
+                    fileType = new Avi();
+                    return fileType;
+                case ".mkv":
+                    fileType = new Mkv();
+                    return fileType;
                 case ".pdf":
                     fileType = new Pdf();
                     return fileType;

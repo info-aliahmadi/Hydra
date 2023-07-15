@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <Folder Include="Drive\" />
+    <Folder Include="Images\avatar\" />
   </ItemGroup>
 
 </Project>

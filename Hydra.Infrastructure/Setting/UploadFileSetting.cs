@@ -12,9 +12,8 @@
 
         public long MaxSizeLimitLargeFile { get; set; }
 
-        public long MinSizeLimitLargeFile { get; set; }
-
         public string ImagesExtensions { get; set; }
+
         public int ImageThumbnailSize { get; set; }
     }
 }

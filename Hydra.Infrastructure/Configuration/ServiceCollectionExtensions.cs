@@ -27,14 +27,12 @@ namespace Hydra.Infrastructure.Configuration
         public static void ConfigureApplicationServices(this IServiceCollection services,
             WebApplicationBuilder builder)
         {
-
             builder.AddSerilogConfig();
-
 
             // Allow large file upload
             builder.WebHost.ConfigureKestrel(serverOptions =>
             {
-                serverOptions.Limits.MaxRequestBodySize = long.MaxValue;
+                serverOptions.Limits.MaxRequestBodySize = null;
             });
             services.AddSingleton<IUploadFileSetting>((serviceProvider) =>
                     builder.Configuration.GetSection("UploadFileSetting").Get<UploadFileSetting>());

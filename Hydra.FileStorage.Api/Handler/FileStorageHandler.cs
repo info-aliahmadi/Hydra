@@ -53,17 +53,17 @@ namespace Hydra.FileStorage.Api.Handler
         public static async Task<IResult> UploadFile(IFileStorageService _fileStorageService, IFormFile file, CancellationToken cancellationToken)
         {
             var result =
-                await _fileStorageService.UploadSmallFileFromFormFile(file, cancellationToken);
+                await _fileStorageService.Upload(file, cancellationToken);
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
 
-        public static async Task<IResult> UploadFileAsStream(IFileStorageService _fileStorageService, IFormFile file, CancellationToken cancellationToken)
+        public static async Task<IResult> UploadSmallFile(IFileStorageService _fileStorageService, IFormFile file, CancellationToken cancellationToken)
         {
             var filename = file.FileName;
             var contentType = file.ContentType;
             var stream = file.OpenReadStream();
             var result =
-                await _fileStorageService.UploadSmallFileFromStreamAsync(filename, contentType, stream,
+                await _fileStorageService.UploadSmallFileStreamAsync(filename, contentType, stream,
                     cancellationToken);
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
@@ -119,13 +119,13 @@ namespace Hydra.FileStorage.Api.Handler
                 var contentType = section.ContentType;
                 var fileName = Path.GetFileName(fileSection?.FileName);
 
-                result = await _fileStorageService.UploadLargeFileFromStreamAsync(fileName, contentType,
+                result = await _fileStorageService.UploadLargeFileStreamAsync(fileName, contentType,
                     section.Body, cancellationToken);
 
                 return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
 
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return Results.BadRequest("No files data in the request.");
             }

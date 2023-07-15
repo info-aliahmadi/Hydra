@@ -90,12 +90,9 @@ namespace Hydra.FileStorage.Api.Services
         {
             return fileSize switch
             {
-
                 FileSizeEnum.Small when lengthOfFile < _fileStorageSetting.MinSizeLimitSmallFile => ValidationFileEnum
                     .FileIsTooSmall,
 
-                FileSizeEnum.Large when lengthOfFile < _fileStorageSetting.MinSizeLimitLargeFile => ValidationFileEnum
-                    .FileIsTooSmall,
                 _ => ValidationFileEnum.Ok
             };
         }
@@ -110,7 +107,7 @@ namespace Hydra.FileStorage.Api.Services
             FileSizeEnum fileSize = FileSizeEnum.Small)
         {
             var result = ValidateFileMaxLength(lengthOfFile, fileSize);
-            return result == ValidationFileEnum.Ok ? result : ValidateFileMinLength(lengthOfFile, fileSize);
+            return result == ValidationFileEnum.Ok ? ValidateFileMinLength(lengthOfFile, fileSize) : result;
         }
 
         /// <summary>

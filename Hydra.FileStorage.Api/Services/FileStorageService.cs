@@ -11,6 +11,9 @@ using Hydra.FileStorage.Core.Interfaces;
 using Hydra.FileStorage.Core.Domain;
 using Hydra.FileStorage.Core.Models;
 using Hydra.FileStorage.Core.Settings;
+using System;
+using Twilio.Base;
+using Org.BouncyCastle.Utilities.Zlib;
 
 namespace Hydra.FileStorage.Api.Services
 {
@@ -36,7 +39,11 @@ namespace Hydra.FileStorage.Api.Services
             _queryRepository = queryRepository;
         }
 
-        /// <summary>
+        /// <summary>\
+        /// 
+        /// 
+        /// 
+        /// 
         /// 
         /// </summary>
         /// <param name="objectId"></param>
@@ -48,7 +55,6 @@ namespace Hydra.FileStorage.Api.Services
             return isExist;
         }
 
-
         /// <summary>
         /// 
         /// </summary>
@@ -57,7 +63,7 @@ namespace Hydra.FileStorage.Api.Services
         public async Task<Result<List<FileUploadModel>>> GetFilesList()
         {
             var result = new Result<List<FileUploadModel>>();
-            var List = await _queryRepository.Table<FileUpload>().Select(x => new FileUploadModel()
+            var List = _queryRepository.Table<FileUpload>().ToList().Select(x => new FileUploadModel()
             {
                 Id = x.Id,
                 FileName = x.FileName,
@@ -67,7 +73,12 @@ namespace Hydra.FileStorage.Api.Services
                 Alt = x.Alt,
                 Tags = x.Tags,
                 UploadDate = x.UploadDate
-            }).ToListAsync();
+            }).ToList();
+
+            //foreach (var item in List)
+            //{
+            //    item.Size = ConvertSizeToString((long.Parse(item.Size)));
+            //}
 
             result.Data = List;
             return result;
@@ -105,17 +116,21 @@ namespace Hydra.FileStorage.Api.Services
         /// <returns></returns>
         public async Task<FileUploadModel> GetFileInfoById(int fileId)
         {
-            var fileUploadModel = await _queryRepository.Table<FileUpload>().Select(x => new FileUploadModel()
+            var fileUpload = await _queryRepository.Table<FileUpload>().FirstOrDefaultAsync(x => x.Id == fileId);
+
+
+
+            var fileUploadModel = new FileUploadModel()
             {
-                Id = x.Id,
-                FileName = x.FileName,
-                Thumbnail = x.Thumbnail,
-                Extension = x.Extension,
-                Size = ConvertSizeToString(x.Size),
-                Alt = x.Alt,
-                Tags = x.Tags,
-                UploadDate = x.UploadDate
-            }).FirstOrDefaultAsync(x => x.Id == fileId);
+                Id = fileUpload.Id,
+                FileName = fileUpload.FileName,
+                Thumbnail = fileUpload.Thumbnail,
+                Extension = fileUpload.Extension,
+                Size = ConvertSizeToString(fileUpload.Size),
+                Alt = fileUpload.Alt,
+                Tags = fileUpload.Tags,
+                UploadDate = fileUpload.UploadDate
+            };
 
             return fileUploadModel;
         }
@@ -132,6 +147,16 @@ namespace Hydra.FileStorage.Api.Services
             var result = new Result<FileUploadModel>();
             try
             {
+                var firstBytes = bytes.Take(64).ToArray();
+                var validateResult =
+                    _validationService.ValidateFile(firstBytes, uploadModel.FileName, bytes.Length, FileSizeEnum.Small);
+                if (validateResult != ValidationFileEnum.Ok)
+                {
+                    result.Status = ResultStatusEnum.InvalidValidation;
+                    result.Message = _validationService.GetValidationMessage(validateResult);
+                    return result;
+                }
+
                 if (IsExist(uploadModel.FileName))
                 {
                     result.Status = ResultStatusEnum.ItsDuplicate;
@@ -144,15 +169,7 @@ namespace Hydra.FileStorage.Api.Services
                 // Otherwise, it is very likely to cause problems such as virus uploading, disk filling, etc
                 // In short, it is necessary to restrict and verify the upload
                 // Here, we just use the temporary folder and a random file name
-                var firstBytes = bytes.Take(64).ToArray();
-                var validateResult =
-                    _validationService.ValidateFile(firstBytes, uploadModel.FileName, bytes.Length, FileSizeEnum.Small);
-                if (validateResult != ValidationFileEnum.Ok)
-                {
-                    result.Status = ResultStatusEnum.InvalidValidation;
-                    result.Message = _validationService.GetValidationMessage(validateResult);
-                    return result;
-                }
+
 
                 var fileInfo = new FileInfo(fileNameWithPath);
 
@@ -201,11 +218,27 @@ namespace Hydra.FileStorage.Api.Services
         /// <param name="stream"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<Result<FileUploadModel>> UploadSmallFileFromFormFile(IFormFile fileForm, CancellationToken cancellationToken = default)
+        public async Task<Result<FileUploadModel>> Upload(IFormFile fileForm, CancellationToken cancellationToken = default)
         {
             var result = new Result<FileUploadModel>();
             try
             {
+
+                var stream = fileForm.OpenReadStream();
+                var validBuffer = new byte[64];
+                stream.Read(validBuffer, 0, validBuffer.Length);
+                stream.Position = 0;
+                var firstBytes = validBuffer.Take(64).ToArray();
+
+                var validateResult =
+                    _validationService.ValidateFile(firstBytes, fileForm.FileName, fileForm.Length, FileSizeEnum.Small);
+                if (validateResult != ValidationFileEnum.Ok)
+                {
+                    result.Status = ResultStatusEnum.InvalidValidation;
+                    result.Message = _validationService.GetValidationMessage(validateResult);
+                    return result;
+                }
+
                 if (IsExist(fileForm.FileName))
                 {
                     result.Status = ResultStatusEnum.ItsDuplicate;
@@ -213,23 +246,14 @@ namespace Hydra.FileStorage.Api.Services
                     return result;
                 }
 
+
                 var fileNameWithPath = drivePaths + fileForm.FileName;
 
                 var fileInfo = new FileInfo(fileNameWithPath);
 
-                using (var stream = File.Create(fileNameWithPath))
+                using (var fileStream = File.Create(fileNameWithPath))
                 {
-                    //var buffer = new byte[1024];
-                    //stream.Read(buffer, 1024, 1024);
-                    //var signatureResult = _validationService.ValidateFileSignature(buffer.ToArray(), fileInfo.Extension);
-                    //if (signatureResult != ValidationFileEnum.Ok)
-                    //{
-                    //    result.Status = ResultStatusEnum.InvalidValidation;
-                    //    result.Message = _validationService.GetValidationMessage(signatureResult);
-                    //    return result;
-                    //}
-                    stream.Position = 0;
-                    await fileForm.CopyToAsync(stream);
+                    await stream.CopyToAsync(fileStream);
                 }
 
                 var registerDate = DateTime.UtcNow;
@@ -276,7 +300,7 @@ namespace Hydra.FileStorage.Api.Services
         /// <param name="stream"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<Result<FileUploadModel>> UploadSmallFileFromStreamAsync(string? fileName, string? contentType, Stream stream, CancellationToken cancellationToken = default)
+        public async Task<Result<FileUploadModel>> UploadSmallFileStreamAsync(string? fileName, string? contentType, Stream stream, CancellationToken cancellationToken = default)
         {
 
             var result = await UploadFromStreamAsync(fileName, FileSizeEnum.Small, stream, contentType,
@@ -293,7 +317,7 @@ namespace Hydra.FileStorage.Api.Services
         /// <param name="stream"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<Result<FileUploadModel>> UploadLargeFileFromStreamAsync(string? fileName, string? contentType, Stream stream, CancellationToken cancellationToken = default)
+        public async Task<Result<FileUploadModel>> UploadLargeFileStreamAsync(string? fileName, string? contentType, Stream stream, CancellationToken cancellationToken = default)
         {
 
             var result = await UploadFromStreamAsync(fileName, FileSizeEnum.Large, stream, contentType,
@@ -310,89 +334,114 @@ namespace Hydra.FileStorage.Api.Services
         /// <param name="source"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<Result<FileUploadModel>> UploadFromStreamAsync(
-            string? fileName,
-            FileSizeEnum fileSize,
-            Stream fileStream,
-            string contentType,
-            CancellationToken cancellationToken = default)
+        public async Task<Result<FileUploadModel>> UploadFromStreamAsync(string? fileName, FileSizeEnum fileSize, Stream stream, string contentType, CancellationToken cancellationToken = default)
         {
             var result = new Result<FileUploadModel>();
-            var whiteListResult = _validationService.ValidateFileWhiteList(fileName);
-            if (whiteListResult != ValidationFileEnum.Ok)
+            try
             {
-                result.Status = ResultStatusEnum.IsNotAllowed;
-                result.Message = _validationService.GetValidationMessage(whiteListResult);
-                return result;
-            }
 
-            long totalSizeInBytes = 0;
-            var boundary = GetBoundary(MediaTypeHeaderValue.Parse(contentType));
-            var multipartReader = new MultipartReader(boundary, fileStream);
-            var section = await multipartReader.ReadNextSectionAsync();
-            var fileNameWithPath = drivePaths + fileName;
-            var isFilledFirstBytes = false;
-            while (section != null)
-            {
-                var fileSection = section.AsFileSection();
-                if (fileSection != null)
+                //var validBuffer = new byte[64];
+                //await stream.ReadAsync(validBuffer, 0, validBuffer.Length);
+                //stream.Position = 0;
+                //var firstBytes = validBuffer.Take(64).ToArray();
+
+                var validateWhiteList = _validationService.ValidateFileWhiteList(fileName);
+                if (validateWhiteList != ValidationFileEnum.Ok)
                 {
-                    if (!isFilledFirstBytes)
+                    result.Status = ResultStatusEnum.IsNotAllowed;
+                    result.Message = _validationService.GetValidationMessage(validateWhiteList);
+                    return result;
+                }
+                if (fileSize == FileSizeEnum.Small)
+                {
+                    var validateFileLength = _validationService.ValidateFileLength(stream.Length, fileSize);
+                    if (validateFileLength != ValidationFileEnum.Ok)
                     {
-                        var buffer = new byte[46];
-                        fileSection.FileStream?.ReadExactly(buffer, 64, 64);
-                        var fileExtension = Path.GetExtension(fileName);
-                        var signatureResult = _validationService.ValidateFileSignature(buffer.ToArray(), fileExtension);
-                        if (signatureResult != ValidationFileEnum.Ok)
-                        {
-                            result.Status = ResultStatusEnum.InvalidValidation;
-                            result.Message = _validationService.GetValidationMessage(signatureResult);
-                            return result;
-                        }
-
-                        fileSection.FileStream.Position = 0;
-                        isFilledFirstBytes = true;
+                        result.Status = validateFileLength == ValidationFileEnum.FileIsTooLarge ? ResultStatusEnum.FileIsTooLarge : ResultStatusEnum.FileIsTooSmall;
+                        result.Message = _validationService.GetValidationMessage(validateFileLength);
+                        return result;
                     }
+                }
+
+                if (IsExist(fileName))
+                {
+                    result.Status = ResultStatusEnum.ItsDuplicate;
+                    result.Message = "The file Is already Existed";
+                    return result;
+                }
+
+                var fileNameWithPath = drivePaths + fileName;
+
+                var fileInfo = new FileInfo(fileNameWithPath);
 
 
-                    totalSizeInBytes += await SaveStreamFileAsync(fileSection, fileNameWithPath, cancellationToken);
-
-                    var fileLengthResult = _validationService.ValidateFileMaxLength(totalSizeInBytes, fileSize);
-                    if (fileLengthResult != ValidationFileEnum.Ok)
+                byte[] buffer = new byte[8 * 1024];
+                int len;
+                int totalLength = 0;
+                using (var streamFile = new FileStream(fileNameWithPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None, 1024))
+                {
+                    // first time we check the signature with operation the turn to while
+                    len = await stream.ReadAsync(buffer, 0, buffer.Length);
+                    totalLength = totalLength + len;
+                    var validateSignature = _validationService.ValidateFileSignature(buffer.Take(60).ToArray(), fileInfo.Extension);
+                    if (validateSignature != ValidationFileEnum.Ok)
                     {
-                        File.Delete(fileNameWithPath);
-                        result.Status = fileLengthResult == ValidationFileEnum.FileIsTooLarge ? ResultStatusEnum.FileIsTooLarge : ResultStatusEnum.FileIsTooSmall;
-                        result.Message = _validationService.GetValidationMessage(fileLengthResult);
+                        result.Status = ResultStatusEnum.InvalidValidation;
+                        result.Message = _validationService.GetValidationMessage(validateSignature);
                         return result;
                     }
 
+                    await streamFile.WriteAsync(buffer, 0, len);
+
+                    while ((len = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                    {
+                        totalLength = totalLength + len;
+                        await streamFile.WriteAsync(buffer, 0, len);
+                    }
+
                 }
-                section = await multipartReader.ReadNextSectionAsync();
+                stream.Close();
+                stream.Close();
+
+                if (totalLength > _fileStorageSetting.MaxSizeLimitLargeFile && fileSize == FileSizeEnum.Large)
+                {
+                    File.Delete(fileNameWithPath);
+                    result.Status = ResultStatusEnum.FileIsTooLarge;
+                    result.Message = _validationService.GetValidationMessage(ValidationFileEnum.FileIsTooLarge);
+                    return result;
+                }
+
+                var fileUpload = new FileUpload()
+                {
+                    FileName = fileName,
+                    Size = stream.Length,
+                    Extension = fileInfo.Extension,
+                    Thumbnail = GenerateThumbnail(fileInfo),
+                    UploadDate = DateTime.UtcNow
+                };
+                await _commandRepository.InsertAsync(fileUpload);
+                await _commandRepository.SaveChangesAsync();
+
+                result.Data = new FileUploadModel()
+                {
+                    Id = fileUpload.Id,
+                    FileName = fileUpload.FileName,
+                    Thumbnail = fileUpload.Thumbnail,
+                    Extension = fileUpload.Extension,
+                    Size = ConvertSizeToString(fileUpload.Size),
+                    UploadDate = fileUpload.UploadDate
+                };
+
+                return result;
             }
-            var fileInfo = new FileInfo(fileNameWithPath);
-            var fileUpload = new FileUpload()
+            catch (Exception e)
             {
-                FileName = fileName,
-                Size = totalSizeInBytes,
-                Extension = fileInfo.Extension,
-                Thumbnail = GenerateThumbnail(fileInfo),
-                UploadDate = DateTime.UtcNow
-            };
-            await _commandRepository.InsertAsync(fileUpload);
-            await _commandRepository.SaveChangesAsync();
-
-            result.Data = new FileUploadModel()
-            {
-                Id = fileUpload.Id,
-                FileName = fileUpload.FileName,
-                Thumbnail = fileUpload.Thumbnail,
-                Extension = fileUpload.Extension,
-                Size = ConvertSizeToString(fileUpload.Size),
-                UploadDate = fileUpload.UploadDate
-            };
-
-            return result;
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                result.Message = e.Message;
+                return result;
+            }
         }
+
 
         public async Task<Result> Delete(int fileId)
         {
@@ -409,27 +458,6 @@ namespace Hydra.FileStorage.Api.Services
             }
             _commandRepository.DeleteAsync(fileUpload);
             return result;
-        }
-
-        private async Task<long> SaveStreamFileAsync(FileMultipartSection fileSection, string filePath, CancellationToken cancellationToken = default)
-        {
-            await using var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 1024);
-            await fileSection.FileStream?.CopyToAsync(stream, cancellationToken);
-
-            return fileSection.FileStream.Length;
-        }
-
-
-        private string GetBoundary(MediaTypeHeaderValue contentType)
-        {
-            var boundary = HeaderUtilities.RemoveQuotes(contentType.Boundary).Value;
-
-            if (string.IsNullOrWhiteSpace(boundary))
-            {
-                throw new InvalidDataException("Missing content-type boundary.");
-            }
-
-            return boundary;
         }
 
         /// <summary>
@@ -499,5 +527,6 @@ namespace Hydra.FileStorage.Api.Services
                 _ => "n/a"
             };
         }
+
     }
 }

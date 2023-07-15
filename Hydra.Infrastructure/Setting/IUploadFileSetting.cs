@@ -12,8 +12,6 @@
 
         long MaxSizeLimitLargeFile { get; set; }
 
-        long MinSizeLimitLargeFile { get; set; }
-
         string ImagesExtensions { get; set; }
         int ImageThumbnailSize { get; set; }
 
