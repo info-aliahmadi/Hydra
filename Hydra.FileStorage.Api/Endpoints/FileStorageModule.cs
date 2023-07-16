@@ -34,11 +34,16 @@ namespace Hydra.FileStorage.Api.Endpoints
             endpoints.MapGet(API_SCHEMA + "/GetFilesList", FileStorageHandler.GetFilesList).RequirePermission("CMS.DELETE_ARTICLE");
             endpoints.MapGet(API_SCHEMA + "/GetGalleyFiles", FileStorageHandler.GetGalleyFiles).RequirePermission("CMS.DELETE_ARTICLE");
 
-            endpoints.MapPost(API_SCHEMA + "/UploadFile", FileStorageHandler.UploadFile).RequirePermission("CMS.DELETE_ARTICLE").DisableRateLimiting();
+            endpoints.MapPost(API_SCHEMA + "/UploadFile", FileStorageHandler.UploadFile).RequirePermission("CMS.DELETE_ARTICLE");
             endpoints.MapPost(API_SCHEMA + "/UploadSmallFile", FileStorageHandler.UploadSmallFile).RequirePermission("CMS.DELETE_ARTICLE");
             endpoints.MapPost(API_SCHEMA + "/UploadLargeFile", FileStorageHandler.UploadLargeFile).RequirePermission("CMS.DELETE_ARTICLE");
 
             endpoints.MapGet(API_SCHEMA + "/DeleteFile", FileStorageHandler.DeleteFile).RequirePermission("CMS.DELETE_ARTICLE");
+
+            endpoints.MapGet(API_SCHEMA + "/DownloadFile", FileStorageHandler.DownloadFile).RequirePermission("CMS.DELETE_ARTICLE");
+            endpoints.MapGet(API_SCHEMA + "/DownloadFileStream", FileStorageHandler.DownloadFileStream).RequirePermission("CMS.DELETE_ARTICLE");
+            endpoints.MapGet(API_SCHEMA + "/DownloadFileByName", FileStorageHandler.DownloadFileByName).RequirePermission("CMS.DELETE_ARTICLE");
+            endpoints.MapGet(API_SCHEMA + "/DownloadFileStreamByName", FileStorageHandler.DownloadFileStreamByName).RequirePermission("CMS.DELETE_ARTICLE");
 
             return endpoints;
         }

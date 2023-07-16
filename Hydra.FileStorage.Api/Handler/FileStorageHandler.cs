@@ -1,9 +1,13 @@
-﻿using Hydra.FileStorage.Core.Interfaces;
+﻿using Hydra.FileStorage.Api.Services;
+using Hydra.FileStorage.Core.Interfaces;
 using Hydra.FileStorage.Core.Models;
+using Hydra.Infrastructure;
 using Hydra.Kernel.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Net.Http.Headers;
+using System.IO;
 
 namespace Hydra.FileStorage.Api.Handler
 {
@@ -92,6 +96,8 @@ namespace Hydra.FileStorage.Api.Handler
                     return Results.BadRequest(result);
                 }
 
+                
+                
                 var reader = new MultipartReader(mediaTypeHeader.Boundary.Value, request.Body);
                 var section = await reader.ReadNextSectionAsync(cancellationToken);
                 if (section == null)
@@ -141,6 +147,39 @@ namespace Hydra.FileStorage.Api.Handler
         {
             var result = await _fileStorageService.Delete(fileId);
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+        }
+
+        public static async Task<IResult> DownloadFile(IFileStorageService _fileStorageService, HttpContext context, int fileId, CancellationToken cancellationToken)
+        {
+            var file = await _fileStorageService.GetFileInfoById(fileId);
+
+            return Results.File(HydraHelper.GetCurrentDomain(context) + file.FileName, contentType: "application/octet-stream", file.FileName, enableRangeProcessing: true);
+        }
+
+        public static async Task<IResult> DownloadFileStream(IFileStorageService _fileStorageService, HttpContext context, int fileId, CancellationToken cancellationToken)
+        {
+            var file = await _fileStorageService.GetFileInfoById(fileId);
+
+            var fs = new FileStream(HydraHelper.GetCurrentDomain(context) + file.FileName, FileMode.Open);
+
+            return Results.Stream(fs, contentType: "application/octet-stream", file.FileName, enableRangeProcessing: true);
+        }
+
+
+        public static async Task<IResult> DownloadFileByName(IFileStorageService _fileStorageService, HttpContext context, string fileName, CancellationToken cancellationToken)
+        {
+            var file = await _fileStorageService.GetFileInfoByName(fileName.Trim());
+
+            return Results.File(HydraHelper.GetCurrentDomain(context) + file.FileName, contentType: "application/octet-stream", file.FileName, enableRangeProcessing: true);
+        }
+
+        public static async Task<IResult> DownloadFileStreamByName(IFileStorageService _fileStorageService, HttpContext context, string fileName, CancellationToken cancellationToken)
+        {
+            var file = await _fileStorageService.GetFileInfoByName(fileName);
+
+            var fs = new FileStream(HydraHelper.GetCurrentDomain(context) + file.FileName, FileMode.Open);
+
+            return Results.Stream(fs, contentType: "application/octet-stream", file.FileName, enableRangeProcessing: true);
         }
     }
 }

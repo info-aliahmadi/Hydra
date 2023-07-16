@@ -138,6 +138,32 @@ namespace Hydra.FileStorage.Api.Services
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="objectId"></param>
+        /// <returns></returns>
+        public async Task<FileUploadModel> GetFileInfoByName(string fileName)
+        {
+            var fileUpload = await _queryRepository.Table<FileUpload>().FirstOrDefaultAsync(x => x.FileName == fileName);
+
+
+
+            var fileUploadModel = new FileUploadModel()
+            {
+                Id = fileUpload.Id,
+                FileName = fileUpload.FileName,
+                Thumbnail = fileUpload.Thumbnail,
+                Extension = fileUpload.Extension,
+                Size = ConvertSizeToString(fileUpload.Size),
+                Alt = fileUpload.Alt,
+                Tags = fileUpload.Tags,
+                UploadDate = fileUpload.UploadDate
+            };
+
+            return fileUploadModel;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="fileName"></param>
         /// <param name="bytes"></param>
         /// <param name="cancellationToken"></param>
@@ -503,6 +529,7 @@ namespace Hydra.FileStorage.Api.Services
             }
             return null;
         }
+
         /// <summary>
         /// 
         /// </summary>
