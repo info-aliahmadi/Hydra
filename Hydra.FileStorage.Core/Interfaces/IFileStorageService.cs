@@ -89,6 +89,14 @@ namespace Hydra.FileStorage.Core.Interfaces
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="base64File"></param>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        Task<Result<FileUploadModel>> UploadBase64File(Base64FileUploadModel base64File);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="fileName"></param>
         /// <param name="fileSize"></param>
         /// <param name="fileStream"></param>

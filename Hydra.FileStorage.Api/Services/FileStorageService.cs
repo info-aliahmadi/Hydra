@@ -14,6 +14,9 @@ using Hydra.FileStorage.Core.Settings;
 using System;
 using Twilio.Base;
 using Org.BouncyCastle.Utilities.Zlib;
+using Hydra.Kernel.Extensions;
+using Serilog.Sinks.File;
+using System.IO;
 
 namespace Hydra.FileStorage.Api.Services
 {
@@ -101,9 +104,9 @@ namespace Hydra.FileStorage.Api.Services
                 .Select(x => new ImageModel()
                 {
                     Name = x.FileName,
-                    Src = HydraHelper.GetCurrentDomain(context) + "drive/" + x.Thumbnail,
-                    Tag = x.Tags,
-                    Alt = x.Alt
+                    Src = HydraHelper.GetCurrentDomain(context) + "drive/" + x.FileName,
+                    Tag = x.Tags ?? "",
+                    Alt = x.Alt ?? ""
                 }).ToListAsync();
             result.Result = Files;
             result.statusCode = 200;
@@ -467,7 +470,88 @@ namespace Hydra.FileStorage.Api.Services
                 return result;
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="base64File"></param>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        public async Task<Result<FileUploadModel>> UploadBase64File(Base64FileUploadModel base64File)
+        {
+            var result = new Result<FileUploadModel>();
+            try
+            {
 
+                var validateWhiteList = _validationService.ValidateFileWhiteList(base64File.FileName);
+                if (validateWhiteList != ValidationFileEnum.Ok)
+                {
+                    result.Status = ResultStatusEnum.IsNotAllowed;
+                    result.Message = _validationService.GetValidationMessage(validateWhiteList);
+                    return result;
+                }
+                var validateFileLength = _validationService.ValidateFileLength(base64File.FileLength, FileSizeEnum.Small);
+                if (validateFileLength != ValidationFileEnum.Ok)
+                {
+                    result.Status = validateFileLength == ValidationFileEnum.FileIsTooLarge ? ResultStatusEnum.FileIsTooLarge : ResultStatusEnum.FileIsTooSmall;
+                    result.Message = _validationService.GetValidationMessage(validateFileLength);
+                    return result;
+                }
+
+                if (IsExist(base64File.FileName))
+                {
+                    var existedFile = await _queryRepository.Table<FileUpload>().FirstAsync(x => x.FileName == base64File.FileName);
+                    result.Data = new FileUploadModel()
+                    {
+                        Id = existedFile.Id,
+                        FileName = existedFile.FileName,
+                        Thumbnail = existedFile.Thumbnail,
+                        Extension = existedFile.Extension,
+                        Size = ConvertSizeToString(existedFile.Size),
+                        UploadDate = existedFile.UploadDate
+                    };
+
+                    return result;
+                }
+
+                var filePath = drivePaths + base64File.FileName;
+                var fileInfo = new FileInfo(filePath);
+                if (!string.IsNullOrEmpty(base64File.Base64File))
+                {
+                    var fileBytes = base64File.Base64File.Base64FileToBytes();
+                    await File.WriteAllBytesAsync(string.Format(filePath, base64File.FileName), fileBytes.FileBytes);
+                }
+
+                var fileUpload = new FileUpload()
+                {
+                    FileName = base64File.FileName,
+                    Size = base64File.FileLength,
+                    Extension = fileInfo.Extension,
+                    Thumbnail = GenerateThumbnail(fileInfo),
+                    UploadDate = DateTime.UtcNow
+                };
+                await _commandRepository.InsertAsync(fileUpload);
+                await _commandRepository.SaveChangesAsync();
+
+                result.Data = new FileUploadModel()
+                {
+                    Id = fileUpload.Id,
+                    FileName = fileUpload.FileName,
+                    Thumbnail = fileUpload.Thumbnail,
+                    Extension = fileUpload.Extension,
+                    Size = ConvertSizeToString(fileUpload.Size),
+                    UploadDate = fileUpload.UploadDate
+                };
+
+                return result;
+
+            }
+            catch (Exception e)
+            {
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                result.Message = e.Message;
+                return result;
+            }
+        }
 
         public async Task<Result> Delete(int fileId)
         {
@@ -554,6 +638,7 @@ namespace Hydra.FileStorage.Api.Services
                 _ => "n/a"
             };
         }
+
 
     }
 }

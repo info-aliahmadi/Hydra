@@ -24,6 +24,17 @@ namespace Hydra.FileStorage.Api.Handler
             var result = await _fileStorageService.GetFileInfoById(fileId);
             return Results.Ok(result);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_fileStorageService"></param>
+        /// <param name="fileId"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetFileInfoByName(IFileStorageService _fileStorageService, string fileName)
+        {
+            var result = await _fileStorageService.GetFileInfoByName(fileName);
+            return Results.Ok(result);
+        }
 
         /// <summary>
         /// 
@@ -58,6 +69,20 @@ namespace Hydra.FileStorage.Api.Handler
         {
             var result =
                 await _fileStorageService.Upload(file, cancellationToken);
+            return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_fileStorageService"></param>
+        /// <param name="file"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public static async Task<IResult> UploadBase64File(IFileStorageService _fileStorageService, [FromBody] Base64FileUploadModel base64File, CancellationToken cancellationToken)
+        {
+            var result =
+                await _fileStorageService.UploadBase64File(base64File);
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
 
@@ -96,8 +121,8 @@ namespace Hydra.FileStorage.Api.Handler
                     return Results.BadRequest(result);
                 }
 
-                
-                
+
+
                 var reader = new MultipartReader(mediaTypeHeader.Boundary.Value, request.Body);
                 var section = await reader.ReadNextSectionAsync(cancellationToken);
                 if (section == null)
