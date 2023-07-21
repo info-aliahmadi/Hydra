@@ -66,6 +66,50 @@ namespace Hydra.Cms.Api.Services
         /// <summary>
         /// 
         /// </summary>
+        /// <returns></returns>
+        public async Task<Result<List<TopicModel>>> GetListForSelect()
+        {
+            var result = new Result<List<TopicModel>>();
+
+            var list = await _queryRepository.Table<Topic>().Select(x => new TopicModel()
+            {
+                Id = x.Id,
+                Title = x.Title,
+                //Parent = x.Parent != null ? new TopicModel() { Id = x.ParentId ?? 0, Title = x.Parent.Title } : new TopicModel(),
+                ParentId = x.ParentId
+            }).ToListAsync();
+            var resultList = new List<TopicModel>();
+            var parents = list.Where(x => x.ParentId == null).ToList();
+            foreach (var topic in parents)
+            {
+                resultList.Add(topic);
+                var childs = GetChildOfSelect(topic, list);
+                if (childs != null)
+                {
+                    resultList.AddRange(childs);
+                }
+            }
+
+            result.Data = parents;
+
+            return result;
+        }
+        private List<TopicModel> GetChildOfSelect(TopicModel topic, List<TopicModel> topics)
+        {
+
+            var result = topics.Where(x => x.ParentId == topic.Id).ToList();
+            if (result.Count == 0) return null;
+            foreach (var item in result)
+            {
+                var childs = GetChild(item, topics);
+                if (childs != null)
+                    item.Childs.AddRange(childs);
+            }
+            return result;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         public async Task<Result<TopicModel>> GetById(int id)
