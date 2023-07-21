@@ -101,7 +101,7 @@ namespace Hydra.Cms.Api.Services
             if (result.Count == 0) return null;
             foreach (var item in result)
             {
-                var childs = GetChild(item, topics);
+                var childs = GetChildOfSelect(item, topics);
                 if (childs != null)
                     item.Childs.AddRange(childs);
             }
