@@ -25,7 +25,8 @@ namespace Hydra.Cms.Api.Endpoints
         public IEndpointRouteBuilder MapEndpoints(IEndpointRouteBuilder endpoints)
         {
 
-            endpoints.MapGet(API_SCHEMA + "/GetTopicList", TopicHandler.GetList).RequirePermission("CMS.GET_TOPIC_LIST");
+            endpoints.MapGet(API_SCHEMA + "/GetTopicsHierarchy", TopicHandler.GetTopicsHierarchy).RequirePermission("CMS.GET_TOPIC_LIST");
+            endpoints.MapGet(API_SCHEMA + "/GetTopicListForSelect", TopicHandler.GetListForSelect).RequirePermission("CMS.GET_TOPIC_LIST");
             endpoints.MapGet(API_SCHEMA + "/GetTopicById", TopicHandler.GetTopicById).RequirePermission("CMS.GET_TOPIC_BY_ID");
             endpoints.MapPost(API_SCHEMA + "/AddTopic", TopicHandler.AddTopic).RequirePermission("CMS.ADD_TOPIC");
             endpoints.MapPost(API_SCHEMA + "/UpdateTopic", TopicHandler.UpdateTopic).RequirePermission("CMS.UPDATE_TOPIC");

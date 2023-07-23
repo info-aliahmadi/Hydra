@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Hydra.Auth.Core\Hydra.Auth.Core.csproj" />
+    <ProjectReference Include="..\Hydra.FileStorage.Core\Hydra.FileStorage.Core.csproj" />
     <ProjectReference Include="..\Hydra.Infrastructure\Hydra.Infrastructure.csproj" />
     <ProjectReference Include="..\Hydra.Kernel\Hydra.Kernel.csproj" />
   </ItemGroup>

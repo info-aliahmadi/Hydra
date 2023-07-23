@@ -19,12 +19,12 @@ namespace Hydra.Cms.Core.Domain
         /// <summary>
         /// 
         /// </summary>
-        public string SmallThumbnail { get; set; }
+        public int? PreviewImageId { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public string LargeThumbnail { get; set; }
+        public string? PreviewImageUrl { get; set; }
 
         /// <summary>
         /// 

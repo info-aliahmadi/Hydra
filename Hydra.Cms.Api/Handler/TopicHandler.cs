@@ -15,11 +15,31 @@ namespace Hydra.Cms.Api.Handler
         /// </summary>
         /// <param name="_topicService"></param>
         /// <returns></returns>
-        public static async Task<IResult> GetList(ITopicService _topicService)
+        public static async Task<IResult> GetTopicsHierarchy(ITopicService _topicService)
         {
             try
             {
-                var result = await _topicService.GetList();
+                var result = await _topicService.GetHierarchy();
+
+                return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
+
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_topicService"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetListForSelect(ITopicService _topicService)
+        {
+            try
+            {
+                var result = await _topicService.GetListForSelect();
 
                 return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
 

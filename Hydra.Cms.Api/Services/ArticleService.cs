@@ -41,8 +41,8 @@ namespace Hydra.Cms.Api.Services
                                   Id = article.Id,
                                   Subject = article.Subject,
                                   Body = article.Body,
-                                  SmallThumbnail = article.SmallThumbnail,
-                                  LargeThumbnail = article.LargeThumbnail,
+                                  PreviewImageId = article.PreviewImageId,
+                                  PreviewImageUrl = article.PreviewImageUrl,
                                   PublishDate = article.PublishDate,
                                   RegisterDate = article.RegisterDate,
                                   WriterId = article.WriterId,
@@ -103,8 +103,8 @@ namespace Hydra.Cms.Api.Services
                 Id = article.Id,
                 Subject = article.Subject,
                 Body = article.Body,
-                SmallThumbnail = article.SmallThumbnail,
-                LargeThumbnail = article.LargeThumbnail,
+                PreviewImageId = article.PreviewImageId,
+                PreviewImageUrl = article.PreviewImageUrl,
                 PublishDate = article.PublishDate,
                 RegisterDate = article.RegisterDate,
                 WriterId = article.WriterId,
@@ -159,8 +159,8 @@ namespace Hydra.Cms.Api.Services
                 WriterId = articleModel.WriterId,
                 IsDraft = articleModel.IsDraft,
                 Tags = articleModel.Tags,
-                SmallThumbnail = articleModel.SmallThumbnail,
-                LargeThumbnail = articleModel.LargeThumbnail,
+                PreviewImageId = articleModel.PreviewImageId,
+                PreviewImageUrl = articleModel.PreviewImageUrl,
                 Topics = _queryRepository.Table<Topic>().Where(x => articleModel.TopicsIds.Contains(x.Id)).ToList()
             };
 
@@ -228,11 +228,11 @@ namespace Hydra.Cms.Api.Services
             article.EditDate = DateTime.UtcNow;
             article.IsDraft = articleModel.IsDraft;
             article.Tags = articleModel.Tags;
-            article.SmallThumbnail = articleModel.SmallThumbnail;
-            article.LargeThumbnail = articleModel.LargeThumbnail;
+            article.PreviewImageId = articleModel.PreviewImageId;
+            article.PreviewImageUrl = articleModel.PreviewImageUrl;
             article.Topics = _queryRepository.Table<Topic>().Where(x => articleModel.TopicsIds.Contains(x.Id)).ToList();
 
-        
+
 
             _commandRepository.UpdateAsync(article);
 

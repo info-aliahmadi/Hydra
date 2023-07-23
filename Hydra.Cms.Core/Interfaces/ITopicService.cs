@@ -10,7 +10,13 @@ namespace Hydra.Cms.Core.Interfaces
         /// 
         /// </summary>
         /// <returns></returns>
-        Task<Result<List<TopicModel>>> GetList();
+        Task<Result<List<TopicModel>>> GetHierarchy();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        Task<Result<List<TopicModel>>> GetListForSelect();
 
         /// <summary>
         /// 

@@ -5,6 +5,7 @@ using Hydra.Kernel.Extensions;
 using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace Hydra.Cms.Api.Services
 {
@@ -23,7 +24,7 @@ namespace Hydra.Cms.Api.Services
         /// 
         /// </summary>
         /// <returns></returns>
-        public async Task<Result<List<TopicModel>>> GetList()
+        public async Task<Result<List<TopicModel>>> GetHierarchy()
         {
             var result = new Result<List<TopicModel>>();
 
@@ -78,34 +79,34 @@ namespace Hydra.Cms.Api.Services
                 //Parent = x.Parent != null ? new TopicModel() { Id = x.ParentId ?? 0, Title = x.Parent.Title } : new TopicModel(),
                 ParentId = x.ParentId
             }).ToListAsync();
-            var resultList = new List<TopicModel>();
+
             var parents = list.Where(x => x.ParentId == null).ToList();
+
             foreach (var topic in parents)
             {
-                resultList.Add(topic);
-                var childs = GetChildOfSelect(topic, list);
-                if (childs != null)
-                {
-                    resultList.AddRange(childs);
-                }
+                 GetChildOfSelect(topic, "", list);
             }
 
-            result.Data = parents;
+            result.Data = resultList;
 
             return result;
         }
-        private List<TopicModel> GetChildOfSelect(TopicModel topic, List<TopicModel> topics)
+        List<TopicModel> resultList = new List<TopicModel>();
+        private List<TopicModel> GetChildOfSelect(TopicModel topic, string space, List<TopicModel> topics)
         {
+            topic.Title = space + topic.Title;
+            resultList.Add(topic);
 
-            var result = topics.Where(x => x.ParentId == topic.Id).ToList();
-            if (result.Count == 0) return null;
-            foreach (var item in result)
+            var childs = topics.Where(x => x.ParentId == topic.Id).ToList();
+            if (childs.Count == 0)
             {
-                var childs = GetChildOfSelect(item, topics);
-                if (childs != null)
-                    item.Childs.AddRange(childs);
+                return null;
             }
-            return result;
+            foreach (var item in childs)
+            {
+               GetChildOfSelect(item, space + "    ", topics);
+            }
+            return childs;
         }
         /// <summary>
         /// 
