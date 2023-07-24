@@ -6,6 +6,7 @@ using Hydra.Kernel.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
 using System.IO;
 
@@ -65,10 +66,11 @@ namespace Hydra.FileStorage.Api.Handler
         /// <param name="file"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static async Task<IResult> UploadFile(IFileStorageService _fileStorageService, IFormFile file, CancellationToken cancellationToken)
+        public static async Task<IResult> UploadFile(IFileStorageService _fileStorageService, HttpContext _context, IFormFile file, CancellationToken cancellationToken)
         {
+            var uploadAction = _context.Request.Headers["UploadAction"]; // none / Rename / Replace
             var result =
-                await _fileStorageService.Upload(file, cancellationToken);
+                await _fileStorageService.Upload(file, uploadAction, cancellationToken);
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
 
@@ -79,15 +81,17 @@ namespace Hydra.FileStorage.Api.Handler
         /// <param name="file"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static async Task<IResult> UploadBase64File(IFileStorageService _fileStorageService, [FromBody] Base64FileUploadModel base64File, CancellationToken cancellationToken)
+        public static async Task<IResult> UploadBase64File(IFileStorageService _fileStorageService, HttpContext _context, [FromBody] Base64FileUploadModel base64File, CancellationToken cancellationToken)
         {
+            var action = _context.Request.Headers["UploadAction"]; // none / Rename / Replace
             var result =
                 await _fileStorageService.UploadBase64File(base64File);
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
 
-        public static async Task<IResult> UploadSmallFile(IFileStorageService _fileStorageService, IFormFile file, CancellationToken cancellationToken)
+        public static async Task<IResult> UploadSmallFile(IFileStorageService _fileStorageService, HttpContext _context, IFormFile file, CancellationToken cancellationToken)
         {
+            var action = _context.Request.Headers["UploadAction"]; // none / Rename / Replace
             var filename = file.FileName;
             var contentType = file.ContentType;
             var stream = file.OpenReadStream();
@@ -104,8 +108,9 @@ namespace Hydra.FileStorage.Api.Handler
         /// <param name="cancellationToken"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public static async Task<IResult> UploadLargeFile(IFileStorageService _fileStorageService, CancellationToken cancellationToken, HttpContext context)
+        public static async Task<IResult> UploadLargeFile(IFileStorageService _fileStorageService, HttpContext _context, CancellationToken cancellationToken, HttpContext context)
         {
+            var action = _context.Request.Headers["UploadAction"]; // none / Rename / Replace
             var result = new Result<FileUploadModel>();
             try
             {

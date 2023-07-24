@@ -56,7 +56,7 @@ namespace Hydra.FileStorage.Core.Interfaces
         /// <param name="bytes"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<Result<FileUploadModel>> UploadFromBytesAsync(FileUploadModel uploadModel, byte[] bytes, CancellationToken cancellationToken = default);
+        Task<Result<FileUploadModel>> UploadFromBytesAsync(FileUploadModel uploadModel, string uploadAction, byte[] bytes, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 
@@ -64,7 +64,7 @@ namespace Hydra.FileStorage.Core.Interfaces
         /// <param name="fileForm"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<Result<FileUploadModel>> Upload(IFormFile fileForm, CancellationToken cancellationToken = default);
+        Task<Result<FileUploadModel>> Upload(IFormFile fileForm,string uploadAction, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 
@@ -74,7 +74,7 @@ namespace Hydra.FileStorage.Core.Interfaces
         /// <param name="stream"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<Result<FileUploadModel>> UploadSmallFileStreamAsync(string? fileName, string? contentType, Stream stream, CancellationToken cancellationToken = default);
+        Task<Result<FileUploadModel>> UploadSmallFileStreamAsync(string? fileName, string uploadAction, string? contentType, Stream stream, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 
@@ -84,7 +84,7 @@ namespace Hydra.FileStorage.Core.Interfaces
         /// <param name="stream"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<Result<FileUploadModel>> UploadLargeFileStreamAsync(string? fileName, string? contentType, Stream stream, CancellationToken cancellationToken = default);
+        Task<Result<FileUploadModel>> UploadLargeFileStreamAsync(string? fileName, string uploadAction, string? contentType, Stream stream, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 
@@ -92,7 +92,7 @@ namespace Hydra.FileStorage.Core.Interfaces
         /// <param name="base64File"></param>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        Task<Result<FileUploadModel>> UploadBase64File(Base64FileUploadModel base64File);
+        Task<Result<FileUploadModel>> UploadBase64File(Base64FileUploadModel base64File, string uploadAction);
 
         /// <summary>
         /// 
@@ -104,7 +104,7 @@ namespace Hydra.FileStorage.Core.Interfaces
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task<Result<FileUploadModel>> UploadFromStreamAsync(
-            string? fileName,
+            string? fileName, string uploadAction,
             FileSizeEnum fileSize,
             Stream fileStream,
             string contentType,

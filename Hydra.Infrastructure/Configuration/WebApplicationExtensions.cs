@@ -28,18 +28,7 @@ namespace Hydra.Infrastructure.Configuration
 
             app.UseHttpsRedirection();
 
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new PhysicalFileProvider(
-                Path.Combine(app.Environment.ContentRootPath, "images/avatar")),
-                RequestPath = "/avatar"
-            });
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new PhysicalFileProvider(
-               Path.Combine(app.Environment.ContentRootPath, "Drive")),
-                RequestPath = "/Drive"
-            });
+            app.UseStaticFiles();
 
             app.UseCors("ReactOrigin");
             app.UseAuthentication();

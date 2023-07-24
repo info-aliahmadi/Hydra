@@ -28,9 +28,9 @@ namespace Hydra.Infrastructure
         {
             return Directory.GetCurrentDirectory() + @"\\images\\avatar\\";
         }
-        public static string GetDriveDirectory()
+        public static string GetUploadsDirectory()
         {
-            return Directory.GetCurrentDirectory() + @"\\Drive\\";
+            return Directory.GetCurrentDirectory() + @"\\uploads\\";
         }
     }
 }

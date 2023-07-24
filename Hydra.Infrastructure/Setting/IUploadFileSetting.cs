@@ -13,6 +13,9 @@
         long MaxSizeLimitLargeFile { get; set; }
 
         string ImagesExtensions { get; set; }
+        string VideosExtensions { get; set; }
+        string MusicExtensions { get; set; }
+        string DocumentsExtensions { get; set; }
         int ImageThumbnailSize { get; set; }
 
 
