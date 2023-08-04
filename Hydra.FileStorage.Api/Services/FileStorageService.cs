@@ -3,20 +3,13 @@ using Hydra.Infrastructure;
 using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Net.Http.Headers;
 using Microsoft.AspNetCore.Http;
 using Hydra.Infrastructure.Setting;
 using Hydra.FileStorage.Core.Interfaces;
 using Hydra.FileStorage.Core.Domain;
 using Hydra.FileStorage.Core.Models;
 using Hydra.FileStorage.Core.Settings;
-using System;
-using Twilio.Base;
-using Org.BouncyCastle.Utilities.Zlib;
 using Hydra.Kernel.Extensions;
-using Serilog.Sinks.File;
-using System.IO;
 
 namespace Hydra.FileStorage.Api.Services
 {
@@ -205,52 +198,50 @@ namespace Hydra.FileStorage.Api.Services
 
                 if (isExisted && uploadAction == "Replace")
                 {
-                    var fileUpload = _queryRepository.Table<FileUpload>().First(x=>x.FileName == uploadModel.FileName);
+                    var existedFileUpload = _queryRepository.Table<FileUpload>().First(x => x.FileName == uploadModel.FileName);
 
-                    fileUpload.Size = bytes.Length;
-                    fileUpload.Thumbnail = thumbnail;
-                    fileUpload.Alt = uploadModel.Alt;
-                    fileUpload.Tags = uploadModel.Tags;
-                    fileUpload.UploadDate = registerDate;
+                    existedFileUpload.Size = bytes.Length;
+                    existedFileUpload.Thumbnail = thumbnail;
+                    existedFileUpload.Alt = uploadModel.Alt;
+                    existedFileUpload.Tags = uploadModel.Tags;
+                    existedFileUpload.UploadDate = registerDate;
 
-                    _commandRepository.UpdateAsync(fileUpload);
+                    _commandRepository.UpdateAsync(existedFileUpload);
                     await _commandRepository.SaveChangesAsync();
 
-                    uploadModel.Id = fileUpload.Id;
-                    uploadModel.Size = ConvertSizeToString(fileUpload.Size);
-                    uploadModel.Thumbnail = fileUpload.Thumbnail;
-                    uploadModel.Extension = fileUpload.Extension;
+                    uploadModel.Id = existedFileUpload.Id;
+                    uploadModel.Size = ConvertSizeToString(existedFileUpload.Size);
+                    uploadModel.Thumbnail = existedFileUpload.Thumbnail;
+                    uploadModel.Extension = existedFileUpload.Extension;
 
                     result.Data = uploadModel;
 
                     return result;
                 }
-                else
+                var fileUpload = new FileUpload()
                 {
-                    var fileUpload = new FileUpload()
-                    {
-                        FileName = uploadModel.FileName,
-                        Size = bytes.Length,
-                        Extension = fileInfo.Extension,
-                        Thumbnail = thumbnail,
-                        Alt = uploadModel.Alt,
-                        Tags = uploadModel.Tags,
-                        UploadDate = registerDate
-                    };
-                    await _commandRepository.InsertAsync(fileUpload);
-                    await _commandRepository.SaveChangesAsync();
+                    FileName = uploadModel.FileName,
+                    Size = bytes.Length,
+                    Extension = fileInfo.Extension,
+                    Thumbnail = thumbnail,
+                    Alt = uploadModel.Alt,
+                    Tags = uploadModel.Tags,
+                    UploadDate = registerDate
+                };
+                await _commandRepository.InsertAsync(fileUpload);
+                await _commandRepository.SaveChangesAsync();
 
-                    uploadModel.Id = fileUpload.Id;
-                    uploadModel.Size = ConvertSizeToString(fileUpload.Size);
-                    uploadModel.Thumbnail = fileUpload.Thumbnail;
-                    uploadModel.Extension = fileUpload.Extension;
+                uploadModel.Id = fileUpload.Id;
+                uploadModel.Size = ConvertSizeToString(fileUpload.Size);
+                uploadModel.Thumbnail = fileUpload.Thumbnail;
+                uploadModel.Extension = fileUpload.Extension;
 
 
-                    result.Data = uploadModel;
+                result.Data = uploadModel;
 
-                    return result;
+                return result;
 
-                }
+
             }
             catch (Exception e)
             {
@@ -279,27 +270,33 @@ namespace Hydra.FileStorage.Api.Services
                 stream.Read(validBuffer, 0, validBuffer.Length);
                 stream.Position = 0;
                 var firstBytes = validBuffer.Take(64).ToArray();
+                var fileName = fileForm.FileName;
 
                 var validateResult =
-                    _validationService.ValidateFile(firstBytes, fileForm.FileName, fileForm.Length, FileSizeEnum.Small);
+                    _validationService.ValidateFile(firstBytes, fileName, fileForm.Length, FileSizeEnum.Small);
+
                 if (validateResult != ValidationFileEnum.Ok)
                 {
                     result.Status = ResultStatusEnum.InvalidValidation;
                     result.Message = _validationService.GetValidationMessage(validateResult);
                     return result;
                 }
+                var isExisted = IsExist(fileName);
 
-                if (IsExist(fileForm.FileName))
+                if (isExisted && uploadAction != "Rename" && uploadAction != "Replace")
                 {
                     result.Status = ResultStatusEnum.ItsDuplicate;
                     result.Message = "The file Is already Existed";
                     return result;
                 }
+                var extension = Path.GetExtension(fileName).ToLowerInvariant();
+                var fileNameWithPath = uploadsPaths + GetFolder(extension);
 
-
-                var extension = Path.GetExtension(fileForm.FileName).ToLowerInvariant();
-
-                var fileNameWithPath = uploadsPaths + GetFolder(extension) + fileForm.FileName;
+                if (isExisted && uploadAction == "Rename")
+                {
+                    fileName = Rename(fileName);
+                }
+                fileNameWithPath += fileName;
 
                 var fileInfo = new FileInfo(fileNameWithPath);
 
@@ -310,10 +307,31 @@ namespace Hydra.FileStorage.Api.Services
 
                 var registerDate = DateTime.UtcNow;
                 var thumbnail = GenerateThumbnail(fileInfo);
+                var uploadModel = new FileUploadModel();
+                if (isExisted && uploadAction == "Replace")
+                {
+                    var existedFileUpload = _queryRepository.Table<FileUpload>().First(x => x.FileName == fileName);
+
+                    existedFileUpload.Size = fileForm.Length;
+                    existedFileUpload.Thumbnail = thumbnail;
+                    existedFileUpload.UploadDate = registerDate;
+
+                    _commandRepository.UpdateAsync(existedFileUpload);
+                    await _commandRepository.SaveChangesAsync();
+
+                    uploadModel.Id = existedFileUpload.Id;
+                    uploadModel.Size = ConvertSizeToString(existedFileUpload.Size);
+                    uploadModel.Thumbnail = existedFileUpload.Thumbnail;
+                    uploadModel.Extension = existedFileUpload.Extension;
+
+                    result.Data = uploadModel;
+
+                    return result;
+                }
 
                 var fileUpload = new FileUpload()
                 {
-                    FileName = fileForm.FileName,
+                    FileName = fileName,
                     Size = fileForm.Length,
                     Extension = fileInfo.Extension,
                     Thumbnail = thumbnail,
@@ -323,14 +341,11 @@ namespace Hydra.FileStorage.Api.Services
 
                 await _commandRepository.SaveChangesAsync();
 
-                var uploadModel = new FileUploadModel()
-                {
-                    Id = fileUpload.Id,
-                    FileName = fileUpload.FileName,
-                    Extension = fileUpload.Extension,
-                    Thumbnail = fileUpload.Thumbnail,
-                    Size = ConvertSizeToString(fileUpload.Size)
-                };
+                uploadModel.Id = fileUpload.Id;
+                uploadModel.FileName = fileUpload.FileName;
+                uploadModel.Extension = fileUpload.Extension;
+                uploadModel.Thumbnail = fileUpload.Thumbnail;
+                uploadModel.Size = ConvertSizeToString(fileUpload.Size);
 
                 result.Data = uploadModel;
 
@@ -415,16 +430,21 @@ namespace Hydra.FileStorage.Api.Services
                     }
                 }
 
-                if (IsExist(fileName))
+                var isExisted = IsExist(fileName);
+                if (isExisted && uploadAction != "Rename" && uploadAction != "Replace")
                 {
                     result.Status = ResultStatusEnum.ItsDuplicate;
                     result.Message = "The file Is already Existed";
                     return result;
                 }
-
                 var extension = Path.GetExtension(fileName).ToLowerInvariant();
+                var fileNameWithPath = uploadsPaths + GetFolder(extension);
 
-                var fileNameWithPath = uploadsPaths + GetFolder(extension) + fileName;
+                if (isExisted && uploadAction == "Rename")
+                {
+                    fileName = Rename(fileName);
+                }
+                fileNameWithPath += fileName;
 
                 var fileInfo = new FileInfo(fileNameWithPath);
 
@@ -464,28 +484,49 @@ namespace Hydra.FileStorage.Api.Services
                     result.Message = _validationService.GetValidationMessage(ValidationFileEnum.FileIsTooLarge);
                     return result;
                 }
+                var registerDate = DateTime.UtcNow;
+                var thumbnail = GenerateThumbnail(fileInfo);
+                var uploadModel = new FileUploadModel();
 
+                if (isExisted && uploadAction == "Replace")
+                {
+                    var existedFileUpload = _queryRepository.Table<FileUpload>().First(x => x.FileName == fileName);
+
+                    existedFileUpload.Size = totalLength;
+                    existedFileUpload.Thumbnail = thumbnail;
+                    existedFileUpload.UploadDate = registerDate;
+
+                    _commandRepository.UpdateAsync(existedFileUpload);
+                    await _commandRepository.SaveChangesAsync();
+
+                    uploadModel.Id = existedFileUpload.Id;
+                    uploadModel.Size = ConvertSizeToString(existedFileUpload.Size);
+                    uploadModel.Thumbnail = existedFileUpload.Thumbnail;
+                    uploadModel.Extension = existedFileUpload.Extension;
+
+                    result.Data = uploadModel;
+
+                    return result;
+                }
                 var fileUpload = new FileUpload()
                 {
                     FileName = fileName,
-                    Size = stream.Length,
+                    Size = totalLength,
                     Extension = fileInfo.Extension,
-                    Thumbnail = GenerateThumbnail(fileInfo),
-                    UploadDate = DateTime.UtcNow
+                    Thumbnail = thumbnail,
+                    UploadDate = registerDate
                 };
                 await _commandRepository.InsertAsync(fileUpload);
                 await _commandRepository.SaveChangesAsync();
 
-                result.Data = new FileUploadModel()
-                {
-                    Id = fileUpload.Id,
-                    FileName = fileUpload.FileName,
-                    Thumbnail = fileUpload.Thumbnail,
-                    Extension = fileUpload.Extension,
-                    Size = ConvertSizeToString(fileUpload.Size),
-                    UploadDate = fileUpload.UploadDate
-                };
+                uploadModel.Id = fileUpload.Id;
+                uploadModel.FileName = fileUpload.FileName;
+                uploadModel.Thumbnail = fileUpload.Thumbnail;
+                uploadModel.Extension = fileUpload.Extension;
+                uploadModel.Size = ConvertSizeToString(fileUpload.Size);
+                uploadModel.UploadDate = fileUpload.UploadDate;
 
+                result.Data = uploadModel;
                 return result;
             }
             catch (Exception e)
@@ -521,26 +562,24 @@ namespace Hydra.FileStorage.Api.Services
                     result.Message = _validationService.GetValidationMessage(validateFileLength);
                     return result;
                 }
-
-                if (IsExist(base64File.FileName))
+                var isExisted = IsExist(base64File.FileName);
+                if (isExisted && uploadAction != "Rename" && uploadAction != "Replace")
                 {
-                    var existedFile = await _queryRepository.Table<FileUpload>().FirstAsync(x => x.FileName == base64File.FileName);
-                    result.Data = new FileUploadModel()
-                    {
-                        Id = existedFile.Id,
-                        FileName = existedFile.FileName,
-                        Thumbnail = existedFile.Thumbnail,
-                        Extension = existedFile.Extension,
-                        Size = ConvertSizeToString(existedFile.Size),
-                        UploadDate = existedFile.UploadDate
-                    };
-
+                    result.Status = ResultStatusEnum.ItsDuplicate;
+                    result.Message = "The file Is already Existed";
                     return result;
                 }
 
                 var extension = Path.GetExtension(base64File.FileName).ToLowerInvariant();
 
-                var fileNameWithPath = uploadsPaths + GetFolder(extension) + base64File.FileName;
+                var fileNameWithPath = uploadsPaths + GetFolder(extension);
+
+                if (isExisted && uploadAction == "Rename")
+                {
+                    base64File.FileName = Rename(base64File.FileName);
+                }
+
+                fileNameWithPath += base64File.FileName;
 
                 var fileInfo = new FileInfo(fileNameWithPath);
                 if (!string.IsNullOrEmpty(base64File.Base64File))
@@ -548,7 +587,30 @@ namespace Hydra.FileStorage.Api.Services
                     var fileBytes = base64File.Base64File.Base64FileToBytes();
                     await File.WriteAllBytesAsync(string.Format(fileNameWithPath, base64File.FileName), fileBytes.FileBytes);
                 }
+                var registerDate = DateTime.UtcNow;
+                var thumbnail = GenerateThumbnail(fileInfo);
+                var uploadModel = new FileUploadModel();
 
+                if (isExisted && uploadAction == "Replace")
+                {
+                    var existedFileUpload = _queryRepository.Table<FileUpload>().First(x => x.FileName == base64File.FileName);
+
+                    existedFileUpload.Size = base64File.FileLength;
+                    existedFileUpload.Thumbnail = thumbnail;
+                    existedFileUpload.UploadDate = registerDate;
+
+                    _commandRepository.UpdateAsync(existedFileUpload);
+                    await _commandRepository.SaveChangesAsync();
+
+                    uploadModel.Id = existedFileUpload.Id;
+                    uploadModel.Size = ConvertSizeToString(existedFileUpload.Size);
+                    uploadModel.Thumbnail = existedFileUpload.Thumbnail;
+                    uploadModel.Extension = existedFileUpload.Extension;
+
+                    result.Data = uploadModel;
+
+                    return result;
+                }
                 var fileUpload = new FileUpload()
                 {
                     FileName = base64File.FileName,
@@ -560,16 +622,14 @@ namespace Hydra.FileStorage.Api.Services
                 await _commandRepository.InsertAsync(fileUpload);
                 await _commandRepository.SaveChangesAsync();
 
-                result.Data = new FileUploadModel()
-                {
-                    Id = fileUpload.Id,
-                    FileName = fileUpload.FileName,
-                    Thumbnail = fileUpload.Thumbnail,
-                    Extension = fileUpload.Extension,
-                    Size = ConvertSizeToString(fileUpload.Size),
-                    UploadDate = fileUpload.UploadDate
-                };
+                uploadModel.Id = fileUpload.Id;
+                uploadModel.FileName = fileUpload.FileName;
+                uploadModel.Thumbnail = fileUpload.Thumbnail;
+                uploadModel.Extension = fileUpload.Extension;
+                uploadModel.Size = ConvertSizeToString(fileUpload.Size);
+                uploadModel.UploadDate = fileUpload.UploadDate;
 
+                result.Data = uploadModel;
                 return result;
 
             }
