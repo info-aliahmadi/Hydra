@@ -5,6 +5,8 @@ namespace Hydra.Cms.Core.Models
     {
 
         public int Id { get; set; }
+        public int UserId { get; set; }
+        public string UserName { get; set; }
 
         /// <summary>
         /// 
@@ -20,5 +22,6 @@ namespace Hydra.Cms.Core.Models
         public int? ParentId { get; set; }
 
         public List<TopicModel>? Childs { get; set; } = new List<TopicModel>();
+        public DateTime RegisterDate { get; set; }
     }
 }

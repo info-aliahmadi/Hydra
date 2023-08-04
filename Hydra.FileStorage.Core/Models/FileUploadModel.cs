@@ -7,6 +7,7 @@ namespace Hydra.FileStorage.Core.Models
         public int Id { get; set; }
 
         public string FileName { get; set; }
+        public string Directory { get; set; }
 
         public string? Thumbnail { get; set; }
 
@@ -18,5 +19,7 @@ namespace Hydra.FileStorage.Core.Models
 
         public string? Alt { get; set; }
         public DateTime UploadDate { get; set; }
+        public string UserName { get; set; }
+        public int UserId { get; set; }
     }
 }

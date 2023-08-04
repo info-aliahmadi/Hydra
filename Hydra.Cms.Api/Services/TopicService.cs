@@ -1,6 +1,7 @@
 ﻿using Hydra.Cms.Core.Domain;
 using Hydra.Cms.Core.Interfaces;
 using Hydra.Cms.Core.Models;
+using Hydra.Infrastructure.Security.Domain;
 using Hydra.Kernel.Extensions;
 using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;
@@ -84,7 +85,7 @@ namespace Hydra.Cms.Api.Services
 
             foreach (var topic in parents)
             {
-                 GetChildOfSelect(topic, "", list);
+                GetChildOfSelect(topic, "", list);
             }
 
             result.Data = resultList;
@@ -104,7 +105,7 @@ namespace Hydra.Cms.Api.Services
             }
             foreach (var item in childs)
             {
-               GetChildOfSelect(item, space + "    ", topics);
+                GetChildOfSelect(item, space + "    ", topics);
             }
             return childs;
         }
@@ -147,18 +148,23 @@ namespace Hydra.Cms.Api.Services
                 result.Message = "The topic existed";
                 return result;
             }
-
+            var regsterDate = DateTime.UtcNow;
             var topic = new Topic()
             {
                 Id = topicModel.Id,
                 Title = topicModel.Title,
-                ParentId = topicModel.ParentId
+                ParentId = topicModel.ParentId,
+                UserId = topicModel.UserId,
+                RegisterDate = regsterDate
             };
             await _commandRepository.InsertAsync(topic);
 
             await _commandRepository.SaveChangesAsync();
-
+            var userName = _queryRepository.Table<User>().First(x => x.Id == topicModel.UserId).UserName;
             topicModel.Id = topic.Id;
+            topicModel.UserId = topic.UserId;
+            topicModel.UserName = userName;
+            topicModel.RegisterDate = regsterDate;
             result.Data = topicModel;
             return result;
         }
@@ -189,12 +195,20 @@ namespace Hydra.Cms.Api.Services
                 return result;
             }
 
+            var regsterDate = DateTime.UtcNow;
 
             topic.Title = topicModel.Title;
+            topic.UserId = topic.UserId;
+            topic.RegisterDate = regsterDate;
 
             _commandRepository.UpdateAsync(topic);
 
             await _commandRepository.SaveChangesAsync();
+
+            var userName = _queryRepository.Table<User>().First(x => x.Id == topicModel.UserId).UserName;
+
+            topicModel.UserName = userName;
+            topicModel.RegisterDate = regsterDate;
 
             result.Data = topicModel;
             return result;

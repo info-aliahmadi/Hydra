@@ -1,6 +1,7 @@
 ﻿using Hydra.Cms.Core.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Reflection.Emit;
 
 
 namespace Hydra.Cms.Core.EntityConfiguration

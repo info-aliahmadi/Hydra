@@ -10,6 +10,7 @@ using Hydra.FileStorage.Core.Domain;
 using Hydra.FileStorage.Core.Models;
 using Hydra.FileStorage.Core.Settings;
 using Hydra.Kernel.Extensions;
+using Hydra.Infrastructure.Security.Domain;
 
 namespace Hydra.FileStorage.Api.Services
 {
@@ -58,7 +59,8 @@ namespace Hydra.FileStorage.Api.Services
             var List = _queryRepository.Table<FileUpload>().ToList().Select(x => new FileUploadModel()
             {
                 Id = x.Id,
-                FileName = GetFolder(x.Extension) + x.FileName,
+                FileName = x.FileName,
+                Directory = x.Directory,
                 Thumbnail = x.Thumbnail,
                 Extension = x.Extension,
                 Size = ConvertSizeToString(x.Size),
@@ -83,7 +85,7 @@ namespace Hydra.FileStorage.Api.Services
                 .Select(x => new ImageModel()
                 {
                     Name = x.FileName,
-                    Src = HydraHelper.GetCurrentDomain(context) + GetFolder(x.Extension) + x.FileName,
+                    Src = HydraHelper.GetCurrentDomain(context) + x.Directory + x.FileName,
                     Tag = x.Tags ?? "",
                     Alt = x.Alt ?? ""
                 }).ToListAsync();
@@ -105,7 +107,8 @@ namespace Hydra.FileStorage.Api.Services
             var fileUploadModel = new FileUploadModel()
             {
                 Id = fileUpload.Id,
-                FileName = GetFolder(fileUpload.Extension) + fileUpload.FileName,
+                FileName = fileUpload.FileName,
+                Directory = fileUpload.Directory,
                 Thumbnail = fileUpload.Thumbnail,
                 Extension = fileUpload.Extension,
                 Size = ConvertSizeToString(fileUpload.Size),
@@ -131,7 +134,8 @@ namespace Hydra.FileStorage.Api.Services
             var fileUploadModel = new FileUploadModel()
             {
                 Id = fileUpload.Id,
-                FileName = GetFolder(fileUpload.Extension) + fileUpload.FileName,
+                FileName = fileUpload.FileName,
+                Directory = fileUpload.Directory,
                 Thumbnail = fileUpload.Thumbnail,
                 Extension = fileUpload.Extension,
                 Size = ConvertSizeToString(fileUpload.Size),
@@ -150,7 +154,7 @@ namespace Hydra.FileStorage.Api.Services
         /// <param name="bytes"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<Result<FileUploadModel>> UploadFromBytesAsync(FileUploadModel uploadModel, string uploadAction, byte[] bytes, CancellationToken cancellationToken = default)
+        public async Task<Result<FileUploadModel>> UploadFromBytesAsync(int userId, FileUploadModel uploadModel, string uploadAction, byte[] bytes, CancellationToken cancellationToken = default)
         {
             var result = new Result<FileUploadModel>();
             try
@@ -176,7 +180,8 @@ namespace Hydra.FileStorage.Api.Services
                     return result;
                 }
                 var extension = Path.GetExtension(uploadModel.FileName).ToLowerInvariant();
-                var fileNameWithPath = uploadsPaths + GetFolder(extension);
+                var directory = GetFolder(extension);
+                var fileNameWithPath = uploadsPaths + directory;
 
                 if (isExisted && uploadAction == "Rename")
                 {
@@ -204,15 +209,20 @@ namespace Hydra.FileStorage.Api.Services
                     existedFileUpload.Thumbnail = thumbnail;
                     existedFileUpload.Alt = uploadModel.Alt;
                     existedFileUpload.Tags = uploadModel.Tags;
+                    existedFileUpload.UserId = userId;
                     existedFileUpload.UploadDate = registerDate;
 
                     _commandRepository.UpdateAsync(existedFileUpload);
                     await _commandRepository.SaveChangesAsync();
 
                     uploadModel.Id = existedFileUpload.Id;
+                    uploadModel.FileName = uploadModel.FileName;
+                    uploadModel.Directory = directory;
                     uploadModel.Size = ConvertSizeToString(existedFileUpload.Size);
                     uploadModel.Thumbnail = existedFileUpload.Thumbnail;
                     uploadModel.Extension = existedFileUpload.Extension;
+                    uploadModel.UploadDate = registerDate;
+                    uploadModel.UserId = userId;
 
                     result.Data = uploadModel;
 
@@ -221,20 +231,25 @@ namespace Hydra.FileStorage.Api.Services
                 var fileUpload = new FileUpload()
                 {
                     FileName = uploadModel.FileName,
+                    Directory = directory,
                     Size = bytes.Length,
                     Extension = fileInfo.Extension,
                     Thumbnail = thumbnail,
                     Alt = uploadModel.Alt,
                     Tags = uploadModel.Tags,
-                    UploadDate = registerDate
+                    UploadDate = registerDate,
+                    UserId = userId
                 };
                 await _commandRepository.InsertAsync(fileUpload);
                 await _commandRepository.SaveChangesAsync();
 
                 uploadModel.Id = fileUpload.Id;
+                uploadModel.FileName = uploadModel.FileName;
+                uploadModel.Directory = directory;
                 uploadModel.Size = ConvertSizeToString(fileUpload.Size);
                 uploadModel.Thumbnail = fileUpload.Thumbnail;
                 uploadModel.Extension = fileUpload.Extension;
+                uploadModel.UserId = userId;
 
 
                 result.Data = uploadModel;
@@ -259,7 +274,7 @@ namespace Hydra.FileStorage.Api.Services
         /// <param name="stream"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<Result<FileUploadModel>> Upload(IFormFile fileForm, string uploadAction, CancellationToken cancellationToken = default)
+        public async Task<Result<FileUploadModel>> Upload(int userId, IFormFile fileForm, string uploadAction, CancellationToken cancellationToken = default)
         {
             var result = new Result<FileUploadModel>();
             try
@@ -290,7 +305,8 @@ namespace Hydra.FileStorage.Api.Services
                     return result;
                 }
                 var extension = Path.GetExtension(fileName).ToLowerInvariant();
-                var fileNameWithPath = uploadsPaths + GetFolder(extension);
+                var directory = GetFolder(extension);
+                var fileNameWithPath = uploadsPaths + directory;
 
                 if (isExisted && uploadAction == "Rename")
                 {
@@ -315,6 +331,7 @@ namespace Hydra.FileStorage.Api.Services
                     existedFileUpload.Size = fileForm.Length;
                     existedFileUpload.Thumbnail = thumbnail;
                     existedFileUpload.UploadDate = registerDate;
+                    existedFileUpload.UserId = userId;
 
                     _commandRepository.UpdateAsync(existedFileUpload);
                     await _commandRepository.SaveChangesAsync();
@@ -323,6 +340,8 @@ namespace Hydra.FileStorage.Api.Services
                     uploadModel.Size = ConvertSizeToString(existedFileUpload.Size);
                     uploadModel.Thumbnail = existedFileUpload.Thumbnail;
                     uploadModel.Extension = existedFileUpload.Extension;
+                    uploadModel.Directory = directory;
+                    uploadModel.UserId = userId;
 
                     result.Data = uploadModel;
 
@@ -332,10 +351,12 @@ namespace Hydra.FileStorage.Api.Services
                 var fileUpload = new FileUpload()
                 {
                     FileName = fileName,
+                    Directory = directory,
                     Size = fileForm.Length,
                     Extension = fileInfo.Extension,
                     Thumbnail = thumbnail,
-                    UploadDate = registerDate
+                    UploadDate = registerDate,
+                    UserId = userId
                 };
                 await _commandRepository.InsertAsync(fileUpload);
 
@@ -343,8 +364,10 @@ namespace Hydra.FileStorage.Api.Services
 
                 uploadModel.Id = fileUpload.Id;
                 uploadModel.FileName = fileUpload.FileName;
+                uploadModel.UserId = userId;
                 uploadModel.Extension = fileUpload.Extension;
                 uploadModel.Thumbnail = fileUpload.Thumbnail;
+                uploadModel.Directory = directory;
                 uploadModel.Size = ConvertSizeToString(fileUpload.Size);
 
                 result.Data = uploadModel;
@@ -367,10 +390,10 @@ namespace Hydra.FileStorage.Api.Services
         /// <param name="stream"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<Result<FileUploadModel>> UploadSmallFileStreamAsync(string? fileName, string uploadAction, string? contentType, Stream stream, CancellationToken cancellationToken = default)
+        public async Task<Result<FileUploadModel>> UploadSmallFileStreamAsync(int userId, string? fileName, string uploadAction, string? contentType, Stream stream, CancellationToken cancellationToken = default)
         {
 
-            var result = await UploadFromStreamAsync(fileName, uploadAction, FileSizeEnum.Small, stream, contentType,
+            var result = await UploadFromStreamAsync(userId, fileName, uploadAction, FileSizeEnum.Small, stream, contentType,
                 cancellationToken);
 
             return result;
@@ -384,10 +407,10 @@ namespace Hydra.FileStorage.Api.Services
         /// <param name="stream"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<Result<FileUploadModel>> UploadLargeFileStreamAsync(string? fileName, string uploadAction, string? contentType, Stream stream, CancellationToken cancellationToken = default)
+        public async Task<Result<FileUploadModel>> UploadLargeFileStreamAsync(int userId, string? fileName, string uploadAction, string? contentType, Stream stream, CancellationToken cancellationToken = default)
         {
 
-            var result = await UploadFromStreamAsync(fileName, uploadAction, FileSizeEnum.Large, stream, contentType,
+            var result = await UploadFromStreamAsync(userId, fileName, uploadAction, FileSizeEnum.Large, stream, contentType,
                 cancellationToken);
 
             return result;
@@ -401,7 +424,7 @@ namespace Hydra.FileStorage.Api.Services
         /// <param name="source"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<Result<FileUploadModel>> UploadFromStreamAsync(string? fileName, string uploadAction, FileSizeEnum fileSize, Stream stream, string contentType, CancellationToken cancellationToken = default)
+        public async Task<Result<FileUploadModel>> UploadFromStreamAsync(int userId, string? fileName, string uploadAction, FileSizeEnum fileSize, Stream stream, string contentType, CancellationToken cancellationToken = default)
         {
             var result = new Result<FileUploadModel>();
             try
@@ -438,7 +461,8 @@ namespace Hydra.FileStorage.Api.Services
                     return result;
                 }
                 var extension = Path.GetExtension(fileName).ToLowerInvariant();
-                var fileNameWithPath = uploadsPaths + GetFolder(extension);
+                var directory = GetFolder(extension);
+                var fileNameWithPath = uploadsPaths + directory;
 
                 if (isExisted && uploadAction == "Rename")
                 {
@@ -495,14 +519,18 @@ namespace Hydra.FileStorage.Api.Services
                     existedFileUpload.Size = totalLength;
                     existedFileUpload.Thumbnail = thumbnail;
                     existedFileUpload.UploadDate = registerDate;
+                    existedFileUpload.UserId = userId;
 
                     _commandRepository.UpdateAsync(existedFileUpload);
                     await _commandRepository.SaveChangesAsync();
 
                     uploadModel.Id = existedFileUpload.Id;
+                    uploadModel.Directory = directory;
                     uploadModel.Size = ConvertSizeToString(existedFileUpload.Size);
                     uploadModel.Thumbnail = existedFileUpload.Thumbnail;
                     uploadModel.Extension = existedFileUpload.Extension;
+                    uploadModel.UploadDate = registerDate;
+                    uploadModel.UserId = userId;
 
                     result.Data = uploadModel;
 
@@ -511,20 +539,24 @@ namespace Hydra.FileStorage.Api.Services
                 var fileUpload = new FileUpload()
                 {
                     FileName = fileName,
+                    Directory = directory,
                     Size = totalLength,
                     Extension = fileInfo.Extension,
                     Thumbnail = thumbnail,
-                    UploadDate = registerDate
+                    UploadDate = registerDate,
+                    UserId = userId,
                 };
                 await _commandRepository.InsertAsync(fileUpload);
                 await _commandRepository.SaveChangesAsync();
 
                 uploadModel.Id = fileUpload.Id;
                 uploadModel.FileName = fileUpload.FileName;
+                uploadModel.Directory = directory;
                 uploadModel.Thumbnail = fileUpload.Thumbnail;
                 uploadModel.Extension = fileUpload.Extension;
                 uploadModel.Size = ConvertSizeToString(fileUpload.Size);
-                uploadModel.UploadDate = fileUpload.UploadDate;
+                uploadModel.UploadDate = registerDate;
+                uploadModel.UserId = userId;
 
                 result.Data = uploadModel;
                 return result;
@@ -542,7 +574,7 @@ namespace Hydra.FileStorage.Api.Services
         /// <param name="base64File"></param>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        public async Task<Result<FileUploadModel>> UploadBase64File(Base64FileUploadModel base64File, string uploadAction)
+        public async Task<Result<FileUploadModel>> UploadBase64File(int userId, Base64FileUploadModel base64File, string uploadAction)
         {
             var result = new Result<FileUploadModel>();
             try
@@ -571,8 +603,8 @@ namespace Hydra.FileStorage.Api.Services
                 }
 
                 var extension = Path.GetExtension(base64File.FileName).ToLowerInvariant();
-
-                var fileNameWithPath = uploadsPaths + GetFolder(extension);
+                var directory = GetFolder(extension);
+                var fileNameWithPath = uploadsPaths + directory;
 
                 if (isExisted && uploadAction == "Rename")
                 {
@@ -598,14 +630,18 @@ namespace Hydra.FileStorage.Api.Services
                     existedFileUpload.Size = base64File.FileLength;
                     existedFileUpload.Thumbnail = thumbnail;
                     existedFileUpload.UploadDate = registerDate;
+                    existedFileUpload.UserId = userId;
 
                     _commandRepository.UpdateAsync(existedFileUpload);
                     await _commandRepository.SaveChangesAsync();
 
                     uploadModel.Id = existedFileUpload.Id;
+                    uploadModel.Directory = directory;
                     uploadModel.Size = ConvertSizeToString(existedFileUpload.Size);
                     uploadModel.Thumbnail = existedFileUpload.Thumbnail;
                     uploadModel.Extension = existedFileUpload.Extension;
+                    uploadModel.UploadDate = registerDate;
+                    uploadModel.UserId = userId;
 
                     result.Data = uploadModel;
 
@@ -614,20 +650,25 @@ namespace Hydra.FileStorage.Api.Services
                 var fileUpload = new FileUpload()
                 {
                     FileName = base64File.FileName,
+                    Directory = directory,
                     Size = base64File.FileLength,
                     Extension = fileInfo.Extension,
                     Thumbnail = GenerateThumbnail(fileInfo),
-                    UploadDate = DateTime.UtcNow
+                    UploadDate = registerDate,
+                    UserId = userId,
+
                 };
                 await _commandRepository.InsertAsync(fileUpload);
                 await _commandRepository.SaveChangesAsync();
 
                 uploadModel.Id = fileUpload.Id;
                 uploadModel.FileName = fileUpload.FileName;
+                uploadModel.Directory = directory;
                 uploadModel.Thumbnail = fileUpload.Thumbnail;
                 uploadModel.Extension = fileUpload.Extension;
                 uploadModel.Size = ConvertSizeToString(fileUpload.Size);
-                uploadModel.UploadDate = fileUpload.UploadDate;
+                uploadModel.UploadDate = registerDate;
+                uploadModel.UserId = userId;
 
                 result.Data = uploadModel;
                 return result;
@@ -641,7 +682,7 @@ namespace Hydra.FileStorage.Api.Services
             }
         }
 
-        public async Task<Result> Delete(int fileId)
+        public async Task<Result> Delete(int userId, int fileId)
         {
             var result = new Result();
             var fileUpload = await _queryRepository.Table<FileUpload>().FirstOrDefaultAsync(x => x.Id == fileId);
@@ -699,7 +740,7 @@ namespace Hydra.FileStorage.Api.Services
 
                 var newSImageName = fileNameOnly + "-Thumb.png";
 
-                image.SaveAsPng(uploadsPaths + newSImageName);
+                image.SaveAsPng(fileInfo.Directory + "/" + newSImageName);
                 image.Dispose();
                 return newSImageName;
             }

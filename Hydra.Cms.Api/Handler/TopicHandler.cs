@@ -5,6 +5,7 @@ using Hydra.Cms.Core.Models;
 using Hydra.Kernel.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Hydra.Cms.Api.Handler
 {
@@ -73,11 +74,13 @@ namespace Hydra.Cms.Api.Handler
         /// <param name="_topicService"></param>
         /// <param name="topicModel"></param>
         /// <returns></returns>
-        public static async Task<IResult> AddTopic(
+        public static async Task<IResult> AddTopic(ClaimsPrincipal userClaim,
             ITopicService _topicService,
             [FromBody] TopicModel topicModel
             )
         {
+            var userId = int.Parse(userClaim?.FindFirst("identity")?.Value);
+            topicModel.UserId = userId;
             var result = await _topicService.Add(topicModel);
 
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
@@ -89,11 +92,13 @@ namespace Hydra.Cms.Api.Handler
         /// <param name="_topicService"></param>
         /// <param name="topicModel"></param>
         /// <returns></returns>
-        public static async Task<IResult> UpdateTopic(
+        public static async Task<IResult> UpdateTopic(ClaimsPrincipal userClaim,
             ITopicService _topicService,
             [FromBody] TopicModel topicModel
             )
         {
+            var userId = int.Parse(userClaim?.FindFirst("identity")?.Value);
+            topicModel.UserId = userId;
             var result = await _topicService.Update(topicModel);
 
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
@@ -104,11 +109,12 @@ namespace Hydra.Cms.Api.Handler
         /// <param name="_topicService"></param>
         /// <param name="topicId"></param>
         /// <returns></returns>
-        public static async Task<IResult> DeleteTopic(
+        public static async Task<IResult> DeleteTopic(ClaimsPrincipal userClaim,
             ITopicService _topicService,
             int topicId
             )
         {
+            var userId = int.Parse(userClaim?.FindFirst("identity")?.Value);
             try
             {
                 var result = await _topicService.Delete(topicId);

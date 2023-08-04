@@ -1,10 +1,12 @@
-﻿using Hydra.Kernel;
+﻿using Hydra.Infrastructure.Security.Domain;
+using Hydra.Kernel;
 
 namespace Hydra.FileStorage.Core.Domain
 {
     public class FileUpload : BaseEntity<int>
     {
         public string FileName { get; set; }
+        public string Directory { get; set; }
 
         public string? Thumbnail { get; set; }
 
@@ -17,6 +19,9 @@ namespace Hydra.FileStorage.Core.Domain
         public string? Alt { get; set; }
 
         public DateTime UploadDate { get; set; }
+
+        public User User { get; set; }
+        public int UserId { get; set; }
 
 
     }
