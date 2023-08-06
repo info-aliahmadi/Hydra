@@ -13,7 +13,7 @@ namespace Hydra.FileStorage.Core.Models
 
         public string Extension { get; set; }
 
-        public string Size { get; set; }
+        public long Size { get; set; }
 
         public string? Tags { get; set; }
 

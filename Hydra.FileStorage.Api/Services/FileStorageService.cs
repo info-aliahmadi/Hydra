@@ -63,7 +63,7 @@ namespace Hydra.FileStorage.Api.Services
                 Directory = x.Directory,
                 Thumbnail = x.Thumbnail,
                 Extension = x.Extension,
-                Size = ConvertSizeToString(x.Size),
+                Size = x.Size,
                 Alt = x.Alt,
                 Tags = x.Tags,
                 UploadDate = x.UploadDate
@@ -111,7 +111,7 @@ namespace Hydra.FileStorage.Api.Services
                 Directory = fileUpload.Directory,
                 Thumbnail = fileUpload.Thumbnail,
                 Extension = fileUpload.Extension,
-                Size = ConvertSizeToString(fileUpload.Size),
+                Size = fileUpload.Size,
                 Alt = fileUpload.Alt,
                 Tags = fileUpload.Tags,
                 UploadDate = fileUpload.UploadDate
@@ -138,7 +138,7 @@ namespace Hydra.FileStorage.Api.Services
                 Directory = fileUpload.Directory,
                 Thumbnail = fileUpload.Thumbnail,
                 Extension = fileUpload.Extension,
-                Size = ConvertSizeToString(fileUpload.Size),
+                Size =fileUpload.Size,
                 Alt = fileUpload.Alt,
                 Tags = fileUpload.Tags,
                 UploadDate = fileUpload.UploadDate
@@ -218,7 +218,7 @@ namespace Hydra.FileStorage.Api.Services
                     uploadModel.Id = existedFileUpload.Id;
                     uploadModel.FileName = uploadModel.FileName;
                     uploadModel.Directory = directory;
-                    uploadModel.Size = ConvertSizeToString(existedFileUpload.Size);
+                    uploadModel.Size = existedFileUpload.Size;
                     uploadModel.Thumbnail = existedFileUpload.Thumbnail;
                     uploadModel.Extension = existedFileUpload.Extension;
                     uploadModel.UploadDate = registerDate;
@@ -246,7 +246,7 @@ namespace Hydra.FileStorage.Api.Services
                 uploadModel.Id = fileUpload.Id;
                 uploadModel.FileName = uploadModel.FileName;
                 uploadModel.Directory = directory;
-                uploadModel.Size = ConvertSizeToString(fileUpload.Size);
+                uploadModel.Size = fileUpload.Size;
                 uploadModel.Thumbnail = fileUpload.Thumbnail;
                 uploadModel.Extension = fileUpload.Extension;
                 uploadModel.UserId = userId;
@@ -337,7 +337,7 @@ namespace Hydra.FileStorage.Api.Services
                     await _commandRepository.SaveChangesAsync();
 
                     uploadModel.Id = existedFileUpload.Id;
-                    uploadModel.Size = ConvertSizeToString(existedFileUpload.Size);
+                    uploadModel.Size = existedFileUpload.Size;
                     uploadModel.Thumbnail = existedFileUpload.Thumbnail;
                     uploadModel.Extension = existedFileUpload.Extension;
                     uploadModel.Directory = directory;
@@ -368,7 +368,7 @@ namespace Hydra.FileStorage.Api.Services
                 uploadModel.Extension = fileUpload.Extension;
                 uploadModel.Thumbnail = fileUpload.Thumbnail;
                 uploadModel.Directory = directory;
-                uploadModel.Size = ConvertSizeToString(fileUpload.Size);
+                uploadModel.Size = fileUpload.Size;
 
                 result.Data = uploadModel;
 
@@ -526,7 +526,7 @@ namespace Hydra.FileStorage.Api.Services
 
                     uploadModel.Id = existedFileUpload.Id;
                     uploadModel.Directory = directory;
-                    uploadModel.Size = ConvertSizeToString(existedFileUpload.Size);
+                    uploadModel.Size = existedFileUpload.Size;
                     uploadModel.Thumbnail = existedFileUpload.Thumbnail;
                     uploadModel.Extension = existedFileUpload.Extension;
                     uploadModel.UploadDate = registerDate;
@@ -554,7 +554,7 @@ namespace Hydra.FileStorage.Api.Services
                 uploadModel.Directory = directory;
                 uploadModel.Thumbnail = fileUpload.Thumbnail;
                 uploadModel.Extension = fileUpload.Extension;
-                uploadModel.Size = ConvertSizeToString(fileUpload.Size);
+                uploadModel.Size = fileUpload.Size;
                 uploadModel.UploadDate = registerDate;
                 uploadModel.UserId = userId;
 
@@ -637,7 +637,7 @@ namespace Hydra.FileStorage.Api.Services
 
                     uploadModel.Id = existedFileUpload.Id;
                     uploadModel.Directory = directory;
-                    uploadModel.Size = ConvertSizeToString(existedFileUpload.Size);
+                    uploadModel.Size = existedFileUpload.Size;
                     uploadModel.Thumbnail = existedFileUpload.Thumbnail;
                     uploadModel.Extension = existedFileUpload.Extension;
                     uploadModel.UploadDate = registerDate;
@@ -666,7 +666,7 @@ namespace Hydra.FileStorage.Api.Services
                 uploadModel.Directory = directory;
                 uploadModel.Thumbnail = fileUpload.Thumbnail;
                 uploadModel.Extension = fileUpload.Extension;
-                uploadModel.Size = ConvertSizeToString(fileUpload.Size);
+                uploadModel.Size = fileUpload.Size;
                 uploadModel.UploadDate = registerDate;
                 uploadModel.UserId = userId;
 

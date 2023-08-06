@@ -42,10 +42,10 @@ namespace Hydra.FileStorage.Api.Endpoints
 
             endpoints.MapGet(API_SCHEMA + "/DeleteFile", FileStorageHandler.DeleteFile).RequirePermission("CMS.DELETE_ARTICLE");
 
-            endpoints.MapGet(API_SCHEMA + "/DownloadFile", FileStorageHandler.DownloadFile).RequirePermission("CMS.DELETE_ARTICLE");
-            endpoints.MapGet(API_SCHEMA + "/DownloadFileStream", FileStorageHandler.DownloadFileStream).RequirePermission("CMS.DELETE_ARTICLE");
-            endpoints.MapGet(API_SCHEMA + "/DownloadFileByName", FileStorageHandler.DownloadFileByName).RequirePermission("CMS.DELETE_ARTICLE");
-            endpoints.MapGet(API_SCHEMA + "/DownloadFileStreamByName", FileStorageHandler.DownloadFileStreamByName).RequirePermission("CMS.DELETE_ARTICLE");
+            endpoints.MapGet(API_SCHEMA + "/DownloadFile", FileStorageHandler.DownloadFile).AllowAnonymous();
+            endpoints.MapGet(API_SCHEMA + "/DownloadFileStream", FileStorageHandler.DownloadFileStream).AllowAnonymous();
+            endpoints.MapGet(API_SCHEMA + "/DownloadFileByName", FileStorageHandler.DownloadFileByName).AllowAnonymous();
+            endpoints.MapGet(API_SCHEMA + "/DownloadFileStreamByName", FileStorageHandler.DownloadFileStreamByName).AllowAnonymous();
 
             return endpoints;
         }
