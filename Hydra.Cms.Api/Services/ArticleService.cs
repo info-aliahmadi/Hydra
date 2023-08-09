@@ -62,7 +62,7 @@ namespace Hydra.Cms.Api.Services
                                       Avatar = article.Editor.Avatar
                                   },
                                   IsDraft = article.IsDraft,
-                                  Tags = article.Tags,
+                                  TagsIds = article.Tags.Select(x => x.Id).ToList(),
                                   TopicsIds = article.Topics.Select(x => x.Id).ToList()
 
                               }).ToPaginatedListAsync(dataGrid);
@@ -124,7 +124,7 @@ namespace Hydra.Cms.Api.Services
                     Avatar = article.Editor?.Avatar
                 },
                 IsDraft = article.IsDraft,
-                Tags = article.Tags,
+                TagsIds = article.Tags.Select(x => x.Id).ToList(),
                 TopicsIds = article.Topics.Select(x => x.Id).ToList()
             };
             result.Data = articleModel;
@@ -158,7 +158,7 @@ namespace Hydra.Cms.Api.Services
                 RegisterDate = DateTime.UtcNow,
                 WriterId = articleModel.WriterId,
                 IsDraft = articleModel.IsDraft,
-                Tags = articleModel.Tags,
+                Tags = _queryRepository.Table<Tag>().Where(x => articleModel.TagsIds.Contains(x.Id)).ToList(),
                 PreviewImageId = articleModel.PreviewImageId,
                 PreviewImageUrl = articleModel.PreviewImageUrl,
                 Topics = _queryRepository.Table<Topic>().Where(x => articleModel.TopicsIds.Contains(x.Id)).ToList()
@@ -227,7 +227,7 @@ namespace Hydra.Cms.Api.Services
             article.EditorId = articleModel.EditorId;
             article.EditDate = DateTime.UtcNow;
             article.IsDraft = articleModel.IsDraft;
-            article.Tags = articleModel.Tags;
+            article.Tags = _queryRepository.Table<Tag>().Where(x => articleModel.TagsIds.Contains(x.Id)).ToList();
             article.PreviewImageId = articleModel.PreviewImageId;
             article.PreviewImageUrl = articleModel.PreviewImageUrl;
             article.Topics = _queryRepository.Table<Topic>().Where(x => articleModel.TopicsIds.Contains(x.Id)).ToList();

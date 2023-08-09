@@ -29,11 +29,6 @@ namespace Hydra.Cms.Core.Domain
         /// <summary>
         /// 
         /// </summary>
-        public string Tags { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
         public DateTime RegisterDate { get; set; }
 
         /// <summary>
@@ -74,6 +69,10 @@ namespace Hydra.Cms.Core.Domain
         /// 
         /// </summary>
         public IList<Topic> Topics { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public IList<Tag> Tags { get; set; }
 
     }
 
