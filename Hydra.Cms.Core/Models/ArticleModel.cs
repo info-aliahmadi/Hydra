@@ -33,7 +33,7 @@ namespace Hydra.Cms.Core.Models
         /// <summary>
         /// 
         /// </summary>
-        public List<int> TagsIds { get; set; } = new List<int>();
+        public List<string> Tags { get; set; } = new List<string>();
 
         /// <summary>
         /// 
