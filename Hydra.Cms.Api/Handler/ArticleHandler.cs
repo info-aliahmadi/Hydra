@@ -5,6 +5,7 @@ using Hydra.Cms.Core.Models;
 using Hydra.Kernel.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Hydra.Cms.Api.Handler
 {
@@ -56,10 +57,13 @@ namespace Hydra.Cms.Api.Handler
         /// <param name="articleModel"></param>
         /// <returns></returns>
         public static async Task<IResult> AddArticle(
+            ClaimsPrincipal userClaim,
             IArticleService _articleService,
             [FromBody] ArticleModel articleModel
             )
         {
+            var userId = int.Parse(userClaim?.FindFirst("identity")?.Value);
+            articleModel.WriterId = userId;
             var result = await _articleService.Add(articleModel);
 
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
@@ -72,10 +76,13 @@ namespace Hydra.Cms.Api.Handler
         /// <param name="articleModel"></param>
         /// <returns></returns>
         public static async Task<IResult> UpdateArticle(
+            ClaimsPrincipal userClaim,
             IArticleService _articleService,
             [FromBody] ArticleModel articleModel
             )
         {
+            var userId = int.Parse(userClaim?.FindFirst("identity")?.Value);
+            articleModel.EditorId = userId;
             var result = await _articleService.Update(articleModel);
 
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);

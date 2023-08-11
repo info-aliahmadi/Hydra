@@ -19,11 +19,13 @@ namespace Hydra.Cms.Api.Services
     {
         private readonly IQueryRepository _queryRepository;
         private readonly ICommandRepository _commandRepository;
+        private readonly ITagService _tagService;
 
-        public ArticleService(IQueryRepository queryRepository, ICommandRepository commandRepository)
+        public ArticleService(IQueryRepository queryRepository, ICommandRepository commandRepository, ITagService tagService)
         {
             _queryRepository = queryRepository;
             _commandRepository = commandRepository;
+            _tagService = tagService;
         }
 
         /// <summary>
@@ -67,20 +69,6 @@ namespace Hydra.Cms.Api.Services
 
                               }).ToPaginatedListAsync(dataGrid);
 
-            //var userIds = list.Items.Select(x => x.Id);
-
-            //var userRoleTable = from userRole in _queryRepository.Table<UserRole>()
-            //                    join role in _queryRepository.Table<Role>() on userRole.RoleId equals role.Id
-            //                    where userIds.Contains(userRole.UserId)
-            //                    select new
-            //                    {
-            //                        role.Id,
-            //                        userRole.UserId,
-            //                    };
-            //foreach (var item in list.Items)
-            //{
-            //    item.RoleIds = userRoleTable.Where(x => x.UserId == item.Id).Select(x => x.Id).ToList();
-            //}
 
             result.Data = list;
 
@@ -140,60 +128,52 @@ namespace Hydra.Cms.Api.Services
         public async Task<Result<ArticleModel>> Add(ArticleModel articleModel)
         {
             var result = new Result<ArticleModel>();
-
-            bool isExist = await _queryRepository.Table<Article>().AnyAsync(x => x.Subject == articleModel.Subject);
-            if (isExist)
+            try
             {
-                result.Status = ResultStatusEnum.ItsDuplicate;
-                result.Message = "The Subject already exist";
-                result.Errors.Add(new Error(nameof(articleModel.Subject), "The Subject already exist"));
+                bool isExist = await _queryRepository.Table<Article>().AnyAsync(x => x.Subject == articleModel.Subject);
+                if (isExist)
+                {
+                    result.Status = ResultStatusEnum.ItsDuplicate;
+                    result.Message = "The Subject already exist";
+                    result.Errors.Add(new Error(nameof(articleModel.Subject), "The Subject already exist"));
+                    return result;
+                }
+                var tags = articleModel.Tags.ToArray();
+                await _tagService.Add(tags);
+
+                var article = new Article()
+                {
+                    Subject = articleModel.Subject,
+                    Body = articleModel.Body,
+                    PublishDate = articleModel.PublishDate,
+                    RegisterDate = DateTime.UtcNow,
+                    WriterId = articleModel.WriterId,
+                    IsDraft = articleModel.IsDraft,
+                    PreviewImageId = articleModel.PreviewImageId,
+                    PreviewImageUrl = articleModel.PreviewImageUrl,
+                };
+
+                await _commandRepository.InsertAsync(article);
+
+                await _commandRepository.SaveChangesAsync();
+
+                article.Tags = _queryRepository.Table<Tag>().Where(x => articleModel.Tags.Contains(x.Title)).ToList();
+                article.Topics = _queryRepository.Table<Topic>().Where(x => articleModel.TopicsIds.Contains(x.Id)).ToList();
+
+                await _commandRepository.SaveChangesAsync();
+
+                articleModel.Id = article.Id;
+
+                result.Data = articleModel;
+
                 return result;
             }
-
-            var article = new Article()
+            catch (Exception e)
             {
-                Subject = articleModel.Subject,
-                Body = articleModel.Body,
-                PublishDate = articleModel.PublishDate,
-                RegisterDate = DateTime.UtcNow,
-                WriterId = articleModel.WriterId,
-                IsDraft = articleModel.IsDraft,
-                Tags = _queryRepository.Table<Tag>().Where(x => articleModel.Tags.Contains(x.Title)).ToList(),
-                PreviewImageId = articleModel.PreviewImageId,
-                PreviewImageUrl = articleModel.PreviewImageUrl,
-                Topics = _queryRepository.Table<Topic>().Where(x => articleModel.TopicsIds.Contains(x.Id)).ToList()
-            };
-
-            await _commandRepository.InsertAsync(article);
-
-            await _commandRepository.SaveChangesAsync();
-
-            //if (!string.IsNullOrEmpty(articleModel.SmallThumbnailFile))
-            //{
-            //    var saveFileResult = SaveThumbnailFile(articleModel.SmallThumbnailFile, article.Id, "small");
-            //    if (saveFileResult.Succeeded)
-            //    {
-            //        article.SmallThumbnail = saveFileResult.Data;
-            //    }
-            //}
-
-            //if (!string.IsNullOrEmpty(articleModel.LargeThumbnailFile))
-            //{
-            //    var saveFileResult = SaveThumbnailFile(articleModel.LargeThumbnailFile, article.Id, "large");
-            //    if (saveFileResult.Succeeded)
-            //    {
-            //        article.LargeThumbnail = saveFileResult.Data;
-            //    }
-            //}
-            _commandRepository.UpdateAsync(article);
-
-            await _commandRepository.SaveChangesAsync();
-
-            articleModel.Id = article.Id;
-
-            result.Data = articleModel;
-
-            return result;
+                result.Message = e.Message;
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                return result;
+            }
         }
 
         /// <summary>
@@ -204,43 +184,54 @@ namespace Hydra.Cms.Api.Services
         public async Task<Result<ArticleModel>> Update(ArticleModel articleModel)
         {
             var result = new Result<ArticleModel>();
-
-            var article = await _queryRepository.Table<Article>().FirstOrDefaultAsync(x => x.Id == articleModel.Id);
-            if (article is null)
+            try
             {
-                result.Status = ResultStatusEnum.NotFound;
-                result.Message = "The Article not found";
+                var article = await _queryRepository.Table<Article>().FirstOrDefaultAsync(x => x.Id == articleModel.Id);
+                if (article is null)
+                {
+                    result.Status = ResultStatusEnum.NotFound;
+                    result.Message = "The Article not found";
+                    return result;
+                }
+
+                await _tagService.Add(articleModel.Tags.ToArray());
+
+                bool isExist = await _queryRepository.Table<Article>().AnyAsync(x => x.Id != articleModel.Id && x.Subject == articleModel.Subject);
+                if (isExist)
+                {
+                    result.Status = ResultStatusEnum.ItsDuplicate;
+                    result.Message = "The Subject already exist";
+                    result.Errors.Add(new Error(nameof(articleModel.Subject), "The Subject already exist"));
+                    return result;
+                }
+
+                article.Subject = articleModel.Subject;
+                article.Body = articleModel.Body;
+                article.EditorId = articleModel.EditorId;
+                article.EditDate = DateTime.UtcNow;
+                article.IsDraft = articleModel.IsDraft;
+                article.PreviewImageId = articleModel.PreviewImageId;
+                article.PreviewImageUrl = articleModel.PreviewImageUrl;
+
+                _commandRepository.UpdateAsync(article);
+
+                await _commandRepository.SaveChangesAsync();
+
+                article.Tags = _queryRepository.Table<Tag>().Where(x => articleModel.Tags.Contains(x.Title)).ToList();
+                article.Topics = _queryRepository.Table<Topic>().Where(x => articleModel.TopicsIds.Contains(x.Id)).ToList();
+
+                await _commandRepository.SaveChangesAsync();
+
+                result.Data = articleModel;
+
                 return result;
             }
-
-            bool isExist = await _queryRepository.Table<Article>().AnyAsync(x => x.Id != articleModel.Id && x.Subject == articleModel.Subject);
-            if (isExist)
+            catch (Exception e)
             {
-                result.Status = ResultStatusEnum.ItsDuplicate;
-                result.Message = "The Subject already exist";
-                result.Errors.Add(new Error(nameof(articleModel.Subject), "The Subject already exist"));
+                result.Message = e.Message;
+                result.Status = ResultStatusEnum.ExceptionThrowed;
                 return result;
             }
-
-            article.Subject = articleModel.Subject;
-            article.Body = articleModel.Body;
-            article.EditorId = articleModel.EditorId;
-            article.EditDate = DateTime.UtcNow;
-            article.IsDraft = articleModel.IsDraft;
-            article.Tags = _queryRepository.Table<Tag>().Where(x => articleModel.Tags.Contains(x.Title)).ToList();
-            article.PreviewImageId = articleModel.PreviewImageId;
-            article.PreviewImageUrl = articleModel.PreviewImageUrl;
-            article.Topics = _queryRepository.Table<Topic>().Where(x => articleModel.TopicsIds.Contains(x.Id)).ToList();
-
-
-
-            _commandRepository.UpdateAsync(article);
-
-            await _commandRepository.SaveChangesAsync();
-
-            result.Data = articleModel;
-
-            return result;
         }
 
         /// <summary>

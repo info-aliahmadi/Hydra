@@ -117,6 +117,32 @@ namespace Hydra.Cms.Api.Services
         /// </summary>
         /// <param name="tagModel"></param>
         /// <returns></returns>
+        public async Task<Result> Add(string[] tags)
+        {
+            var result = new Result();
+
+            var existedTags = _queryRepository.Table<Tag>().AsNoTracking().Where(x => tags.Contains(x.Title)).ToList();
+
+            var newTags = tags.Where(x => !existedTags.Select(s => s.Title).ToArray().Contains(x)).Select(tagName => new Tag()
+            {
+                Title = tagName
+            });
+
+            foreach (var tag in newTags)
+            {
+                await _commandRepository.InsertAsync(tag);
+            }
+
+            await _commandRepository.SaveChangesAsync();
+            _commandRepository.ResetContextState();
+            return result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tagModel"></param>
+        /// <returns></returns>
         public async Task<Result<TagModel>> Update(TagModel tagModel)
         {
             var result = new Result<TagModel>();
