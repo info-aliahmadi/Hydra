@@ -23,7 +23,7 @@ namespace Hydra.Cms.Core.Domain
         /// <summary>
         /// 
         /// </summary>
-        public IList<Article> Articles { get; set; }
+        public ICollection<Article> Articles { get; set; }
 
         /// <summary>
         /// 

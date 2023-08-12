@@ -29,22 +29,22 @@ namespace Hydra.Migrations.Migrations
                 schema: "Cms",
                 columns: table => new
                 {
-                    ArticlesId = table.Column<int>(type: "int", nullable: false),
-                    TagsId = table.Column<int>(type: "int", nullable: false)
+                    ArticleId = table.Column<int>(type: "int", nullable: false),
+                    TagId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ArticleTag", x => new { x.ArticlesId, x.TagsId });
+                    table.PrimaryKey("PK_ArticleTag", x => new { x.TagId, x.ArticleId });
                     table.ForeignKey(
-                        name: "FK_ArticleTag_Article_ArticlesId",
-                        column: x => x.ArticlesId,
+                        name: "FK_ArticleTag_Article_ArticleId",
+                        column: x => x.ArticleId,
                         principalSchema: "Cms",
                         principalTable: "Article",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ArticleTag_Tag_TagsId",
-                        column: x => x.TagsId,
+                        name: "FK_ArticleTag_Tag_TagId",
+                        column: x => x.TagId,
                         principalSchema: "Cms",
                         principalTable: "Tag",
                         principalColumn: "Id",
@@ -52,10 +52,10 @@ namespace Hydra.Migrations.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ArticleTag_TagsId",
+                name: "IX_ArticleTag_ArticleId",
                 schema: "Cms",
                 table: "ArticleTag",
-                column: "TagsId");
+                column: "ArticleId");
         }
 
         /// <inheritdoc />

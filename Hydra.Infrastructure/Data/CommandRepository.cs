@@ -139,7 +139,14 @@ namespace Hydra.Infrastructure.Data
             return _dbContext.Database.ExecuteSqlRawAsync(sql, parameters, cancellationToken);
         }
 
-        public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken)) => _dbContext.SaveChangesAsync(cancellationToken);
+        public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken)) {
+
+            return _dbContext.SaveChangesAsync(cancellationToken);
+        
+        }
+
+        public int SaveChanges() => _dbContext.SaveChanges();
+
 
         public void Dispose()
         {

@@ -22,21 +22,6 @@ namespace Hydra.Migrations.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ArticleTag", b =>
-                {
-                    b.Property<int>("ArticlesId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TagsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ArticlesId", "TagsId");
-
-                    b.HasIndex("TagsId");
-
-                    b.ToTable("ArticleTag", "Cms");
-                });
-
             modelBuilder.Entity("ArticleTopic", b =>
                 {
                     b.Property<int>("ArticlesId")
@@ -100,6 +85,21 @@ namespace Hydra.Migrations.Migrations
                     b.HasIndex("WriterId");
 
                     b.ToTable("Article", "Cms");
+                });
+
+            modelBuilder.Entity("Hydra.Cms.Core.Domain.ArticleTag", b =>
+                {
+                    b.Property<int>("TagId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ArticleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TagId", "ArticleId");
+
+                    b.HasIndex("ArticleId");
+
+                    b.ToTable("ArticleTag", "Cms");
                 });
 
             modelBuilder.Entity("Hydra.Cms.Core.Domain.Tag", b =>
@@ -467,21 +467,6 @@ namespace Hydra.Migrations.Migrations
                     b.ToTable("PermissionRole", "Auth");
                 });
 
-            modelBuilder.Entity("ArticleTag", b =>
-                {
-                    b.HasOne("Hydra.Cms.Core.Domain.Article", null)
-                        .WithMany()
-                        .HasForeignKey("ArticlesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Hydra.Cms.Core.Domain.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ArticleTopic", b =>
                 {
                     b.HasOne("Hydra.Cms.Core.Domain.Article", null)
@@ -512,6 +497,25 @@ namespace Hydra.Migrations.Migrations
                     b.Navigation("Editor");
 
                     b.Navigation("Writer");
+                });
+
+            modelBuilder.Entity("Hydra.Cms.Core.Domain.ArticleTag", b =>
+                {
+                    b.HasOne("Hydra.Cms.Core.Domain.Article", "Article")
+                        .WithMany("ArticleTags")
+                        .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Hydra.Cms.Core.Domain.Tag", "Tag")
+                        .WithMany("ArticleTags")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Article");
+
+                    b.Navigation("Tag");
                 });
 
             modelBuilder.Entity("Hydra.Cms.Core.Domain.Topic", b =>
@@ -602,6 +606,16 @@ namespace Hydra.Migrations.Migrations
                         .HasForeignKey("RolesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Hydra.Cms.Core.Domain.Article", b =>
+                {
+                    b.Navigation("ArticleTags");
+                });
+
+            modelBuilder.Entity("Hydra.Cms.Core.Domain.Tag", b =>
+                {
+                    b.Navigation("ArticleTags");
                 });
 
             modelBuilder.Entity("Hydra.Infrastructure.Security.Domain.Role", b =>

@@ -125,6 +125,12 @@ namespace Hydra.Kernel.Interfaces.Data
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken));
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        int SaveChanges();
+
         void Dispose();
     }
 }

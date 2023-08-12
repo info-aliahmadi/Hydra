@@ -13,7 +13,11 @@ namespace Hydra.Cms.Core.Domain
         /// <summary>
         /// 
         /// </summary>
-        public IList<Article> Articles { get; set; }
+        public List<Article> Articles { get; set; } = new();
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<ArticleTag> ArticleTags { get; set; } = new();
 
     }
 }

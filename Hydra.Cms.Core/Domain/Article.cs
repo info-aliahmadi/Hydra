@@ -68,11 +68,16 @@ namespace Hydra.Cms.Core.Domain
         /// <summary>
         /// 
         /// </summary>
-        public IList<Topic> Topics { get; set; }
+        public ICollection<Topic> Topics { get; set; }
         /// <summary>
         /// 
         /// </summary>
-        public IList<Tag> Tags { get; set; }
+        public List<Tag> Tags { get; set; } = new();
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<ArticleTag> ArticleTags { get; set; } = new();
+
 
     }
 

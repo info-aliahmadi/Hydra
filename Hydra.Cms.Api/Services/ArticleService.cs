@@ -190,7 +190,7 @@ namespace Hydra.Cms.Api.Services
             var result = new Result<ArticleModel>();
             try
             {
-                var article = await _queryRepository.Table<Article>().FirstOrDefaultAsync(x => x.Id == articleModel.Id);
+                var article = await _queryRepository.Table<Article>().FirstAsync(x => x.Id == articleModel.Id);
                 if (article is null)
                 {
                     result.Status = ResultStatusEnum.NotFound;
@@ -200,15 +200,6 @@ namespace Hydra.Cms.Api.Services
 
                 await _tagService.Add(articleModel.Tags.ToArray());
 
-                bool isExist = await _queryRepository.Table<Article>().AnyAsync(x => x.Id != articleModel.Id && x.Subject == articleModel.Subject);
-                if (isExist)
-                {
-                    result.Status = ResultStatusEnum.ItsDuplicate;
-                    result.Message = "The Subject already exist";
-                    result.Errors.Add(new Error(nameof(articleModel.Subject), "The Subject already exist"));
-                    return result;
-                }
-
                 article.Subject = articleModel.Subject;
                 article.Body = articleModel.Body;
                 article.EditorId = articleModel.EditorId;
@@ -217,12 +208,17 @@ namespace Hydra.Cms.Api.Services
                 article.PreviewImageId = articleModel.PreviewImageId;
                 article.PreviewImageUrl = articleModel.PreviewImageUrl;
 
+                var removedTag = article.Tags.AsEnumerable();
 
-                article.Tags = _queryRepository.Table<Tag>().Where(x => articleModel.Tags.Contains(x.Title)).ToList();
-                ////article.Topics = _queryRepository.Table<Topic>().Where(x => articleModel.TopicsIds.Contains(x.Id)).ToList();
+                foreach (var tag in removedTag)
+                {
+                    article.Tags.Remove(tag);
+                }
+                var tags = _queryRepository.Table<ArticleTag>().Where(x => x.ArticleId == article.Id).AsEnumerable();
 
-                _commandRepository.DetectChanges();
-                _commandRepository.UpdateAsync(article);
+                _commandRepository.DeleteAsync(tags);
+
+                //_commandRepository.UpdateAsync(article);
                 await _commandRepository.SaveChangesAsync();
 
 
