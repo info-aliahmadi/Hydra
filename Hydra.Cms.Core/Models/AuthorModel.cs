@@ -4,7 +4,7 @@ namespace Hydra.Cms.Core.Models
 {
     public record AuthorModel
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         public string? Name { get; set; }
 

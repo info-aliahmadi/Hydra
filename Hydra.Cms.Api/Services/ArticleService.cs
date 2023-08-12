@@ -3,6 +3,7 @@ using Hydra.Cms.Core.Domain;
 using Hydra.Cms.Core.Interfaces;
 using Hydra.Cms.Core.Models;
 using Hydra.Infrastructure;
+using Hydra.Infrastructure.Data;
 using Hydra.Infrastructure.Data.Extension;
 using Hydra.Infrastructure.Security.Domain;
 using Hydra.Kernel.Extensions;
@@ -46,6 +47,7 @@ namespace Hydra.Cms.Api.Services
                                   PreviewImageId = article.PreviewImageId,
                                   PreviewImageUrl = article.PreviewImageUrl,
                                   PublishDate = article.PublishDate,
+                                  EditDate = article.EditDate,
                                   RegisterDate = article.RegisterDate,
                                   WriterId = article.WriterId,
                                   EditorId = article.EditorId,
@@ -58,10 +60,10 @@ namespace Hydra.Cms.Api.Services
                                   },
                                   Editor = new AuthorModel()
                                   {
-                                      Id = article.Editor.Id,
-                                      Name = article.Editor.Name ?? "",
-                                      UserName = article.Editor.UserName,
-                                      Avatar = article.Editor.Avatar
+                                      Id = article.Editor!.Id,
+                                      Name = article.Editor!.Name ?? "",
+                                      UserName = article.Editor!.UserName ?? "",
+                                      Avatar = article.Editor!.Avatar ?? ""
                                   },
                                   IsDraft = article.IsDraft,
                                   Tags = article.Tags.Select(x => x.Title).ToList(),
@@ -83,7 +85,7 @@ namespace Hydra.Cms.Api.Services
         public async Task<Result<ArticleModel>> GetById(int id)
         {
             var result = new Result<ArticleModel>();
-            var article = await _queryRepository.Table<Article>().Include(x => x.Writer).Include(x => x.Editor).Where(x => x.Id == id)
+            var article = await _queryRepository.Table<Article>().Include(x => x.Writer).Include(x => x.Editor).Include(x => x.Tags).Include(x => x.Topics).Where(x => x.Id == id)
                 .FirstOrDefaultAsync();
 
             var articleModel = new ArticleModel()
@@ -95,6 +97,7 @@ namespace Hydra.Cms.Api.Services
                 PreviewImageUrl = article.PreviewImageUrl,
                 PublishDate = article.PublishDate,
                 RegisterDate = article.RegisterDate,
+                EditDate = article.EditDate,
                 WriterId = article.WriterId,
                 EditorId = article.EditorId,
                 Writer = new AuthorModel()
@@ -160,6 +163,7 @@ namespace Hydra.Cms.Api.Services
                 article.Tags = _queryRepository.Table<Tag>().Where(x => articleModel.Tags.Contains(x.Title)).ToList();
                 article.Topics = _queryRepository.Table<Topic>().Where(x => articleModel.TopicsIds.Contains(x.Id)).ToList();
 
+
                 await _commandRepository.SaveChangesAsync();
 
                 articleModel.Id = article.Id;
@@ -213,14 +217,14 @@ namespace Hydra.Cms.Api.Services
                 article.PreviewImageId = articleModel.PreviewImageId;
                 article.PreviewImageUrl = articleModel.PreviewImageUrl;
 
-                _commandRepository.UpdateAsync(article);
-
-                await _commandRepository.SaveChangesAsync();
 
                 article.Tags = _queryRepository.Table<Tag>().Where(x => articleModel.Tags.Contains(x.Title)).ToList();
-                article.Topics = _queryRepository.Table<Topic>().Where(x => articleModel.TopicsIds.Contains(x.Id)).ToList();
+                ////article.Topics = _queryRepository.Table<Topic>().Where(x => articleModel.TopicsIds.Contains(x.Id)).ToList();
 
+                _commandRepository.DetectChanges();
+                _commandRepository.UpdateAsync(article);
                 await _commandRepository.SaveChangesAsync();
+
 
                 result.Data = articleModel;
 

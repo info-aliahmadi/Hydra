@@ -24,6 +24,11 @@ namespace Hydra.Kernel.Interfaces.Data
         void ResetContextState();
 
         /// <summary>
+        /// 
+        /// </summary>
+        void DetectChanges();
+
+        /// <summary>
         /// This method takes <typeparamref name="TEntity"/>, insert it into database and returns <see cref="Task{TResult}"/>.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>

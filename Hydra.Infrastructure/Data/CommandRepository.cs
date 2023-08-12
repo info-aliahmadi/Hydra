@@ -35,6 +35,13 @@ namespace Hydra.Infrastructure.Data
         {
             _dbContext.ChangeTracker.Clear();
         }
+
+        public void DetectChanges()
+        {
+            _dbContext.ChangeTracker.DetectChanges();
+
+            _dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
+        }
         public async Task<T> InsertAsync<T>(T entity, CancellationToken cancellationToken = default)
            where T : class
         {
