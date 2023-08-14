@@ -1,16 +1,10 @@
-﻿using Hydra.Auth.Core.Models;
-using Hydra.Cms.Core.Domain;
+﻿using Hydra.Cms.Core.Domain;
 using Hydra.Cms.Core.Interfaces;
 using Hydra.Cms.Core.Models;
-using Hydra.Infrastructure;
-using Hydra.Infrastructure.Data;
 using Hydra.Infrastructure.Data.Extension;
-using Hydra.Infrastructure.Security.Domain;
 using Hydra.Kernel.Extensions;
 using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -38,7 +32,7 @@ namespace Hydra.Cms.Api.Services
         {
             var result = new Result<PaginatedList<ArticleModel>>();
 
-            var list = await (from article in _queryRepository.Table<Article>().Include(x => x.Writer).Include(x => x.Editor)
+            var list = await (from article in _queryRepository.Table<Article>().Where(x => !x.IsDeleted).Include(x => x.Writer).Include(x => x.Editor)
                               select new ArticleModel()
                               {
                                   Id = article.Id,
@@ -77,6 +71,53 @@ namespace Hydra.Cms.Api.Services
             return result;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dataGrid"></param>
+        /// <returns></returns>
+        public async Task<Result<PaginatedList<ArticleModel>>> GetTrashList(GridDataBound dataGrid)
+        {
+            var result = new Result<PaginatedList<ArticleModel>>();
+
+            var list = await (from article in _queryRepository.Table<Article>().Where(x => x.IsDeleted).Include(x => x.Writer).Include(x => x.Editor)
+                              select new ArticleModel()
+                              {
+                                  Id = article.Id,
+                                  Subject = article.Subject,
+                                  Body = article.Body,
+                                  PreviewImageId = article.PreviewImageId,
+                                  PreviewImageUrl = article.PreviewImageUrl,
+                                  PublishDate = article.PublishDate,
+                                  EditDate = article.EditDate,
+                                  RegisterDate = article.RegisterDate,
+                                  WriterId = article.WriterId,
+                                  EditorId = article.EditorId,
+                                  Writer = new AuthorModel()
+                                  {
+                                      Id = article.Writer.Id,
+                                      Name = article.Writer.Name,
+                                      UserName = article.Writer.UserName,
+                                      Avatar = article.Writer.Avatar
+                                  },
+                                  Editor = new AuthorModel()
+                                  {
+                                      Id = article.Editor!.Id,
+                                      Name = article.Editor!.Name ?? "",
+                                      UserName = article.Editor!.UserName ?? "",
+                                      Avatar = article.Editor!.Avatar ?? ""
+                                  },
+                                  IsDraft = article.IsDraft,
+                                  Tags = article.Tags.Select(x => x.Title).ToList(),
+                                  TopicsIds = article.Topics.Select(x => x.Id).ToList()
+
+                              }).ToPaginatedListAsync(dataGrid);
+
+
+            result.Data = list;
+
+            return result;
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -190,15 +231,24 @@ namespace Hydra.Cms.Api.Services
             var result = new Result<ArticleModel>();
             try
             {
-                var article = await _queryRepository.Table<Article>().FirstAsync(x => x.Id == articleModel.Id);
+                var article = await _queryRepository.Table<Article>().AsNoTracking().FirstAsync(x => x.Id == articleModel.Id);
                 if (article is null)
                 {
                     result.Status = ResultStatusEnum.NotFound;
                     result.Message = "The Article not found";
                     return result;
                 }
+                bool isExist = await _queryRepository.Table<Article>().AnyAsync(x => x.Id != articleModel.Id && x.Subject == articleModel.Subject);
+                if (isExist)
+                {
+                    result.Status = ResultStatusEnum.ItsDuplicate;
+                    result.Message = "The Subject already exist";
+                    result.Errors.Add(new Error(nameof(articleModel.Subject), "The Subject already exist"));
+                    return result;
+                }
+                var tags = articleModel.Tags.ToArray();
 
-                await _tagService.Add(articleModel.Tags.ToArray());
+                await _tagService.Add(tags);
 
                 article.Subject = articleModel.Subject;
                 article.Body = articleModel.Body;
@@ -208,17 +258,15 @@ namespace Hydra.Cms.Api.Services
                 article.PreviewImageId = articleModel.PreviewImageId;
                 article.PreviewImageUrl = articleModel.PreviewImageUrl;
 
-                var removedTag = article.Tags.AsEnumerable();
+                var newTagIds = (await _tagService.GetListByTitle(articleModel.Tags.ToArray())).Data.Select(x => x.Id).ToArray();
 
-                foreach (var tag in removedTag)
-                {
-                    article.Tags.Remove(tag);
-                }
-                var tags = _queryRepository.Table<ArticleTag>().Where(x => x.ArticleId == article.Id).AsEnumerable();
+                // remove then add new relationship
+                await UpdateArticleTopic(article.Id, articleModel.TopicsIds.ToArray());
 
-                _commandRepository.DeleteAsync(tags);
+                // remove then add new relationship
+                await UpdateArticleTags(article.Id, newTagIds);
 
-                //_commandRepository.UpdateAsync(article);
+                _commandRepository.UpdateAsync(article);
                 await _commandRepository.SaveChangesAsync();
 
 
@@ -237,9 +285,138 @@ namespace Hydra.Cms.Api.Services
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="roleIds"></param>
+        /// <returns></returns>
+        public async Task<Result> UpdateArticleTags(int articleId, int[] newTags)
+        {
+            var result = new Result();
+            try
+            {
+                var articleTags = _queryRepository.Table<ArticleTag>().Where(x => x.ArticleId == articleId).ToList();
+
+                var currentTags = articleTags.Select(x => x.TagId).ToArray();
+
+                if (!(newTags == currentTags))
+                {
+                    foreach (var articleTag in articleTags)
+                    {
+                        _commandRepository.DeleteAsync(articleTag);
+                    }
+                    foreach (var tag in newTags)
+                    {
+                        await _commandRepository.InsertAsync(new ArticleTag()
+                        {
+                            ArticleId = articleId,
+                            TagId = tag
+                        });
+                    }
+                    await _commandRepository.SaveChangesAsync();
+                }
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                result.Message = e.Message;
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="roleIds"></param>
+        /// <returns></returns>
+        public async Task<Result> UpdateArticleTopic(int articleId, int[] newTopics)
+        {
+            var result = new Result();
+            try
+            {
+                var articleTopics = _queryRepository.Table<ArticleTopic>().Where(x => x.ArticleId == articleId).ToList();
+
+                var currentTopics = articleTopics.Select(x => x.TopicId).ToArray();
+
+                if (!(newTopics == currentTopics))
+                {
+                    foreach (var articleTopic in articleTopics)
+                    {
+                        _commandRepository.DeleteAsync(articleTopic);
+                    }
+                    foreach (var topic in newTopics)
+                    {
+                        await _commandRepository.InsertAsync(new ArticleTopic()
+                        {
+                            ArticleId = articleId,
+                            TopicId = topic
+                        });
+                    }
+                    await _commandRepository.SaveChangesAsync();
+                }
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                result.Message = e.Message;
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         public async Task<Result> Delete(int id)
+        {
+            var result = new Result();
+            var article = await _queryRepository.Table<Article>().FirstOrDefaultAsync(x => x.Id == id);
+            if (article is null)
+            {
+                result.Status = ResultStatusEnum.NotFound;
+                result.Message = "The Article not found";
+                return result;
+            }
+
+            article.IsDeleted = true;
+
+            _commandRepository.UpdateAsync(article);
+            await _commandRepository.SaveChangesAsync();
+
+            return result;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Result> Restore(int id)
+        {
+            var result = new Result();
+            var article = await _queryRepository.Table<Article>().FirstOrDefaultAsync(x => x.Id == id);
+            if (article is null)
+            {
+                result.Status = ResultStatusEnum.NotFound;
+                result.Message = "The Article not found";
+                return result;
+            }
+
+            article.IsDeleted = false;
+
+            _commandRepository.UpdateAsync(article);
+            await _commandRepository.SaveChangesAsync();
+
+            return result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Result> Remove(int id)
         {
             var result = new Result();
             var article = await _queryRepository.Table<Article>().FirstOrDefaultAsync(x => x.Id == id);

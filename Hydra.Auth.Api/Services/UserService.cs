@@ -393,29 +393,22 @@ namespace Hydra.Auth.Api.Services
         /// <param name="userId"></param>
         /// <param name="roleIds"></param>
         /// <returns></returns>
-        public async Task<Result<UserModel>> AssignRolesToUser(int userId, int[] roleIds)
+        public async Task<Result<UserModel>> AssignRolesToUser(int userId, int[] newRoles)
         {
             var result = new Result<UserModel>();
             try
             {
                 var userRoles = _queryRepository.Table<UserRole>().Where(x => x.UserId == userId).ToList();
 
-                var mergedCount = userRoles.Count(x => roleIds.Contains(x.RoleId));
+                var currentRoles = userRoles.Select(x => x.RoleId).ToArray();
 
-                var inputRoleIdsCount = roleIds.Count();
-
-                var existedRolesCount = userRoles.Count();
-
-                if (inputRoleIdsCount > existedRolesCount || inputRoleIdsCount < existedRolesCount || mergedCount != existedRolesCount)
+                if (!(currentRoles == newRoles))
                 {
                     foreach (var userRole in userRoles)
                     {
-                        _commandRepository.DeleteAsync<UserRole>(userRole);
+                        _commandRepository.DeleteAsync(userRole);
                     }
-
-                    var newRoles = _queryRepository.Table<Role>().Where(x => roleIds.Contains(x.Id)).ToList();
-
-                    foreach (var roleid in roleIds)
+                    foreach (var roleid in newRoles)
                     {
                         await _commandRepository.InsertAsync(new UserRole()
                         {
@@ -423,12 +416,9 @@ namespace Hydra.Auth.Api.Services
                             RoleId = roleid
                         });
                     }
-
                     await _commandRepository.SaveChangesAsync();
                 }
-
                 return result;
-
             }
             catch (Exception e)
             {
@@ -438,6 +428,7 @@ namespace Hydra.Auth.Api.Services
                 return result;
             }
         }
+
         /// <summary>
         /// 
         /// </summary>

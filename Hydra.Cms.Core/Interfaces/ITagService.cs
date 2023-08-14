@@ -17,8 +17,16 @@ namespace Hydra.Cms.Core.Interfaces
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="tags"></param>
+        /// <returns></returns>
+        Task<Result<List<TagModel>>> GetListByTitle(string[] tags);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <returns></returns>
         Task<Result<List<TagModel>>> GetListForSelect();
+
 
         /// <summary>
         /// 

@@ -12,6 +12,12 @@ namespace Hydra.Cms.Core.Interfaces
         /// <param name="dataGrid"></param>
         /// <returns></returns>
         Task<Result<PaginatedList<ArticleModel>>> GetList(GridDataBound dataGrid);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dataGrid"></param>
+        /// <returns></returns>
+        Task<Result<PaginatedList<ArticleModel>>> GetTrashList(GridDataBound dataGrid);
 
         /// <summary>
         /// 
@@ -40,6 +46,20 @@ namespace Hydra.Cms.Core.Interfaces
         /// <param name="id"></param>
         /// <returns></returns>
         Task<Result> Delete(int id);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<Result> Restore(int id);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<Result> Remove(int id);
 
     }
 }

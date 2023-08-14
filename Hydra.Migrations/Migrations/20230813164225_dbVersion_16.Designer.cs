@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nitro.Migrations;
 
@@ -11,9 +12,11 @@ using Nitro.Migrations;
 namespace Hydra.Migrations.Migrations
 {
     [DbContext(typeof(MigrationContext))]
-    partial class MigrationContextModelSnapshot : ModelSnapshot
+    [Migration("20230813164225_dbVersion_16")]
+    partial class dbVersion_16
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,9 +42,6 @@ namespace Hydra.Migrations.Migrations
 
                     b.Property<int?>("EditorId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDraft")
                         .HasColumnType("bit");
@@ -103,70 +103,6 @@ namespace Hydra.Migrations.Migrations
                     b.HasIndex("ArticleId");
 
                     b.ToTable("ArticleTopic", "Cms");
-                });
-
-            modelBuilder.Entity("Hydra.Cms.Core.Domain.Page", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Body")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("EditDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("EditorId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDraft")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("PageTitle")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<DateTime>("RegisterDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Subject")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<int>("WriterId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EditorId");
-
-                    b.HasIndex("WriterId");
-
-                    b.ToTable("Page", "Cms");
-                });
-
-            modelBuilder.Entity("Hydra.Cms.Core.Domain.PageTag", b =>
-                {
-                    b.Property<int>("TagId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PageId")
-                        .HasColumnType("int");
-
-                    b.HasKey("TagId", "PageId");
-
-                    b.HasIndex("PageId");
-
-                    b.ToTable("PageTag", "Cms");
                 });
 
             modelBuilder.Entity("Hydra.Cms.Core.Domain.Tag", b =>
@@ -589,42 +525,6 @@ namespace Hydra.Migrations.Migrations
                     b.Navigation("Topic");
                 });
 
-            modelBuilder.Entity("Hydra.Cms.Core.Domain.Page", b =>
-                {
-                    b.HasOne("Hydra.Infrastructure.Security.Domain.User", "Editor")
-                        .WithMany()
-                        .HasForeignKey("EditorId");
-
-                    b.HasOne("Hydra.Infrastructure.Security.Domain.User", "Writer")
-                        .WithMany()
-                        .HasForeignKey("WriterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Editor");
-
-                    b.Navigation("Writer");
-                });
-
-            modelBuilder.Entity("Hydra.Cms.Core.Domain.PageTag", b =>
-                {
-                    b.HasOne("Hydra.Cms.Core.Domain.Page", "Page")
-                        .WithMany("PageTags")
-                        .HasForeignKey("PageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Hydra.Cms.Core.Domain.Tag", "Tag")
-                        .WithMany("PageTags")
-                        .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Page");
-
-                    b.Navigation("Tag");
-                });
-
             modelBuilder.Entity("Hydra.Cms.Core.Domain.Topic", b =>
                 {
                     b.HasOne("Hydra.Cms.Core.Domain.Topic", "Parent")
@@ -722,16 +622,9 @@ namespace Hydra.Migrations.Migrations
                     b.Navigation("ArticleTopics");
                 });
 
-            modelBuilder.Entity("Hydra.Cms.Core.Domain.Page", b =>
-                {
-                    b.Navigation("PageTags");
-                });
-
             modelBuilder.Entity("Hydra.Cms.Core.Domain.Tag", b =>
                 {
                     b.Navigation("ArticleTags");
-
-                    b.Navigation("PageTags");
                 });
 
             modelBuilder.Entity("Hydra.Cms.Core.Domain.Topic", b =>

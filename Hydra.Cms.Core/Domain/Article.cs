@@ -63,12 +63,13 @@ namespace Hydra.Cms.Core.Domain
         /// <summary>
         /// 
         /// </summary>
-        public bool IsDraft { get; set; }
+        public bool IsDraft { get; set; } = false;
 
         /// <summary>
         /// 
         /// </summary>
-        public ICollection<Topic> Topics { get; set; }
+        public bool IsDeleted { get; set; } = false;
+
         /// <summary>
         /// 
         /// </summary>
@@ -79,6 +80,14 @@ namespace Hydra.Cms.Core.Domain
         public List<ArticleTag> ArticleTags { get; set; } = new();
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<Topic> Topics { get; set; } = new();
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<ArticleTopic> ArticleTopics { get; set; } = new();
     }
 
 }

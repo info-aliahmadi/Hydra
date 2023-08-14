@@ -19,5 +19,14 @@ namespace Hydra.Cms.Core.Domain
         /// </summary>
         public List<ArticleTag> ArticleTags { get; set; } = new();
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<Page> Pages { get; set; } = new();
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<PageTag> PageTags { get; set; } = new();
+
     }
 }

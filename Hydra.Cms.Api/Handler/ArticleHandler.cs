@@ -33,6 +33,28 @@ namespace Hydra.Cms.Api.Handler
             }
 
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_articleService"></param>
+        /// <param name="articleModel"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetTrashList(
+             IArticleService _articleService, GridDataBound dataGrid)
+        {
+            try
+            {
+                var result = await _articleService.GetTrashList(dataGrid);
+
+                return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
+
+        }
 
         /// <summary>
         /// 
@@ -101,6 +123,52 @@ namespace Hydra.Cms.Api.Handler
             try
             {
                 var result = await _articleService.Delete(articleId);
+
+                return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_articleService"></param>
+        /// <param name="articleId"></param>
+        /// <returns></returns>
+        public static async Task<IResult> RestoreArticle(
+            IArticleService _articleService,
+            int articleId
+            )
+        {
+            try
+            {
+                var result = await _articleService.Restore(articleId);
+
+                return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_articleService"></param>
+        /// <param name="articleId"></param>
+        /// <returns></returns>
+        public static async Task<IResult> RemoveArticle(
+            IArticleService _articleService,
+            int articleId
+            )
+        {
+            try
+            {
+                var result = await _articleService.Remove(articleId);
 
                 return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
 

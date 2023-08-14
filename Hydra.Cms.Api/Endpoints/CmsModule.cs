@@ -40,10 +40,13 @@ namespace Hydra.Cms.Api.Endpoints
             endpoints.MapGet(API_SCHEMA + "/DeleteTag", TagHandler.DeleteTag).RequirePermission("CMS.DELETE_TAG");
 
             endpoints.MapPost(API_SCHEMA + "/GetArticleList", ArticleHandler.GetList).RequirePermission("CMS.GET_ARTICLE_LIST");
+            endpoints.MapPost(API_SCHEMA + "/GetArticleTrashList", ArticleHandler.GetTrashList).RequirePermission("CMS.GET_TRASH_ARTICLE_LIST");
             endpoints.MapGet(API_SCHEMA + "/GetArticleById", ArticleHandler.GetArticleById).RequirePermission("CMS.GET_ARTICLE_BY_ID");
             endpoints.MapPost(API_SCHEMA + "/AddArticle", ArticleHandler.AddArticle).RequirePermission("CMS.ADD_ARTICLE");
             endpoints.MapPost(API_SCHEMA + "/UpdateArticle", ArticleHandler.UpdateArticle).RequirePermission("CMS.UPDATE_ARTICLE");
             endpoints.MapGet(API_SCHEMA + "/DeleteArticle", ArticleHandler.DeleteArticle).RequirePermission("CMS.DELETE_ARTICLE");
+            endpoints.MapGet(API_SCHEMA + "/RestoreArticle", ArticleHandler.RestoreArticle).RequirePermission("CMS.RESTORE_ARTICLE");
+            endpoints.MapGet(API_SCHEMA + "/RemoveArticle", ArticleHandler.RemoveArticle).RequirePermission("CMS.REMOVE_ARTICLE");
 
 
             return endpoints;

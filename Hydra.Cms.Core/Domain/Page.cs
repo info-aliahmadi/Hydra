@@ -1,14 +1,16 @@
 ﻿
-using Hydra.Auth.Core.Models;
-using Hydra.Cms.Core.Domain;
 using Hydra.Infrastructure.Security.Domain;
+using Hydra.Kernel;
 
-namespace Hydra.Cms.Core.Models
+namespace Hydra.Cms.Core.Domain
 {
-    public record ArticleModel
+    public class Page : BaseEntity<int>
     {
 
-        public int Id { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string PageTitle { get; set; }
 
         /// <summary>
         /// 
@@ -20,20 +22,6 @@ namespace Hydra.Cms.Core.Models
         /// </summary>
         public string Body { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public int? PreviewImageId { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public string? PreviewImageUrl { get; set; }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public List<string> Tags { get; set; } = new List<string>();
 
         /// <summary>
         /// 
@@ -43,12 +31,7 @@ namespace Hydra.Cms.Core.Models
         /// <summary>
         /// 
         /// </summary>
-        public DateTime PublishDate { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public AuthorModel Writer { get; set; }
+        public User Writer { get; set; }
 
         /// <summary>
         /// 
@@ -58,7 +41,7 @@ namespace Hydra.Cms.Core.Models
         /// <summary>
         /// 
         /// </summary>
-        public AuthorModel? Editor { get; set; }
+        public User? Editor { get; set; }
 
         /// <summary>
         /// 
@@ -82,7 +65,11 @@ namespace Hydra.Cms.Core.Models
         /// <summary>
         /// 
         /// </summary>
-        public List<int> TopicsIds { get; set; } = new List<int>();
+        public List<Tag> Tags { get; set; } = new();
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<PageTag> PageTags { get; set; } = new();
 
 
     }

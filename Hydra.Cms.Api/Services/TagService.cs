@@ -46,6 +46,24 @@ namespace Hydra.Cms.Api.Services
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Result<List<TagModel>>> GetListByTitle(string[] tags)
+        {
+            var result = new Result<List<TagModel>>();
+
+            var list = await _queryRepository.Table<Tag>().Where(x => tags.Contains(x.Title)).Select(tag => new TagModel()
+            {
+                Id = tag.Id,
+                Title = tag.Title,
+            }).ToListAsync();
+
+            result.Data = list;
+            return result;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
         /// <returns></returns>
         public async Task<Result<List<TagModel>>> GetListForSelect()
         {

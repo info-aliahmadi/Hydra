@@ -23,16 +23,22 @@ namespace Hydra.Cms.Core.Domain
         /// <summary>
         /// 
         /// </summary>
-        public ICollection<Article> Articles { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
         public DateTime RegisterDate { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
         public int UserId { get; set; }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<Article> Articles { get; set; } = new();
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<ArticleTopic> ArticleTopics { get; set; } = new();
+
     }
 }
