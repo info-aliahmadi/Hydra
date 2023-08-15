@@ -72,6 +72,11 @@ namespace Hydra.Cms.Core.Models
         /// <summary>
         /// 
         /// </summary>
+        public bool IsPinned { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public bool IsDraft { get; set; }
 
         /// <summary>

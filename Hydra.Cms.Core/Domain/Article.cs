@@ -63,6 +63,11 @@ namespace Hydra.Cms.Core.Domain
         /// <summary>
         /// 
         /// </summary>
+        public bool IsPinned { get; set; } = false;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public bool IsDraft { get; set; } = false;
 
         /// <summary>

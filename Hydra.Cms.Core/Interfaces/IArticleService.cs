@@ -45,6 +45,14 @@ namespace Hydra.Cms.Core.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        Task<Result> Pin(int id);
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         Task<Result> Delete(int id);
 
         /// <summary>

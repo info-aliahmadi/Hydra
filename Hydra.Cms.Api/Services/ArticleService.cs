@@ -60,10 +60,11 @@ namespace Hydra.Cms.Api.Services
                                       Avatar = article.Editor!.Avatar ?? ""
                                   },
                                   IsDraft = article.IsDraft,
+                                  IsPinned = article.IsPinned,
                                   Tags = article.Tags.Select(x => x.Title).ToList(),
                                   TopicsIds = article.Topics.Select(x => x.Id).ToList()
 
-                              }).ToPaginatedListAsync(dataGrid);
+                              }).OrderByDescending(x=>x.IsPinned).ThenByDescending(x=>x.PublishDate).ToPaginatedListAsync(dataGrid);
 
 
             result.Data = list;
@@ -107,6 +108,7 @@ namespace Hydra.Cms.Api.Services
                                       UserName = article.Editor!.UserName ?? "",
                                       Avatar = article.Editor!.Avatar ?? ""
                                   },
+                                  IsPinned = article.IsPinned,
                                   IsDraft = article.IsDraft,
                                   Tags = article.Tags.Select(x => x.Title).ToList(),
                                   TopicsIds = article.Topics.Select(x => x.Id).ToList()
@@ -155,6 +157,7 @@ namespace Hydra.Cms.Api.Services
                     UserName = article.Editor?.UserName,
                     Avatar = article.Editor?.Avatar
                 },
+                IsPinned = article.IsPinned,
                 IsDraft = article.IsDraft,
                 Tags = article.Tags.Select(x => x.Title).ToList(),
                 TopicsIds = article.Topics.Select(x => x.Id).ToList()
@@ -364,6 +367,30 @@ namespace Hydra.Cms.Api.Services
             }
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Result> Pin(int id)
+        {
+            var result = new Result();
+            var article = await _queryRepository.Table<Article>().FirstOrDefaultAsync(x => x.Id == id);
+            if (article is null)
+            {
+                result.Status = ResultStatusEnum.NotFound;
+                result.Message = "The Article not found";
+                return result;
+            }
+
+            article.IsPinned = !article.IsPinned;
+
+            _commandRepository.UpdateAsync(article);
+            await _commandRepository.SaveChangesAsync();
+
+            return result;
+        }
         /// <summary>
         /// 
         /// </summary>

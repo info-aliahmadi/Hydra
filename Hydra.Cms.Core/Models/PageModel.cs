@@ -1,12 +1,14 @@
 ﻿
+using Hydra.Auth.Core.Models;
+using Hydra.Cms.Core.Domain;
 using Hydra.Infrastructure.Security.Domain;
-using Hydra.Kernel;
 
-namespace Hydra.Cms.Core.Domain
+namespace Hydra.Cms.Core.Models
 {
-    public class Page : BaseEntity<int>
+    public record PageModel
     {
 
+        public int Id { get; set; }
         /// <summary>
         /// 
         /// </summary>
@@ -22,7 +24,6 @@ namespace Hydra.Cms.Core.Domain
         /// </summary>
         public string Body { get; set; }
 
-
         /// <summary>
         /// 
         /// </summary>
@@ -31,7 +32,7 @@ namespace Hydra.Cms.Core.Domain
         /// <summary>
         /// 
         /// </summary>
-        public User Writer { get; set; }
+        public AuthorModel Writer { get; set; }
 
         /// <summary>
         /// 
@@ -41,7 +42,7 @@ namespace Hydra.Cms.Core.Domain
         /// <summary>
         /// 
         /// </summary>
-        public User? Editor { get; set; }
+        public AuthorModel? Editor { get; set; }
 
         /// <summary>
         /// 
@@ -55,11 +56,7 @@ namespace Hydra.Cms.Core.Domain
         /// <summary>
         /// 
         /// </summary>
-        public List<Tag> Tags { get; set; } = new();
-        /// <summary>
-        /// 
-        /// </summary>
-        public List<PageTag> PageTags { get; set; } = new();
+        public List<string> Tags { get; set; } = new List<string>();
 
 
     }
