@@ -1,22 +1,37 @@
 ﻿
+using Hydra.Auth.Core.Models;
+using Hydra.Cms.Core.Domain;
+using Hydra.Infrastructure.Security.Domain;
+
 namespace Hydra.Cms.Core.Models
 {
-    public record MenuModel
+    public record SlideshowModel
     {
-        public int Id { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Title { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Url { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public int PreviewImageId { get; set; }
+        public int Id { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Header { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Description { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public int? PreviewImageId { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string? PreviewImageUrl { get; set; }
 
         /// <summary>
         /// 
@@ -26,29 +41,24 @@ namespace Hydra.Cms.Core.Models
         /// <summary>
         /// 
         /// </summary>
+        public bool IsVisible { get; set; } = true;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime CreateDate { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public AuthorModel User { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public int UserId { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public string UserName { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public List<MenuModel>? Childs { get; set; } = new List<MenuModel>();
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public MenuModel? Parent { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public int? ParentId { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public bool isEdited { get; set; } = false;
 
     }
+
 }

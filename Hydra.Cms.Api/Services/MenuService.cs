@@ -49,41 +49,25 @@ namespace Hydra.Cms.Api.Services
                 }
             }
 
+            List<MenuModel> GetChild(MenuModel menu, List<MenuModel> menus)
+            {
+
+                var result = menus.Where(x => x.ParentId == menu.Id).ToList();
+                if (result.Count == 0) return null;
+                foreach (var item in result)
+                {
+                    var childs = GetChild(item, menus);
+                    if (childs != null)
+                        item.Childs.AddRange(childs);
+                }
+                return result;
+            }
+
             result.Data = parents;
 
             return result;
         }
-        private List<MenuModel> GetChild(MenuModel menu, List<MenuModel> menus)
-        {
 
-            var result = menus.Where(x => x.ParentId == menu.Id).ToList();
-            if (result.Count == 0) return null;
-            foreach (var item in result)
-            {
-                var childs = GetChild(item, menus);
-                if (childs != null)
-                    item.Childs.AddRange(childs);
-            }
-            return result;
-        }
-
-        List<MenuModel> resultList = new List<MenuModel>();
-        private List<MenuModel> GetChildOfSelect(MenuModel menu, string space, List<MenuModel> menus)
-        {
-            menu.Title = space + menu.Title;
-            resultList.Add(menu);
-
-            var childs = menus.Where(x => x.ParentId == menu.Id).ToList();
-            if (childs.Count == 0)
-            {
-                return null;
-            }
-            foreach (var item in childs)
-            {
-                GetChildOfSelect(item, space + "    ", menus);
-            }
-            return childs;
-        }
         /// <summary>
         /// 
         /// </summary>
@@ -192,6 +176,53 @@ namespace Hydra.Cms.Api.Services
             menuModel.UserName = userName;
 
             result.Data = menuModel;
+            return result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="menuModel"></param>
+        /// <returns></returns>
+        public async Task<Result<List<MenuModel>>> UpdateOrder(List<MenuModel> menuModelList)
+        {
+            var result = new Result<List<MenuModel>>();
+
+            var flattenMenus = new List<MenuModel>();
+
+            GetChild(menuModelList);
+
+            void GetChild(List<MenuModel> menus)
+            {
+                foreach (var item in menus)
+                {
+                    if (item.isEdited)
+                    {
+                        flattenMenus.Add(item);
+                    }
+                    if (item.Childs.Any())
+                    {
+                        GetChild(item.Childs);
+                    }
+                }
+            }
+
+            var editedModelIds = flattenMenus.Select(x=>x.Id).ToArray();
+
+
+            var editedList = _queryRepository.Table<Menu>().Where(x => editedModelIds.Contains(x.Id)).ToList();
+
+            foreach (var item in editedList)
+            {
+                var model = flattenMenus.First(x => x.Id == item.Id);
+                item.Order = model.Order;
+                item.ParentId = model.ParentId;
+                _commandRepository.UpdateAsync(item);
+            }
+
+            await _commandRepository.SaveChangesAsync();
+
+            result.Data = menuModelList;
             return result;
         }
 

@@ -80,6 +80,37 @@ namespace Hydra.Cms.Api.Handler
         /// <param name="_menuService"></param>
         /// <param name="menuModel"></param>
         /// <returns></returns>
+        public static async Task<IResult> UpdateOrders(ClaimsPrincipal userClaim,
+            IMenuService _menuService,
+            [FromBody] List<MenuModel> menuModelList
+            )
+        {
+            try
+            {
+                var userId = int.Parse(userClaim?.FindFirst("identity")?.Value);
+                foreach (var menuModel in menuModelList.Where(x => x.isEdited))
+                {
+                    menuModel.UserId = userId;
+                }
+
+                var result = await _menuService.UpdateOrder(menuModelList);
+
+                return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
+
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_menuService"></param>
+        /// <param name="menuModel"></param>
+        /// <returns></returns>
         public static async Task<IResult> UpdateMenu(ClaimsPrincipal userClaim,
             IMenuService _menuService,
             [FromBody] MenuModel menuModel

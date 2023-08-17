@@ -61,7 +61,15 @@ namespace Hydra.Cms.Api.Endpoints
             endpoints.MapGet(API_SCHEMA + "/GetMenuById", MenuHandler.GetMenuById).RequirePermission("CMS.GET_MENU_BY_ID");
             endpoints.MapPost(API_SCHEMA + "/AddMenu", MenuHandler.AddMenu).RequirePermission("CMS.ADD_MENU");
             endpoints.MapPost(API_SCHEMA + "/UpdateMenu", MenuHandler.UpdateMenu).RequirePermission("CMS.UPDATE_MENU");
+            endpoints.MapPost(API_SCHEMA + "/UpdateMenuOrders", MenuHandler.UpdateOrders).RequirePermission("CMS.UPDATE_MENU");
             endpoints.MapGet(API_SCHEMA + "/DeleteMenu", MenuHandler.DeleteMenu).RequirePermission("CMS.DELETE_MENU");
+
+            endpoints.MapGet(API_SCHEMA + "/GetSlideshowsList", SlideshowHandler.GetList).RequirePermission("CMS.GET_SLIDESHOW_LIST");
+            endpoints.MapGet(API_SCHEMA + "/GetSlideshowById", SlideshowHandler.GetSlideshowById).RequirePermission("CMS.GET_SLIDESHOW_BY_ID");
+            endpoints.MapPost(API_SCHEMA + "/AddSlideshow", SlideshowHandler.AddSlideshow).RequirePermission("CMS.ADD_SLIDESHOW");
+            endpoints.MapPost(API_SCHEMA + "/UpdateSlideshow", SlideshowHandler.UpdateSlideshow).RequirePermission("CMS.UPDATE_SLIDESHOW");
+            endpoints.MapPost(API_SCHEMA + "/UpdateSlideshowOrders", SlideshowHandler.UpdateOrders).RequirePermission("CMS.UPDATE_SLIDESHOW");
+            endpoints.MapGet(API_SCHEMA + "/DeleteSlideshow", SlideshowHandler.DeleteSlideshow).RequirePermission("CMS.DELETE_SLIDESHOW");
 
             return endpoints;
         }

@@ -256,6 +256,7 @@ namespace Hydra.Cms.Api.Services
                 article.Subject = articleModel.Subject;
                 article.Body = articleModel.Body;
                 article.EditorId = articleModel.EditorId;
+                article.PublishDate = articleModel.PublishDate;
                 article.EditDate = DateTime.UtcNow;
                 article.IsDraft = articleModel.IsDraft;
                 article.PreviewImageId = articleModel.PreviewImageId;
