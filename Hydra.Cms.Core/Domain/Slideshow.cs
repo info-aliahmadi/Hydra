@@ -1,4 +1,5 @@
 ﻿
+using Hydra.FileStorage.Core.Domain;
 using Hydra.Infrastructure.Security.Domain;
 using Hydra.Kernel;
 

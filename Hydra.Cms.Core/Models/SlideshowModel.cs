@@ -1,6 +1,7 @@
 ﻿
 using Hydra.Auth.Core.Models;
 using Hydra.Cms.Core.Domain;
+using Hydra.FileStorage.Core.Models;
 using Hydra.Infrastructure.Security.Domain;
 
 namespace Hydra.Cms.Core.Models
@@ -27,7 +28,11 @@ namespace Hydra.Cms.Core.Models
         /// 
         /// </summary>
         public int? PreviewImageId { get; set; }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        public FileUploadModel? PreviewImage { get; set; }
+        
         /// <summary>
         /// 
         /// </summary>

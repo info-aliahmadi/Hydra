@@ -2,6 +2,7 @@
 using Hydra.Infrastructure.Data;
 using Hydra.Kernel.Interfaces.Data;
 using Hydra.Infrastructure.Security.Service;
+using Hydra.Infrastructure.Setting.Service;
 
 namespace Hydra.Infrastructure.ServiceRegistrar
 {
@@ -9,16 +10,12 @@ namespace Hydra.Infrastructure.ServiceRegistrar
     {
         public static void AddServices(this IServiceCollection services)
         {
-
-
             // services
             services.AddTransient<ICommandRepository, CommandRepository>();
             services.AddTransient<IQueryRepository, QueryRepository>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IPermissionChecker, PermissionChecker>();
-
-            //services.AddAllServices();
-
+            services.AddScoped<ISettingService, SettingService>();
 
         }
     }

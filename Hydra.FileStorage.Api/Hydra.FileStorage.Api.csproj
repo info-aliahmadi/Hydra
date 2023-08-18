@@ -9,6 +9,7 @@
 		<Exec Command="xcopy /y  &quot;$(TargetPath)&quot; &quot;$(SolutionDir)Hydra.Web\$(OutDir)&quot;" />
 	</Target>
 	<ItemGroup>
+		<PackageReference Include="NReco.VideoConverter" Version="1.2.1" />
 		<PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
 	</ItemGroup>
 

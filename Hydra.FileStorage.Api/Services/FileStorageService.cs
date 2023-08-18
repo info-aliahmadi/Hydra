@@ -711,6 +711,7 @@ namespace Hydra.FileStorage.Api.Services
         public string? GenerateThumbnail(FileInfo fileInfo)
         {
             var imagesExtension = _fileStorageSetting.ImagesExtensions.Split(',');
+            var videoExtension = _fileStorageSetting.VideosExtensions.Split(',');
 
             if (imagesExtension.Contains(fileInfo.Extension))
             {
@@ -743,6 +744,15 @@ namespace Hydra.FileStorage.Api.Services
                 image.SaveAsPng(fileInfo.Directory + "/" + newSImageName);
                 image.Dispose();
                 return newSImageName;
+            }
+            else if(videoExtension.Contains(fileInfo.Extension))
+            {
+                var extension = fileInfo.Extension;
+                var fileNameOnly = fileInfo.Name.Substring(0, fileInfo.Name.Length - extension.Length);
+                var newSVideoName = fileNameOnly + "-Thumb.jpg";
+                var ffMpeg = new NReco.VideoConverter.FFMpegConverter();
+                ffMpeg.GetVideoThumbnail(fileInfo.FullName, fileInfo.Directory + @"\" + newSVideoName, 3.0f);
+                return newSVideoName;
             }
             return null;
         }

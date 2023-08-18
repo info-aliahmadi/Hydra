@@ -1,6 +1,8 @@
 ﻿using Hydra.Cms.Core.Domain;
 using Hydra.Cms.Core.Interfaces;
 using Hydra.Cms.Core.Models;
+using Hydra.FileStorage.Core.Domain;
+using Hydra.FileStorage.Core.Models;
 using Hydra.Infrastructure.Data.Extension;
 using Hydra.Infrastructure.Security.Domain;
 using Hydra.Kernel.Extensions;
@@ -53,7 +55,22 @@ namespace Hydra.Cms.Api.Services
                                       Avatar = slideshow.User.Avatar
                                   }
                               }).OrderByDescending(x => x.IsVisible).ThenByDescending(x => x.Order).ToListAsync();
-
+            var listIds = list.Where(x => x.PreviewImageId != null).Select(x => x.PreviewImageId).ToArray();
+            var files = _queryRepository.Table<FileUpload>().Where(x => listIds.Contains(x.Id));
+            foreach (var item in list)
+            {
+                var file = files.FirstOrDefault(x => x.Id == item.PreviewImageId);
+                if (file != null)
+                    item.PreviewImage = new FileUploadModel()
+                    {
+                        Id = file.Id,
+                        FileName = file.FileName,
+                        Directory = file.Directory,
+                        Extension = file.Extension,
+                        Size = file.Size,
+                        Thumbnail = file.Thumbnail
+                    };
+            }
 
             result.Data = list;
 
@@ -182,15 +199,17 @@ namespace Hydra.Cms.Api.Services
             var result = new Result<List<SlideshowModel>>();
 
 
-            var visibleModelList = slideshowModelList.Where(x => x.IsVisible);
-            var visibleIds = visibleModelList.Select(x => x.Id).ToArray();
-
+            var visibleIds = slideshowModelList.Select(x => x.Id).ToArray();
+            var i = slideshowModelList.Count();
+            foreach (var item in slideshowModelList)
+            {
+                item.Order = i--;
+            }
 
             var visibleList = _queryRepository.Table<Slideshow>().Where(x => visibleIds.Contains(x.Id)).ToList();
-
             foreach (var item in visibleList)
             {
-                var model = visibleModelList.First(x => x.Id == item.Id);
+                var model = slideshowModelList.First(x => x.Id == item.Id);
                 item.Order = model.Order;
                 _commandRepository.UpdateAsync(item);
             }

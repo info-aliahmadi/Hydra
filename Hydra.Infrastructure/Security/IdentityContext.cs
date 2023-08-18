@@ -26,7 +26,7 @@ namespace Hydra.Infrastructure
             modelBuilder.ApplyConfiguration(new UserLoginConfiguration());
             modelBuilder.ApplyConfiguration(new RoleClaimConfiguration());
             modelBuilder.ApplyConfiguration(new UserTokenConfiguration());
-            modelBuilder.ApplyConfiguration(new PermissionConfiguration());
+            modelBuilder.ApplyConfiguration(new SettingConfiguration());
 
             #endregion
 

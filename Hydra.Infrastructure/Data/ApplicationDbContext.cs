@@ -1,7 +1,6 @@
-﻿
-using Hydra.Kernel;
+﻿using Hydra.Infrastructure.Security.EntityConfiguration;
+using Hydra.Infrastructure.Setting.Domain;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 
 namespace Hydra.Infrastructure.Data
 {
@@ -27,10 +26,11 @@ namespace Hydra.Infrastructure.Data
                 modelBuilder.ApplyConfigurationsFromAssembly(assembly);
 
             }
+            modelBuilder.ApplyConfiguration(new SettingConfiguration());
 
             #endregion
         }
-
+        public DbSet<SiteSetting> Setting { get; set; }
 
     }
 }
