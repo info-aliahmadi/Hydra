@@ -1,6 +1,7 @@
 ﻿using Hydra.FileStorage.Core.Interfaces;
 using Hydra.FileStorage.Core.Settings;
 using Hydra.Infrastructure.Setting;
+using Hydra.Kernel.Models;
 
 namespace Hydra.FileStorage.Api.Services
 {
@@ -186,6 +187,40 @@ namespace Hydra.FileStorage.Api.Services
                 case ValidationFileEnum.Ok:
                 default:
                     return "";
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="validationFileEnum"></param>
+        /// <returns></returns>
+        public ResultStatusEnum GetValidationStatus(ValidationFileEnum validationFileEnum)
+        {
+            switch (validationFileEnum)
+            {
+                case ValidationFileEnum.FileNotFound:
+                    // If the code runs to this location, it means that no files have been saved
+                    return ResultStatusEnum.NotFound;
+
+                case ValidationFileEnum.FileIsTooLarge:
+                    // If the code runs to this location, it means that no files have been saved
+                    return ResultStatusEnum.FileIsTooLarge;
+
+                case ValidationFileEnum.FileIsTooSmall:
+                    // If the code runs to this location, it means that no files have been saved
+                    return ResultStatusEnum.FileIsTooSmall;
+
+                case ValidationFileEnum.FileNotSupported:
+                    // If the code runs to this location, it means that no files have been saved
+                    return ResultStatusEnum.IsNotAllowed;
+
+                case ValidationFileEnum.InvalidSignature:
+                    // If the code runs to this location, it means that no files have been saved
+                    return ResultStatusEnum.InvalidValidation;
+
+                case ValidationFileEnum.Ok:
+                default:
+                    return ResultStatusEnum.Succeeded;
             }
         }
     }

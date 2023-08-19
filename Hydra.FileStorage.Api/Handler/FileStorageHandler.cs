@@ -1,10 +1,8 @@
 ﻿using Hydra.FileStorage.Core.Interfaces;
 using Hydra.FileStorage.Core.Models;
 using Hydra.Infrastructure;
-using Hydra.Infrastructure.Security.Domain;
 using Hydra.Kernel.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Net.Http.Headers;
@@ -36,6 +34,49 @@ namespace Hydra.FileStorage.Api.Handler
         {
             var result = await _fileStorageService.GetFileInfoByName(fileName);
             return Results.Ok(result);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_fileStorageService"></param>
+        /// <param name="fileId"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetDirectories(IFileStorageService _fileStorageService)
+        {
+            try
+            {
+                var result = await _fileStorageService.GetDirectoryList();
+
+                return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_fileStorageService"></param>
+        /// <param name="fileId"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetFilesByDirectory(IFileStorageService _fileStorageService, string directoryName)
+        {
+            try
+            {
+                directoryName = directoryName.Contains("/") ? directoryName : directoryName + "/";
+                var result = await _fileStorageService.GetFilesListByDirectory(directoryName.ToLower());
+
+                return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
         }
 
         /// <summary>
@@ -74,7 +115,7 @@ namespace Hydra.FileStorage.Api.Handler
             var uploadAction = _context.Request.Headers["UploadAction"]; // none / Rename / Replace
             var result =
                 await _fileStorageService.Upload(userId, file, uploadAction, cancellationToken);
-            return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+            return result.Succeeded ? Results.Ok(result) : Results.StatusCode(((int)result.Status));
         }
 
         /// <summary>
@@ -183,7 +224,7 @@ namespace Hydra.FileStorage.Api.Handler
         public static async Task<IResult> DeleteFile(ClaimsPrincipal userClaim, IFileStorageService _fileStorageService, int fileId)
         {
             var userId = int.Parse(userClaim?.FindFirst("identity")?.Value);
-            var result = await _fileStorageService.Delete(userId,fileId);
+            var result = await _fileStorageService.Delete(userId, fileId);
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
 

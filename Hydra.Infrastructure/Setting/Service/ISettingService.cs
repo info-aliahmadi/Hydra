@@ -14,7 +14,7 @@ namespace Hydra.Infrastructure.Setting.Service
         /// </summary>
         /// <param name="dataGrid"></param>
         /// <returns></returns>
-        Task<Result<List<SiteSetting>>> GetAll();
+        List<SiteSetting> GetAll();
 
 
         /// <summary>
@@ -22,7 +22,7 @@ namespace Hydra.Infrastructure.Setting.Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<Result<SiteSetting>> GetById(int id);
+        SiteSetting GetById(int id);
 
 
         /// <summary>
@@ -30,34 +30,28 @@ namespace Hydra.Infrastructure.Setting.Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<Result<SiteSetting>> GetByKey(string key);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="tagModel"></param>
-        /// <returns></returns>
-        Task<Result<SiteSetting>> Add(SiteSetting siteSetting);
+        SiteSetting GetByKey(string key);
 
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="tagModel"></param>
+        /// <param name="siteSetting"></param>
         /// <returns></returns>
-        Task<Result<SiteSetting>> Update(SiteSetting siteSetting);
+        SiteSetting AddOrUpdate(SiteSetting siteSetting);
+
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        Task<Result> DeleteById(int id);
+        Result DeleteById(int id);
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        Task<Result> DeleteByKey(string key);
+        Result DeleteByKey(string key);
 
     }
 }

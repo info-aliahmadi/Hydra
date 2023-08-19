@@ -15,8 +15,11 @@
         public string ImagesExtensions { get; set; }
 
         public string VideosExtensions { get; set; }
-        public string MusicExtensions { get; set; }
+
+        public string AudioExtensions { get; set; }
+
         public string DocumentsExtensions { get; set; }
+
         public int ImageThumbnailSize { get; set; }
     }
 }

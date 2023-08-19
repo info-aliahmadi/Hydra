@@ -14,7 +14,7 @@
 
         string ImagesExtensions { get; set; }
         string VideosExtensions { get; set; }
-        string MusicExtensions { get; set; }
+        string AudioExtensions { get; set; }
         string DocumentsExtensions { get; set; }
         int ImageThumbnailSize { get; set; }
 

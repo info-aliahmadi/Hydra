@@ -25,6 +25,24 @@ namespace Hydra.FileStorage.Core.Interfaces
         /// <summary>
         /// 
         /// </summary>
+        /// <returns></returns>
+        Task<Result<List<FileUploadModel>>> GetFilesList();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="directoryname"></param>
+        /// <returns></returns>
+        Task<Result<List<FileUploadModel>>> GetFilesListByDirectory(string directoryname);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        Task<Result<List<DirectoryModel>>> GetDirectoryList();
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="fileId"></param>
         /// <returns></returns>
         Task<FileUploadModel> GetFileInfoById(int fileId);
@@ -35,12 +53,6 @@ namespace Hydra.FileStorage.Core.Interfaces
         /// <param name="fileName"></param>
         /// <returns></returns>
         Task<FileUploadModel> GetFileInfoByName(string fileName);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        Task<Result<List<FileUploadModel>>> GetFilesList();
 
         /// <summary>
         /// 

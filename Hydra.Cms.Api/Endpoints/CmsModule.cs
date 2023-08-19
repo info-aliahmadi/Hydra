@@ -14,6 +14,8 @@ namespace Hydra.Cms.Api.Endpoints
         private const string API_SCHEMA = "/Cms";
         public IServiceCollection RegisterModules(IServiceCollection services)
         {
+            
+            services.AddScoped<ISiteSettingsService, SiteSettingsService>();
             services.AddScoped<IArticleService, ArticleService>();
             services.AddScoped<ITopicService, TopicService>();
             services.AddScoped<ITagService, TagService>();
@@ -26,6 +28,9 @@ namespace Hydra.Cms.Api.Endpoints
 
         public IEndpointRouteBuilder MapEndpoints(IEndpointRouteBuilder endpoints)
         {
+
+            endpoints.MapGet(API_SCHEMA + "/GetSettings", SettingsHandler.GetSettings).AllowAnonymous();
+            endpoints.MapPost(API_SCHEMA + "/AddOrUpdateSettings", SettingsHandler.AddOrUpdateSettings).RequirePermission("CMS.ADD_OR_UPDATE_SETTINGS");
 
             endpoints.MapGet(API_SCHEMA + "/GetTopicsHierarchy", TopicHandler.GetTopicsHierarchy).RequirePermission("CMS.GET_TOPIC_LIST");
             endpoints.MapGet(API_SCHEMA + "/GetTopicListForSelect", TopicHandler.GetListForSelect).RequirePermission("CMS.GET_TOPIC_LIST");

@@ -606,7 +606,8 @@ namespace Hydra.Migrations.Migrations
 
                     b.Property<string>("Key")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -616,7 +617,7 @@ namespace Hydra.Migrations.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Setting");
+                    b.ToTable("Setting", "Cms");
                 });
 
             modelBuilder.Entity("PermissionRole", b =>

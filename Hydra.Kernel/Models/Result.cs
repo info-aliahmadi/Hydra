@@ -35,33 +35,34 @@ namespace Hydra.Kernel.Models
     public enum ResultStatusEnum
     {
         [Description("Succeeded")]
-        Succeeded = 0,
+        Succeeded = 200,
 
         [Description("Failed")]
-        Failed = 1,
+        Failed = 500,
 
         [Description("Invalid Validation")]
-        InvalidValidation = 2,
+        InvalidValidation = 501,
 
         [Description("Not Found")]
-        NotFound = 3,
+        NotFound = 404,
 
         [Description("Is Not Authorized")]
-        IsNotAuthorized = 4,
+        IsNotAuthorized = 401,
 
         [Description("Is Not Allowed")]
-        IsNotAllowed = 5,
+        IsNotAllowed = 502,
 
         [Description("It's Duplicate")]
-        ItsDuplicate = 6,
+        ItsDuplicate = 503,
 
         [Description("Exception Throwed")]
-        ExceptionThrowed = 7,
+        ExceptionThrowed = 504,
 
         [Description("File Is Too Large")]
-        FileIsTooLarge = 8,
+        FileIsTooLarge = 505,
+
         [Description("File Is Too Small")]
-        FileIsTooSmall = 9
+        FileIsTooSmall = 506
 
     }
     public static class EnumExtensions

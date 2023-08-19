@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Hydra.Infrastructure.Security.EntityConfiguration
 {
-    public class SettingConfiguration : IEntityTypeConfiguration<Permission>
+    public class PermissionConfiguration : IEntityTypeConfiguration<Permission>
     {
         public void Configure(EntityTypeBuilder<Permission> builder)
         {

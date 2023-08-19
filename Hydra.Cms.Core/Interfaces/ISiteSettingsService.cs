@@ -10,42 +10,14 @@ namespace Hydra.Cms.Core.Interfaces
         /// 
         /// </summary>
         /// <returns></returns>
-        Task<Result<List<SiteSettingsModel>>> GetALL();
+        Result<SiteSettingsModel> GetSettings();
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<Result<SiteSettingsModel>> GetById(int id);
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<Result<SiteSettingsModel>> GetByKey(string key);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="menuModel"></param>
-        /// <returns></returns>
-        Task<Result<SiteSettingsModel>> Add(SiteSettingsModel menuModel);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="menuModel"></param>
-        /// <returns></returns>
-        Task<Result<SiteSettingsModel>> Update(SiteSettingsModel menuModel);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<Result> Delete(int id);
-
+        Result<SiteSettingsModel> AddOrUpdate(SiteSettingsModel siteSettingsModel);
 
     }
 }

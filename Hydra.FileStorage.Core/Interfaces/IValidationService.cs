@@ -1,4 +1,5 @@
 ﻿using Hydra.FileStorage.Core.Settings;
+using Hydra.Kernel.Models;
 
 namespace Hydra.FileStorage.Core.Interfaces
 {
@@ -21,5 +22,6 @@ namespace Hydra.FileStorage.Core.Interfaces
             FileSizeEnum fileSize = FileSizeEnum.Small, CancellationToken cancellationToken = default);
 
         string GetValidationMessage(ValidationFileEnum validationFileEnum);
+        ResultStatusEnum GetValidationStatus(ValidationFileEnum validationFileEnum);
     }
 }

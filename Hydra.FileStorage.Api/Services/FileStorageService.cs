@@ -10,7 +10,6 @@ using Hydra.FileStorage.Core.Domain;
 using Hydra.FileStorage.Core.Models;
 using Hydra.FileStorage.Core.Settings;
 using Hydra.Kernel.Extensions;
-using Hydra.Infrastructure.Security.Domain;
 
 namespace Hydra.FileStorage.Api.Services
 {
@@ -56,7 +55,7 @@ namespace Hydra.FileStorage.Api.Services
         public async Task<Result<List<FileUploadModel>>> GetFilesList()
         {
             var result = new Result<List<FileUploadModel>>();
-            var List = _queryRepository.Table<FileUpload>().ToList().Select(x => new FileUploadModel()
+            var List = _queryRepository.Table<FileUpload>().Include(x => x.User).ToList().Select(x => new FileUploadModel()
             {
                 Id = x.Id,
                 FileName = x.FileName,
@@ -66,10 +65,69 @@ namespace Hydra.FileStorage.Api.Services
                 Size = x.Size,
                 Alt = x.Alt,
                 Tags = x.Tags,
-                UploadDate = x.UploadDate
+                UploadDate = x.UploadDate,
+                UserName = x.User.UserName
             }).ToList();
 
             result.Data = List;
+            return result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="directoryname"></param>
+        /// <returns></returns>
+        public async Task<Result<List<FileUploadModel>>> GetFilesListByDirectory(string directoryname)
+        {
+            var result = new Result<List<FileUploadModel>>();
+            var List = _queryRepository.Table<FileUpload>().Include(x => x.User).Where(x => x.Directory == directoryname).ToList().Select(x => new FileUploadModel()
+            {
+                Id = x.Id,
+                FileName = x.FileName,
+                Directory = x.Directory,
+                Thumbnail = x.Thumbnail,
+                Extension = x.Extension,
+                Size = x.Size,
+                Alt = x.Alt,
+                Tags = x.Tags,
+                UploadDate = x.UploadDate,
+                UserName = x.User.UserName
+            }).ToList();
+
+            result.Data = List;
+            return result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="objectId"></param>
+        /// <returns></returns>
+        public async Task<Result<List<DirectoryModel>>> GetDirectoryList()
+        {
+            var result = new Result<List<DirectoryModel>>();
+            var directories = GetDirectories();
+            var groupedFiles = await (from f in _queryRepository.Table<FileUpload>()
+                                      group f by f.Directory into grouped
+                                      select new DirectoryModel()
+                                      {
+                                          DirectoryName = grouped.Key,
+                                          DirectorySize = grouped.Sum(x => x.Size),
+                                          FilesCount = grouped.Count()
+                                      }).ToListAsync();
+            var notExistedDirectory = directories.Where(c => !groupedFiles.Select(x => x.DirectoryName).Contains(c));
+            foreach (var directory in notExistedDirectory)
+            {
+                groupedFiles.Add(new DirectoryModel()
+                {
+                    DirectoryName = directory,
+                    DirectorySize = 0,
+                    FilesCount = 0
+                });
+            }
+
+            result.Data = groupedFiles;
             return result;
         }
 
@@ -138,7 +196,7 @@ namespace Hydra.FileStorage.Api.Services
                 Directory = fileUpload.Directory,
                 Thumbnail = fileUpload.Thumbnail,
                 Extension = fileUpload.Extension,
-                Size =fileUpload.Size,
+                Size = fileUpload.Size,
                 Alt = fileUpload.Alt,
                 Tags = fileUpload.Tags,
                 UploadDate = fileUpload.UploadDate
@@ -180,7 +238,7 @@ namespace Hydra.FileStorage.Api.Services
                     return result;
                 }
                 var extension = Path.GetExtension(uploadModel.FileName).ToLowerInvariant();
-                var directory = GetFolder(extension);
+                var directory = GetDirectory(extension);
                 var fileNameWithPath = uploadsPaths + directory;
 
                 if (isExisted && uploadAction == "Rename")
@@ -292,7 +350,8 @@ namespace Hydra.FileStorage.Api.Services
 
                 if (validateResult != ValidationFileEnum.Ok)
                 {
-                    result.Status = ResultStatusEnum.InvalidValidation;
+                    result.Status = _validationService.GetValidationStatus(validateResult);
+                    
                     result.Message = _validationService.GetValidationMessage(validateResult);
                     return result;
                 }
@@ -305,7 +364,7 @@ namespace Hydra.FileStorage.Api.Services
                     return result;
                 }
                 var extension = Path.GetExtension(fileName).ToLowerInvariant();
-                var directory = GetFolder(extension);
+                var directory = GetDirectory(extension);
                 var fileNameWithPath = uploadsPaths + directory;
 
                 if (isExisted && uploadAction == "Rename")
@@ -461,7 +520,7 @@ namespace Hydra.FileStorage.Api.Services
                     return result;
                 }
                 var extension = Path.GetExtension(fileName).ToLowerInvariant();
-                var directory = GetFolder(extension);
+                var directory = GetDirectory(extension);
                 var fileNameWithPath = uploadsPaths + directory;
 
                 if (isExisted && uploadAction == "Rename")
@@ -603,7 +662,7 @@ namespace Hydra.FileStorage.Api.Services
                 }
 
                 var extension = Path.GetExtension(base64File.FileName).ToLowerInvariant();
-                var directory = GetFolder(extension);
+                var directory = GetDirectory(extension);
                 var fileNameWithPath = uploadsPaths + directory;
 
                 if (isExisted && uploadAction == "Rename")
@@ -691,15 +750,19 @@ namespace Hydra.FileStorage.Api.Services
                 result.Status = ResultStatusEnum.NotFound;
                 return result;
             }
-            if (File.Exists(uploadsPaths + fileUpload.FileName))
+            var directory = GetDirectory(fileUpload.Extension);
+
+            if (File.Exists(uploadsPaths + directory + fileUpload.FileName))
             {
-                File.Delete(uploadsPaths + fileUpload.FileName);
+                File.Delete(uploadsPaths + directory + fileUpload.FileName);
             }
-            if (File.Exists(uploadsPaths + fileUpload.Thumbnail))
+            if (File.Exists(uploadsPaths + directory + fileUpload.Thumbnail))
             {
-                File.Delete(uploadsPaths + fileUpload.Thumbnail);
+                File.Delete(uploadsPaths + directory + fileUpload.Thumbnail);
             }
             _commandRepository.DeleteAsync(fileUpload);
+            await _commandRepository.SaveChangesAsync();
+
             return result;
         }
 
@@ -745,7 +808,7 @@ namespace Hydra.FileStorage.Api.Services
                 image.Dispose();
                 return newSImageName;
             }
-            else if(videoExtension.Contains(fileInfo.Extension))
+            else if (videoExtension.Contains(fileInfo.Extension))
             {
                 var extension = fileInfo.Extension;
                 var fileNameOnly = fileInfo.Name.Substring(0, fileInfo.Name.Length - extension.Length);
@@ -786,7 +849,7 @@ namespace Hydra.FileStorage.Api.Services
         /// </summary>
         /// <param name="objectId"></param>
         /// <returns></returns>
-        public string GetFolder(string extension)
+        public string GetDirectory(string extension)
         {
             if (_fileStorageSetting.ImagesExtensions.Split(',').Contains(extension))
             {
@@ -796,9 +859,9 @@ namespace Hydra.FileStorage.Api.Services
             {
                 return "videos/";
             }
-            if (_fileStorageSetting.MusicExtensions.Split(',').Contains(extension))
+            if (_fileStorageSetting.AudioExtensions.Split(',').Contains(extension))
             {
-                return "music/";
+                return "audio/";
             }
             if (_fileStorageSetting.DocumentsExtensions.Split(',').Contains(extension))
             {
@@ -807,6 +870,15 @@ namespace Hydra.FileStorage.Api.Services
             return "others/";
         }
 
+        /// <summary>
+        /// </summary>
+        /// <param name="objectId"></param>
+        /// <returns></returns>
+        public string[] GetDirectories()
+        {
+            string[] directories = { "images/", "audio/", "music/", "documents/", "others/", };
+            return directories;
+        }
         /// <summary>
         /// </summary>
         /// <param name="objectId"></param>

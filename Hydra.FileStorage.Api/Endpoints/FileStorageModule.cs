@@ -30,10 +30,12 @@ namespace Hydra.FileStorage.Api.Endpoints
         public IEndpointRouteBuilder MapEndpoints(IEndpointRouteBuilder endpoints)
         {
 
-            endpoints.MapGet(API_SCHEMA + "/GetFileInfo", FileStorageHandler.GetFileInfo).RequirePermission("CMS.DELETE_ARTICLE");
-            endpoints.MapGet(API_SCHEMA + "/GetFileInfoByName", FileStorageHandler.GetFileInfoByName).RequirePermission("CMS.DELETE_ARTICLE");
-            endpoints.MapGet(API_SCHEMA + "/GetFilesList", FileStorageHandler.GetFilesList).RequirePermission("CMS.DELETE_ARTICLE");
-            endpoints.MapGet(API_SCHEMA + "/GetGalleyFiles", FileStorageHandler.GetGalleyFiles).RequirePermission("CMS.DELETE_ARTICLE");
+            endpoints.MapGet(API_SCHEMA + "/GetFileInfo", FileStorageHandler.GetFileInfo).RequirePermission("CMS.GET_FILE_INFO");
+            endpoints.MapGet(API_SCHEMA + "/GetFileInfoByName", FileStorageHandler.GetFileInfoByName).RequirePermission("CMS.GET_FILE_INFO_BY_NAME");
+            endpoints.MapGet(API_SCHEMA + "/GetFilesList", FileStorageHandler.GetFilesList).RequirePermission("CMS.GET_FILES_LIST");
+            endpoints.MapGet(API_SCHEMA + "/GetGalleyFiles", FileStorageHandler.GetGalleyFiles).RequirePermission("CMS.GET_GALLEY_FILES");
+            endpoints.MapGet(API_SCHEMA + "/GetDirectories", FileStorageHandler.GetDirectories).RequirePermission("CMS.GET_DIRECTORIES");
+            endpoints.MapGet(API_SCHEMA + "/GetFilesByDirectory", FileStorageHandler.GetFilesByDirectory).RequirePermission("CMS.GET_FILES_BY_DIRECTORY");
 
             endpoints.MapPost(API_SCHEMA + "/UploadFile", FileStorageHandler.UploadFile).RequirePermission("CMS.DELETE_ARTICLE");
             endpoints.MapPost(API_SCHEMA + "/UploadBase64File", FileStorageHandler.UploadBase64File).RequirePermission("CMS.DELETE_ARTICLE");
