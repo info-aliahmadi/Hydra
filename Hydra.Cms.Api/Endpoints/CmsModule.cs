@@ -69,6 +69,7 @@ namespace Hydra.Cms.Api.Endpoints
             endpoints.MapPost(API_SCHEMA + "/UpdateMenu", MenuHandler.UpdateMenu).RequirePermission("CMS.UPDATE_MENU");
             endpoints.MapPost(API_SCHEMA + "/UpdateMenuOrders", MenuHandler.UpdateOrders).RequirePermission("CMS.UPDATE_MENU");
             endpoints.MapGet(API_SCHEMA + "/DeleteMenu", MenuHandler.DeleteMenu).RequirePermission("CMS.DELETE_MENU");
+            endpoints.MapGet(API_SCHEMA + "/GetMenu", MenuHandler.GetMenu).AllowAnonymous();
 
             endpoints.MapGet(API_SCHEMA + "/GetSlideshowList", SlideshowHandler.GetList).RequirePermission("CMS.GET_SLIDESHOW_LIST");
             endpoints.MapGet(API_SCHEMA + "/GetSlideshowById", SlideshowHandler.GetSlideshowById).RequirePermission("CMS.GET_SLIDESHOW_BY_ID");

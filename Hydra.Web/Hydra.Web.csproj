@@ -25,6 +25,8 @@
 
   <ItemGroup>
     <Folder Include="Images\avatar\" />
+    <Folder Include="Uploads\documents\" />
+    <Folder Include="Uploads\others\" />
   </ItemGroup>
 
 </Project>

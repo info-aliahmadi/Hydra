@@ -10,6 +10,12 @@ namespace Hydra.Cms.Core.Interfaces
         /// 
         /// </summary>
         /// <returns></returns>
+        Task<Result<List<MenuModel>>> GetMenu();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         Task<Result<List<MenuModel>>> GetHierarchy();
 
         /// <summary>

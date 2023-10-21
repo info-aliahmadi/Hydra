@@ -1,8 +1,5 @@
-﻿using Hydra.Auth.Core.Interfaces;
-using Hydra.Auth.Core.Models;
-using Hydra.Cms.Core.Interfaces;
+﻿using Hydra.Cms.Core.Interfaces;
 using Hydra.Cms.Core.Models;
-using Hydra.Kernel.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -11,6 +8,28 @@ namespace Hydra.Cms.Api.Handler
 {
     public static class MenuHandler
     {
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_menuService"></param>
+        /// <param name="menuId"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetMenu(IMenuService _menuService)
+        {
+            try
+            {
+                var result = await _menuService.GetMenu();
+
+                return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>

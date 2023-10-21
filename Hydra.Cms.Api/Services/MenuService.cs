@@ -21,6 +21,29 @@ namespace Hydra.Cms.Api.Services
             _commandRepository = commandRepository;
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Result<List<MenuModel>>> GetMenu()
+        {
+            var result = new Result<List<MenuModel>>();
+
+            var list = await _queryRepository.Table<Menu>().Select(x => new MenuModel()
+            {
+                Id = x.Id,
+                Title = x.Title,
+                Url = x.Url,
+                PreviewImageId = x.PreviewImageId,
+                Order = x.Order,
+                ParentId = x.ParentId
+            }).OrderBy(x => x.Order).ToListAsync();
+
+            result.Data = list;
+
+            return result;
+        }
         /// <summary>
         /// 
         /// </summary>
