@@ -1,12 +1,9 @@
-﻿
-using Hydra.FileStorage.Core.Models;
-using Hydra.Kernel.Models;
+﻿using Hydra.Kernel.Models;
 
-namespace Hydra.Cms.Core.Models
+namespace Hydra.Crm.Core.Models
 {
-    public record SlideshowModel
+    public record MessageModel
     {
-
         /// <summary>
         /// 
         /// </summary>
@@ -15,52 +12,52 @@ namespace Hydra.Cms.Core.Models
         /// <summary>
         /// 
         /// </summary>
-        public string Header { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public string Description { get; set; }
+        public string Email { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public int? PreviewImageId { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public FileUploadModel? PreviewImage { get; set; }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        public string? PreviewImageUrl { get; set; }
+        public string Subject { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public int Order { get; set; }
+        public string Body { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public bool IsVisible { get; set; } = true;
+        public DateTime RegisterDate { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public DateTime CreateDate { get; set; }
+        public int? FromUserId { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public AuthorModel User { get; set; }
+        public AuthorModel? FromUser { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public int UserId { get; set; }
+        public int ToUserId { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public AuthorModel ToUser { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool IsRead { get; set; }
 
     }
 

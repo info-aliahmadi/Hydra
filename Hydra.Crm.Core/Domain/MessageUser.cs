@@ -1,0 +1,24 @@
+﻿using Hydra.Infrastructure.Security.Domain;
+using Hydra.Kernel;
+
+namespace Hydra.Crm.Core.Domain
+{
+    public class MessageUser : BaseEntity<int>
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public int MessageId { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int ToUserId { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool IsRead { get; set; }
+
+    }
+
+}

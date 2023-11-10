@@ -1,7 +1,5 @@
 ﻿
-using Hydra.Cms.Core.Domain;
 using Hydra.FileStorage.Core.Models;
-using Hydra.Infrastructure.Security.Domain;
 
 namespace Hydra.Cms.Core.Models
 {

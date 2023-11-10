@@ -1,7 +1,5 @@
 ﻿
-using Hydra.Auth.Core.Models;
-using Hydra.Cms.Core.Domain;
-using Hydra.Infrastructure.Security.Domain;
+using Hydra.Kernel.Models;
 
 namespace Hydra.Cms.Core.Models
 {

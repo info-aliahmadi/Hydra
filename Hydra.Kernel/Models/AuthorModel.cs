@@ -1,6 +1,4 @@
-﻿
-
-namespace Hydra.Cms.Core.Models
+﻿namespace Hydra.Kernel.Models
 {
     public record AuthorModel
     {

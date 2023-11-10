@@ -1,17 +1,14 @@
-﻿
-using Hydra.Auth.Core.Models;
-using Hydra.Cms.Core.Domain;
-using Hydra.Infrastructure.Security.Domain;
+﻿using Hydra.Infrastructure.Security.Domain;
+using Hydra.Kernel;
 
-namespace Hydra.Cms.Core.Models
+namespace Hydra.Crm.Core.Domain
 {
-    public record MessageModel
+    public class Message : BaseEntity<int>
     {
         /// <summary>
         /// 
         /// </summary>
-        public int Id { get; set; }
-
+        public MessageType MessageType { get; set; }
         /// <summary>
         /// 
         /// </summary>
@@ -40,28 +37,20 @@ namespace Hydra.Cms.Core.Models
         /// <summary>
         /// 
         /// </summary>
+        public User? FromUser { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public int? FromUserId { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public AuthorModel? FromUser { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public int? ToUserId { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public AuthorModel? ToUser { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public bool IsRead { get; set; }
 
     }
 
+    public enum MessageType
+    {
+        Private= 0,
+        Public = 1,
+        Contact = 2,
+        Request = 3,
+    }
 }

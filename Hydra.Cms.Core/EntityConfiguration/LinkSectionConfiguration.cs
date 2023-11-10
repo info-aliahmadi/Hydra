@@ -1,7 +1,6 @@
 ﻿using Hydra.Cms.Core.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.Extensions.Hosting;
 
 
 namespace Hydra.Cms.Core.EntityConfiguration

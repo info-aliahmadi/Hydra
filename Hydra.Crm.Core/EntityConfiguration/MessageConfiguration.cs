@@ -1,15 +1,16 @@
 ﻿using Hydra.Cms.Core.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.Extensions.Hosting;
 
 
-namespace Hydra.Cms.Core.EntityConfiguration
+namespace Hydra.Crm.Core.EntityConfiguration
 {
-    public class ArticleConfiguration : IEntityTypeConfiguration<Article>
+    public class MessageConfiguration : IEntityTypeConfiguration<Message>
     {
-        public void Configure(EntityTypeBuilder<Article> builder)
+        public void Configure(EntityTypeBuilder<Message> builder)
         {
-            builder.ToTable("Article", "Cms");
+            builder.ToTable("Message", "Crm");
 
             builder.HasKey(o => o.Id);
 

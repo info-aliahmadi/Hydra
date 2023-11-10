@@ -30,14 +30,11 @@ namespace Hydra.Cms.Api.Services
         /// </summary>
         /// <param name="dataGrid"></param>
         /// <returns></returns>
-        public async Task<Result<PaginatedList<MessageModel>>> GetInbox(GridDataBound dataGrid, int toUser,bool showAll)
+        public async Task<Result<PaginatedList<MessageModel>>> GetAllMessages(GridDataBound dataGrid)
         {
             var result = new Result<PaginatedList<MessageModel>>();
 
-            var userService = new UserManager<User>();
-
-            var list = await (from message in _queryRepository.Table<Message>().Include(x => x.Writer)
-                              where message.to
+            var list = await (from message in _queryRepository.Table<Message>().Include(x => x.FromUser).Include(x => x.ToUser)
                               select new MessageModel()
                               {
                                   Id = message.Id,
@@ -46,16 +43,112 @@ namespace Hydra.Cms.Api.Services
                                   Body = message.Body,
                                   RegisterDate = message.RegisterDate,
                                   IsRead = message.IsRead,
-                                  WriterId = message.WriterId,
-                                  Writer = new AuthorModel()
+                                  FromUserId = message.FromUserId,
+                                  FromUser = new AuthorModel()
                                   {
-                                      Id = message.Writer.Id,
-                                      Name = message.Writer.Name,
-                                      UserName = message.Writer.UserName,
-                                      Avatar = message.Writer.Avatar
+                                      Id = message.FromUser.Id,
+                                      Name = message.FromUser.Name,
+                                      UserName = message.FromUser.UserName,
+                                      Avatar = message.FromUser.Avatar
+                                  },
+                                  ToUserId = message.ToUserId,
+                                  ToUser = new AuthorModel()
+                                  {
+                                      Id = message.ToUser.Id,
+                                      Name = message.ToUser.Name,
+                                      UserName = message.ToUser.UserName,
+                                      Avatar = message.ToUser.Avatar
                                   }
 
-                              }).OrderByDescending(x=>x.RegisterDate).ToPaginatedListAsync(dataGrid);
+                              }).OrderByDescending(x => x.RegisterDate).ToPaginatedListAsync(dataGrid);
+
+
+            result.Data = list;
+
+            return result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dataGrid"></param>
+        /// <returns></returns>
+        public async Task<Result<PaginatedList<MessageModel>>> GetInbox(GridDataBound dataGrid, int toUserId)
+        {
+            var result = new Result<PaginatedList<MessageModel>>();
+
+            var list = await (from message in _queryRepository.Table<Message>().Include(x => x.FromUser).Include(x => x.ToUser)
+                              where message.ToUserId == toUserId
+                              select new MessageModel()
+                              {
+                                  Id = message.Id,
+                                  Name = message.Name,
+                                  Subject = message.Subject,
+                                  Body = message.Body,
+                                  RegisterDate = message.RegisterDate,
+                                  IsRead = message.IsRead,
+                                  FromUserId = message.FromUserId,
+                                  FromUser = new AuthorModel()
+                                  {
+                                      Id = message.FromUser.Id,
+                                      Name = message.FromUser.Name,
+                                      UserName = message.FromUser.UserName,
+                                      Avatar = message.FromUser.Avatar
+                                  },
+                                  ToUserId = message.ToUserId,
+                                  ToUser = new AuthorModel()
+                                  {
+                                      Id = message.ToUser.Id,
+                                      Name = message.ToUser.Name,
+                                      UserName = message.ToUser.UserName,
+                                      Avatar = message.ToUser.Avatar
+                                  }
+
+                              }).OrderByDescending(x => x.RegisterDate).ToPaginatedListAsync(dataGrid);
+
+
+            result.Data = list;
+
+            return result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dataGrid"></param>
+        /// <returns></returns>
+        public async Task<Result<PaginatedList<MessageModel>>> GetSent(GridDataBound dataGrid, int fromUserId)
+        {
+            var result = new Result<PaginatedList<MessageModel>>();
+
+            var list = await (from message in _queryRepository.Table<Message>().Include(x => x.FromUser).Include(x => x.ToUser)
+                              where message.FromUserId == fromUserId
+                              select new MessageModel()
+                              {
+                                  Id = message.Id,
+                                  Name = message.Name,
+                                  Subject = message.Subject,
+                                  Body = message.Body,
+                                  RegisterDate = message.RegisterDate,
+                                  IsRead = message.IsRead,
+                                  FromUserId = message.FromUserId,
+                                  FromUser = new AuthorModel()
+                                  {
+                                      Id = message.FromUser.Id,
+                                      Name = message.FromUser.Name,
+                                      UserName = message.FromUser.UserName,
+                                      Avatar = message.FromUser.Avatar
+                                  },
+                                  ToUserId = message.ToUserId,
+                                  ToUser = new AuthorModel()
+                                  {
+                                      Id = message.ToUser.Id,
+                                      Name = message.ToUser.Name,
+                                      UserName = message.ToUser.UserName,
+                                      Avatar = message.ToUser.Avatar
+                                  }
+
+                              }).OrderByDescending(x => x.RegisterDate).ToPaginatedListAsync(dataGrid);
 
 
             result.Data = list;
@@ -71,7 +164,7 @@ namespace Hydra.Cms.Api.Services
         public async Task<Result<MessageModel>> GetById(int id)
         {
             var result = new Result<MessageModel>();
-            var message = await _queryRepository.Table<Message>().Include(x => x.Writer).Where(x => x.Id == id)
+            var message = await _queryRepository.Table<Message>().Include(x => x.FromUser).Include(x => x.ToUser).Where(x => x.Id == id)
                 .FirstOrDefaultAsync();
 
             var messageModel = new MessageModel()
@@ -82,13 +175,21 @@ namespace Hydra.Cms.Api.Services
                 Body = message.Body,
                 RegisterDate = message.RegisterDate,
                 IsRead = message.IsRead,
-                WriterId = message.WriterId,
-                Writer = new AuthorModel()
+                FromUserId = message.FromUserId,
+                FromUser = new AuthorModel()
                 {
-                    Id = message.Writer.Id,
-                    Name = message.Writer.Name,
-                    UserName = message.Writer.UserName,
-                    Avatar = message.Writer.Avatar
+                    Id = message.FromUser.Id,
+                    Name = message.FromUser.Name,
+                    UserName = message.FromUser.UserName,
+                    Avatar = message.FromUser.Avatar
+                },
+                ToUserId = message.ToUserId,
+                ToUser = new AuthorModel()
+                {
+                    Id = message.ToUser.Id,
+                    Name = message.ToUser.Name,
+                    UserName = message.ToUser.UserName,
+                    Avatar = message.ToUser.Avatar
                 }
             };
             result.Data = messageModel;
@@ -101,15 +202,13 @@ namespace Hydra.Cms.Api.Services
         /// </summary>
         /// <param name="messageModel"></param>
         /// <returns></returns>
-        public async Task<Result<MessageModel>> Add(MessageModel messageModel)
+        public async Task<Result<MessageModel>> Send(MessageModel messageModel, bool isContactPage, int? fromUserId)
         {
             var result = new Result<MessageModel>();
             try
             {
-                var dateTime =  DateTime.UtcNow;  
-                if (messageModel.WriterId == null) {
-                    var toTime = DateTime.UtcNow.AddSeconds(7);
-                bool isExist = await _queryRepository.Table<Message>().AnyAsync(x => x.Email == messageModel.Email && x.RegisterDate >= dateTime && x.RegisterDate <= toTime);
+                var dateTime = DateTime.UtcNow;
+                bool isExist = await _queryRepository.Table<Message>().AnyAsync(x => x.Email == messageModel.Email && x.Subject == messageModel.Subject && x.Name == messageModel.Name && x.Body == messageModel.Body);
                 if (isExist)
                 {
                     result.Status = ResultStatusEnum.ItsDuplicate;
@@ -117,8 +216,8 @@ namespace Hydra.Cms.Api.Services
                     result.Errors.Add(new Error(nameof(messageModel.Subject), "The Message already exist"));
                     return result;
                 }
-                
-                }
+
+
                 var message = new Message()
                 {
                     Name = messageModel.Name,
@@ -126,9 +225,16 @@ namespace Hydra.Cms.Api.Services
                     Body = messageModel.Body,
                     Email = messageModel.Email,
                     IsRead = false,
-                    WriterId = messageModel.WriterId,
                     RegisterDate = dateTime
                 };
+
+                if (isContactPage)
+                {
+                    var adminUser
+
+                }
+
+
                 await _commandRepository.InsertAsync(message);
 
                 await _commandRepository.SaveChangesAsync();
@@ -171,7 +277,7 @@ namespace Hydra.Cms.Api.Services
                     }
 
                 }
-                var message = await _queryRepository.Table<Message>().FirstAsync(x=>x.Id == messageModel.Id);
+                var message = await _queryRepository.Table<Message>().FirstAsync(x => x.Id == messageModel.Id);
 
                 message.Subject = messageModel.Subject;
                 message.Body = messageModel.Body;

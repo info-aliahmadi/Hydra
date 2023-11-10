@@ -43,12 +43,12 @@ namespace Hydra.Cms.Core.Domain
         /// <summary>
         /// 
         /// </summary>
-        public User? ToUserId { get; set; }
+        public User ToUser { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public int? ToUserId { get; set; }
+        public int ToUserId { get; set; }
 
         /// <summary>
         /// 
