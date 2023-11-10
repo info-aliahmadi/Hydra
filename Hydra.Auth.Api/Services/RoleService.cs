@@ -54,7 +54,7 @@ namespace Hydra.Auth.Api.Services
         /// 
         /// </summary>
         /// <returns></returns>
-        public async Task<Result<List<RoleModel>>> GetAllRoles()
+        public Result<List<RoleModel>> GetAllRoles()
         {
             var result = new Result<List<RoleModel>>();
 

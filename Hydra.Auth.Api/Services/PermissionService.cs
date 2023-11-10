@@ -46,7 +46,7 @@ namespace Hydra.Auth.Api.Services
         /// 
         /// </summary>
         /// <returns></returns>
-        public async Task<Result<List<PermissionModel>>> GetPermissionsByName(string name)
+        public Result<List<PermissionModel>> GetPermissionsByName(string name)
         {
             var result = new Result<List<PermissionModel>>();
 
