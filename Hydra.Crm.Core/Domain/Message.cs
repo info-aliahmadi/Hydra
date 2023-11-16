@@ -17,7 +17,7 @@ namespace Hydra.Crm.Core.Domain
         /// <summary>
         /// 
         /// </summary>
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         /// <summary>
         /// 

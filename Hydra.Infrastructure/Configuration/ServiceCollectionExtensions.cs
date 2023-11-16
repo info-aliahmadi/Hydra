@@ -11,6 +11,7 @@ using Hydra.Infrastructure.ModuleExtension;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Hydra.Infrastructure.Email;
 
 namespace Hydra.Infrastructure.Configuration
 {
@@ -50,6 +51,8 @@ namespace Hydra.Infrastructure.Configuration
             services.AddIdentityConfig(builder.Configuration);
 
             services.AddlocalizationConfig();
+
+            services.AddEmailConfig(builder.Configuration);
 
             builder.AddSettingConfig();
 

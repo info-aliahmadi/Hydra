@@ -8,7 +8,17 @@ namespace Hydra.Crm.Core.Domain
         /// <summary>
         /// 
         /// </summary>
+        public Message Message { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public int MessageId { get; set; }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public User ToUser { get; set; }
         /// <summary>
         /// 
         /// </summary>

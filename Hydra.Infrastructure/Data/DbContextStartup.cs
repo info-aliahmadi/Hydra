@@ -5,7 +5,7 @@ using EFCoreSecondLevelCacheInterceptor;
 
 namespace Hydra.Infrastructure.Data
 {
-    public static class ControllerStartup
+    public static class DbContextStartup
     {
         public static void AddDbContextConfig(this IServiceCollection services,
             IConfiguration configuration)
