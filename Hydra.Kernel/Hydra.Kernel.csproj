@@ -7,11 +7,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Interfaces\IEmailSender.cs" />
+    <Compile Remove="MessageSender\MessageSender.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
     <PackageReference Include="MimeKit" Version="4.0.0" />
     <PackageReference Include="NETCore.MailKit" Version="2.1.0" />
     <PackageReference Include="Twilio" Version="6.6.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="MessageSender\" />
   </ItemGroup>
 
 </Project>

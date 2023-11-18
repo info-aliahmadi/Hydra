@@ -3,31 +3,45 @@ using Hydra.Kernel;
 
 namespace Hydra.Crm.Core.Domain
 {
-    public class MessageUser : BaseEntity<int>
+    public class Chat : BaseEntity<long>
     {
+
         /// <summary>
         /// 
         /// </summary>
-        public Message Message { get; set; }
+        public ChatSession ChatSession { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
-        public int MessageId { get; set; }
+        public long ChatSessionId { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ChatUser ChatUser { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public int ChatUserId { get; set; }
 
 
         /// <summary>
         /// 
         /// </summary>
-        public User ToUser { get; set; }
+        public DateTime RegisterDate { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
-        public int ToUserId { get; set; }
+        public string Message { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
         public bool IsRead { get; set; }
+
 
     }
 

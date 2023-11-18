@@ -40,12 +40,12 @@ namespace Hydra.Infrastructure.Email.Service
                     var emailMessage = new EmailMessage
                     {
                         UID = uid.Id,
+                        Subject = message.Subject,
+                        Date = message.Date,
                         Content = !string.IsNullOrEmpty(message.HtmlBody) ? message.HtmlBody : message.TextBody,
                         FromAddresses = message.From.Mailboxes.Select(x => new EmailAddress { Address = x.Address, Name = x.Name }).ToList(),
                         ToAddresses = message.To.Mailboxes.Select(x => new EmailAddress { Address = x.Address, Name = x.Name }).ToList(),
-                        Subject = message.Subject,
                         Attachments = message.Attachments.ToList()
-
                     };
                     emailMessage.ToAddresses.AddRange(message.To.Select(x => (MailboxAddress)x).Select(x => new EmailAddress { Address = x.Address, Name = x.Name }));
                     emailMessage.FromAddresses.AddRange(message.From.Select(x => (MailboxAddress)x).Select(x => new EmailAddress { Address = x.Address, Name = x.Name }));
@@ -66,6 +66,13 @@ namespace Hydra.Infrastructure.Email.Service
             message.From.AddRange(emailMessage.FromAddresses.Select(x => new MailboxAddress(x.Name, x.Address)));
 
             message.Subject = emailMessage.Subject;
+
+            message.Date = emailMessage.Date;
+
+
+
+
+
             //We will say we are sending HTML. But there are options for plaintext etc. 
             message.Body = new TextPart(TextFormat.Html)
             {
