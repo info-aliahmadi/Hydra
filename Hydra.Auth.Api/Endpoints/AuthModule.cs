@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
-using Nitro.Service.MessageSender;
 using System.Security.Claims;
 
 namespace Hydra.Cms.Api.Endpoints
@@ -20,8 +19,6 @@ namespace Hydra.Cms.Api.Endpoints
 
         public IServiceCollection RegisterModules(IServiceCollection services)
         {
-            services.AddScoped<IEmailSender, MessageSender>();
-            services.AddScoped<ISmsSender, MessageSender>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IUserService, UserService>();

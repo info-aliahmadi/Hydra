@@ -79,11 +79,6 @@ namespace Hydra.Cms.Api.Endpoints
             endpoints.MapGet(API_SCHEMA + "/VisibleSlideshow", SlideshowHandler.VisibleSlideshow).RequirePermission("CMS.VISIBLE_SLIDESHOW");
             endpoints.MapGet(API_SCHEMA + "/DeleteSlideshow", SlideshowHandler.DeleteSlideshow).RequirePermission("CMS.DELETE_SLIDESHOW");
 
-            endpoints.MapPost(API_SCHEMA + "/GetMessageList", MessageHandler.GetList).RequirePermission("CMS.GET_MESSAGE_LIST");
-            endpoints.MapGet(API_SCHEMA + "/GetMessageById", MessageHandler.GetMessageById).RequirePermission("CMS.GET_MESSAGE_BY_ID");
-            endpoints.MapPost(API_SCHEMA + "/AddMessage", MessageHandler.AddMessage).RequirePermission("CMS.ADD_MESSAGE");
-            endpoints.MapPost(API_SCHEMA + "/UpdateMessage", MessageHandler.UpdateMessage).RequirePermission("CMS.UPDATE_MESSAGE");
-            endpoints.MapGet(API_SCHEMA + "/DeleteMessage", MessageHandler.DeleteMessage).RequirePermission("CMS.DELETE_MESSAGE");
 
             return endpoints;
         }

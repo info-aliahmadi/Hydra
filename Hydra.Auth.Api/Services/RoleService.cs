@@ -54,17 +54,17 @@ namespace Hydra.Auth.Api.Services
         /// 
         /// </summary>
         /// <returns></returns>
-        public Result<List<RoleModel>> GetAllRoles()
+        public async Task<Result<List<RoleModel>>> GetAllRoles()
         {
             var result = new Result<List<RoleModel>>();
 
-            var list = _queryRepository.Table<Role>().Select(x => new RoleModel()
+            var list = await _queryRepository.Table<Role>().Select(x => new RoleModel()
             {
                 Id = x.Id,
                 Name = x.Name,
                 ConcurrencyStamp = x.ConcurrencyStamp,
                 NormalizedName = x.NormalizedName,
-            }).Cacheable().ToList();
+            }).Cacheable().ToListAsync();
 
             result.Data = list;
 

@@ -1,21 +1,19 @@
 ﻿using Hydra.Auth.Core.Interfaces;
 using Hydra.Auth.Core.Models;
 using Hydra.Infrastructure;
+using Hydra.Infrastructure.Email.Models;
+using Hydra.Infrastructure.Email.Service;
 using Hydra.Infrastructure.Security.Domain;
 using Hydra.Infrastructure.Security.Service;
-using Hydra.Kernel.Extensions;
 using Hydra.Kernel.Interfaces;
 using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using MiniValidation;
-using System.IO;
 using System.Security.Claims;
 
 namespace Hydra.Auth.Api.Handler
@@ -35,7 +33,7 @@ namespace Hydra.Auth.Api.Handler
         /// <returns></returns>
         public static async Task<IResult> InitializeHandler(
             IQueryRepository _repository,
-            IEmailSender _emailSender,
+            IEmailService _emailSender,
             UserManager<User> _userManager,
             RoleManager<Role> _roleManager,
             SignInManager<User> _signInManager,
@@ -94,7 +92,7 @@ namespace Hydra.Auth.Api.Handler
 
         public static async Task<IResult> RegisterHandler(
              IQueryRepository _repository,
-             IEmailSender _emailSender,
+             IEmailService _emailSender,
              UserManager<User> _userManager,
              RoleManager<Role> _roleManager,
              SignInManager<User> _signInManager,
@@ -127,22 +125,22 @@ namespace Hydra.Auth.Api.Handler
                         if (_userManager.Options.SignIn.RequireConfirmedEmail)
                         {
                             result.Status = AccountStatusEnum.RequireConfirmedEmail;
-                            var emailRequest = new EmailRequestRecord();
+                            var emailRequest = new EmailMessage();
                             //For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                             //Send an email with this link
                             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                             var callbackUrl = string.Format("ConfirmEmail/Account/{0}/{1}/{2}", user.Id, code, "");
 
                             emailRequest.Subject = _sharedlocalizer["ConfirmEmail"];
-                            emailRequest.Body =
+                            emailRequest.Content =
                                 string.Format(
                                     _sharedlocalizer[
                                         "Please confirm your account by clicking this link: <a href='{0}'>link</a>"],
                                     callbackUrl);
-                            emailRequest.ToEmail = registerModel.Email;
+                            emailRequest.ToAddresses.Add(new EmailAddress() { Address = registerModel.Email });
                             try
                             {
-                                await _emailSender.SendEmailAsync(emailRequest);
+                                _emailSender.Send(emailRequest);
 
                                 result.Status = AccountStatusEnum.Succeeded;
                                 return Results.Ok(result);
@@ -592,7 +590,7 @@ namespace Hydra.Auth.Api.Handler
             HttpContext context,
             IStringLocalizer<SharedResource> _sharedlocalizer,
              ILogger<AccountHandler> _logger,
-             IEmailSender _emailSender, ClaimsPrincipal userClaim, ChangePasswordModel model)
+             IEmailService _emailSender, ClaimsPrincipal userClaim, ChangePasswordModel model)
         {
 
             var result = new AccountResult();
@@ -629,7 +627,7 @@ namespace Hydra.Auth.Api.Handler
             HttpContext context,
             IStringLocalizer<SharedResource> _sharedlocalizer,
              ILogger<AccountHandler> _logger,
-             IEmailSender _emailSender, [FromBody] ForgotPasswordModel model)
+             IEmailService _emailSender, [FromBody] ForgotPasswordModel model)
         {
             var result = new AccountResult();
             if (MiniValidator.TryValidate(model, out var errors))
@@ -644,7 +642,7 @@ namespace Hydra.Auth.Api.Handler
 
                 result.Status = AccountStatusEnum.RequireConfirmedEmail;
 
-                var emailRequest = new EmailRequestRecord();
+                var emailRequest = new EmailMessage();
                 //For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                 //Send an email with this link
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -652,11 +650,11 @@ namespace Hydra.Auth.Api.Handler
                 var callbackUrl = HydraHelper.GetCurrentDomain(context) + $"ConfirmEmail/Account?userId={user.Id}&code={code}&returnUrl=";
 
                 emailRequest.Subject = _sharedlocalizer["ConfirmEmail"];
-                emailRequest.Body = $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>";
-                emailRequest.ToEmail = model.Email;
+                emailRequest.Content = $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>";
+                emailRequest.ToAddresses.Add(new EmailAddress() { Address = model.Email });
                 try
                 {
-                    await _emailSender.SendEmailAsync(emailRequest);
+                    _emailSender.Send(emailRequest);
 
                     result.Status = AccountStatusEnum.Succeeded;
                     return Results.Ok(result);
@@ -736,7 +734,7 @@ namespace Hydra.Auth.Api.Handler
 
         public static async Task<IResult> SendCodeHandler(UserManager<User> _userManager, SignInManager<User> _signInManager,
             IStringLocalizer<SharedResource> _sharedlocalizer,
-             ILogger<AccountHandler> _logger, IEmailSender _emailSender, ISmsSender _smsSender, [FromBody] SendCodeModel model)
+             ILogger<AccountHandler> _logger, IEmailService _emailSender, ISmsSender _smsSender, [FromBody] SendCodeModel model)
         {
             var result = new AccountResult();
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
@@ -781,16 +779,15 @@ namespace Hydra.Auth.Api.Handler
             var message = _sharedlocalizer["Your security code is: "] + code;
             if (model.SelectedProvider == "Email")
             {
-                var emailRequest = new EmailRequestRecord()
+                var emailRequest = new EmailMessage()
                 {
-                    ToEmail = await _userManager.GetEmailAsync(user),
                     Subject = _sharedlocalizer["Security Code"],
-                    Body = message
+                    Content = message
                 };
-
+                emailRequest.ToAddresses.Add(new EmailAddress() { Address = await _userManager.GetEmailAsync(user) });
                 try
                 {
-                    await _emailSender.SendEmailAsync(emailRequest);
+                    _emailSender.Send(emailRequest);
 
                     result.Status = AccountStatusEnum.Succeeded;
                     return Results.Ok(result);

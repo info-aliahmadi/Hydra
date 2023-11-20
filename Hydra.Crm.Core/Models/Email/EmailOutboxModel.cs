@@ -1,23 +1,16 @@
-﻿using Hydra.Kernel.Models;
-
-namespace Hydra.Crm.Core.Models
+﻿
+namespace Hydra.Crm.Core.Models.Email
 {
-    public record MessageModel
+    public record EmailOutboxModel
     {
         /// <summary>
         /// 
         /// </summary>
-        public int Id { get; set; }
-
+        public EmailInboxModel? ReplayTo { get; set; }
         /// <summary>
         /// 
         /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Email { get; set; }
+        public int? ReplayToId { get; set; }
 
         /// <summary>
         /// 
@@ -27,7 +20,7 @@ namespace Hydra.Crm.Core.Models
         /// <summary>
         /// 
         /// </summary>
-        public string Body { get; set; }
+        public string Content { get; set; }
 
         /// <summary>
         /// 
@@ -37,27 +30,23 @@ namespace Hydra.Crm.Core.Models
         /// <summary>
         /// 
         /// </summary>
-        public int? FromUserId { get; set; }
+        public bool IsDraft { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public AuthorModel? FromUser { get; set; }
+        public List<EmailOutboxFromAddressModel> EmailOutboxFromAddress { get; set; } = new();
 
         /// <summary>
         /// 
         /// </summary>
-        public int ToUserId { get; set; }
+        public List<EmailOutboxToAddressModel> EmailOutboxToAddress { get; set; } = new();
 
         /// <summary>
         /// 
         /// </summary>
-        public AuthorModel ToUser { get; set; }
+        public List<EmailOutboxAttachmentModel> EmailOutboxAttachments { get; set; } = new();
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public bool IsRead { get; set; }
 
     }
 

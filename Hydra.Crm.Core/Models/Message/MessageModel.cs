@@ -1,14 +1,19 @@
-﻿using Hydra.Infrastructure.Security.Domain;
-using Hydra.Kernel;
+﻿using Hydra.Crm.Core.Domain.Message;
+using Hydra.Kernel.Models;
 
-namespace Hydra.Crm.Core.Domain.Message
+namespace Hydra.Crm.Core.Models.Message
 {
-    public class Message : BaseEntity<int>
+    public record MessageModel
     {
         /// <summary>
         /// 
         /// </summary>
+        public int Id { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public MessageType MessageType { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
@@ -17,17 +22,17 @@ namespace Hydra.Crm.Core.Domain.Message
         /// <summary>
         /// 
         /// </summary>
-        public string? Email { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public User? FromUser { get; set; }
+        public string Email { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
         public int? FromUserId { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public AuthorModel? FromUser { get; set; }
 
         /// <summary>
         /// 
@@ -47,32 +52,23 @@ namespace Hydra.Crm.Core.Domain.Message
         /// <summary>
         /// 
         /// </summary>
+        public bool IsDraft { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public bool IsDeleted { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public bool IsDraft { get; set; }
-
-
+        public List<MessageUserModel> ToUsers { get; set; } = new();
         /// <summary>
         /// 
         /// </summary>
-        public List<MessageUser> MessageUsers { get; set; } = new();
+        public List<int> Attachments { get; set; } = new();
 
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public List<MessageAttachment> MessageAttachments { get; set; } = new();
 
     }
 
-    public enum MessageType
-    {
-        Private = 0,
-        Public = 1,
-        Contact = 2,
-        Request = 3,
-    }
 }

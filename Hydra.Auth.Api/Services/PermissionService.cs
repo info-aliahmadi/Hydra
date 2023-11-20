@@ -46,16 +46,16 @@ namespace Hydra.Auth.Api.Services
         /// 
         /// </summary>
         /// <returns></returns>
-        public Result<List<PermissionModel>> GetPermissionsByName(string name)
+        public async Task<Result<List<PermissionModel>>> GetPermissionsByName(string name)
         {
             var result = new Result<List<PermissionModel>>();
 
-            var list = _queryRepository.Table<Permission>().Where(x => x.Name.Contains(name) || x.NormalizedName.Contains(name)).Take(10).Select(x => new PermissionModel()
+            var list = await _queryRepository.Table<Permission>().Where(x => x.Name.Contains(name) || x.NormalizedName.Contains(name)).Take(10).Select(x => new PermissionModel()
             {
                 Id = x.Id,
                 Name = x.Name,
                 NormalizedName = x.NormalizedName
-            }).ToList();
+            }).ToListAsync();
 
             result.Data = list;
 

@@ -301,7 +301,7 @@ namespace Hydra.Cms.Api.Services
 
                 var currentTags = articleTags.Select(x => x.TagId).ToArray();
 
-                if (!(newTags == currentTags))
+                if (newTags != currentTags)
                 {
                     foreach (var articleTag in articleTags)
                     {

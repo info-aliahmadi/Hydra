@@ -1,24 +1,20 @@
 ﻿using Hydra.Infrastructure.Security.Domain;
 using Hydra.Kernel;
+using Hydra.Kernel.Models;
 
-namespace Hydra.Crm.Core.Domain.Message
+namespace Hydra.Crm.Core.Models.Message
 {
-    public class MessageUser : BaseEntity<int>
+    public record MessageUserModel
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        public Message Message { get; set; }
         /// <summary>
         /// 
         /// </summary>
         public int MessageId { get; set; }
 
-
         /// <summary>
         /// 
         /// </summary>
-        public User ToUser { get; set; }
+        public AuthorModel ToUser { get; set; }
         /// <summary>
         /// 
         /// </summary>
