@@ -8,7 +8,7 @@ namespace Hydra.Crm.Core.Domain.Email
         /// <summary>
         /// 
         /// </summary>
-        public long UID { get; set; }
+        public string UID { get; set; }
 
         /// <summary>
         /// 
@@ -29,6 +29,21 @@ namespace Hydra.Crm.Core.Domain.Email
         /// 
         /// </summary>
         public DateTime RegisterDate { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool IsDeleted { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool IsRead { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool IsPin { get; set; }
 
         /// <summary>
         /// 

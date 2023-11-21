@@ -1,5 +1,4 @@
-﻿using EFCoreSecondLevelCacheInterceptor;
-using Hydra.Auth.Core.Interfaces;
+﻿using Hydra.Auth.Core.Interfaces;
 using Hydra.Auth.Core.Models;
 using Hydra.Infrastructure.Data.Extension;
 using Hydra.Infrastructure.Security.Domain;
@@ -7,7 +6,6 @@ using Hydra.Kernel.Extensions;
 using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
 
 namespace Hydra.Auth.Api.Services
 {

@@ -18,6 +18,11 @@ namespace Hydra.Crm.Core.Domain.Email
         /// <summary>
         /// 
         /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public string Address { get; set; }
 
     }

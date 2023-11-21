@@ -56,17 +56,32 @@ namespace Hydra.Crm.Core.Interfaces
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="messageId"></param>
+        /// <returns></returns>
+        Task<Result<MessageModel>> GetByIdForPublic(int messageId);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="messageId"></param>
         /// <param name="currentUserId"></param>
         /// <returns></returns>
-        Task<Result<MessageModel>> GetById(int id, int currentUserId);
+        Task<Result<MessageModel>> GetByIdForSender(int messageId, int fromUserId);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="messageId"></param>
+        /// <param name="currentUserId"></param>
+        /// <returns></returns>
+        Task<Result<MessageModel>> GetByIdForReceiver(int messageId, int toUserId);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="messageModel"></param>
         /// <returns></returns>
-        Task<Result<MessageModel>> Send(MessageModel messageModel);
+        Task<Result<MessageModel>> Send(MessageModel messageModel, int currentUserId);
 
         /// <summary>
         /// 
@@ -74,7 +89,21 @@ namespace Hydra.Crm.Core.Interfaces
         /// <param name="messageModel"></param>
         /// <param name="currentUser"></param>
         /// <returns></returns>
-        Task<Result<MessageModel>> UpdateDraft(MessageModel messageModel, int currentUserId);
+        Task<Result<MessageModel>> SaveDraft(MessageModel messageModel, int currentUserId);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="messageModel"></param>
+        /// <param name="currentUser"></param>
+        /// <returns></returns>
+        Task<Result<MessageModel>> Add(MessageModel messageModel);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="messageModel"></param>
+        /// <param name="currentUser"></param>
+        /// <returns></returns>
+        Task<Result<MessageModel>> Update(MessageModel messageModel, int currentUserId);
 
         /// <summary>
         /// 

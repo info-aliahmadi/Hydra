@@ -62,7 +62,12 @@ namespace Hydra.Crm.Core.Models.Message
         /// <summary>
         /// 
         /// </summary>
-        public List<MessageUserModel> ToUsers { get; set; } = new();
+        public MessageUserModel ToUser { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<MessageUserModel> ToUsers { get; set; }
         /// <summary>
         /// 
         /// </summary>

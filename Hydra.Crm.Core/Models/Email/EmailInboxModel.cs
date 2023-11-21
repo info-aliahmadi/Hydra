@@ -8,7 +8,12 @@ namespace Hydra.Crm.Core.Models.Email
         /// <summary>
         /// 
         /// </summary>
-        public long UID { get; set; }
+        public int Id { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string UID { get; set; }
 
         /// <summary>
         /// 
@@ -24,6 +29,27 @@ namespace Hydra.Crm.Core.Models.Email
         /// 
         /// </summary>
         public DateTimeOffset Date { get; set; }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool IsDeleted { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool IsRead { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool IsPin { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public int? ReplayedOutboxId { get; set; }
 
         /// <summary>
         /// 
@@ -43,7 +69,7 @@ namespace Hydra.Crm.Core.Models.Email
         /// <summary>
         /// 
         /// </summary>
-        public List<EmailInboxAttachmentModel> EmailInboxAttachments { get; set; } = new();
+        public List<int> Attachments { get; set; } = new();
 
 
     }

@@ -6,6 +6,10 @@ namespace Hydra.Crm.Core.Models.Email
         /// <summary>
         /// 
         /// </summary>
+        public int Id { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public EmailInboxModel? ReplayTo { get; set; }
         /// <summary>
         /// 
@@ -31,6 +35,7 @@ namespace Hydra.Crm.Core.Models.Email
         /// 
         /// </summary>
         public bool IsDraft { get; set; }
+
 
         /// <summary>
         /// 

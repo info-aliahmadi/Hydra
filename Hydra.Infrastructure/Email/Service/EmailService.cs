@@ -39,7 +39,7 @@ namespace Hydra.Infrastructure.Email.Service
 
                     var emailMessage = new EmailMessage
                     {
-                        UID = uid.Id,
+                        UID = uid.ToString(),
                         Subject = message.Subject,
                         Date = message.Date,
                         Content = !string.IsNullOrEmpty(message.HtmlBody) ? message.HtmlBody : message.TextBody,
@@ -70,14 +70,22 @@ namespace Hydra.Infrastructure.Email.Service
             message.Date = emailMessage.Date;
 
 
-
-
-
             //We will say we are sending HTML. But there are options for plaintext etc. 
             message.Body = new TextPart(TextFormat.Html)
             {
                 Text = emailMessage.Content
             };
+
+
+            if (emailMessage.AttachmentPaths.Any())
+            {
+                var builder = new BodyBuilder();
+                foreach (var attachmentPath in emailMessage.AttachmentPaths)
+                {
+                    builder.Attachments.Add(attachmentPath);
+                }
+                message.Body = builder.ToMessageBody();
+            }
 
             //Be careful that the SmtpClient class is the one from Mailkit not the framework!
             using (var emailClient = new SmtpClient())
