@@ -21,8 +21,6 @@ namespace Hydra.Crm.Api.Handler
             var result = await _messageService.GetAllMessages(dataGrid);
 
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
-
-
         }
 
         /// <summary>
@@ -35,7 +33,7 @@ namespace Hydra.Crm.Api.Handler
             ClaimsPrincipal userClaim,
              IMessageService _messageService, GridDataBound dataGrid)
         {
-            var currentUserId = int.Parse(userClaim?.FindFirst("identity")?.Value);
+            var currentUserId = int.Parse(userClaim.FindFirst("identity")!.Value);
 
             var result = await _messageService.GetInbox(dataGrid, currentUserId);
 
@@ -70,7 +68,7 @@ namespace Hydra.Crm.Api.Handler
             ClaimsPrincipal userClaim,
              IMessageService _messageService, GridDataBound dataGrid)
         {
-            var currentUserId = int.Parse(userClaim?.FindFirst("identity")?.Value);
+            var currentUserId = int.Parse(userClaim.FindFirst("identity")!.Value);
 
             var result = await _messageService.GetDeletedInbox(dataGrid, currentUserId);
 
@@ -88,7 +86,7 @@ namespace Hydra.Crm.Api.Handler
             ClaimsPrincipal userClaim,
              IMessageService _messageService, GridDataBound dataGrid)
         {
-            var currentUserId = int.Parse(userClaim?.FindFirst("identity")?.Value);
+            var currentUserId = int.Parse(userClaim.FindFirst("identity")!.Value);
 
             var result = await _messageService.GetSent(dataGrid, currentUserId);
 
@@ -106,36 +104,61 @@ namespace Hydra.Crm.Api.Handler
             ClaimsPrincipal userClaim,
              IMessageService _messageService, GridDataBound dataGrid)
         {
-            var currentUserId = int.Parse(userClaim?.FindFirst("identity")?.Value);
+            var currentUserId = int.Parse(userClaim.FindFirst("identity")!.Value);
 
             var result = await _messageService.GetDeletedSent(dataGrid, currentUserId);
 
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
 
         }
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="_messageService"></param>
         /// <param name="messageModel"></param>
         /// <returns></returns>
-        public static async Task<IResult> GetMessageById(
+        public static async Task<IResult> GetMessageByIdForPublic(
             ClaimsPrincipal userClaim,
              IMessageService _messageService, int messageId)
         {
-            try
-            {
-                var currentUserId = int.Parse(userClaim?.FindFirst("identity")?.Value);
-
-                var result = await _messageService.GetById(messageId, currentUserId);
+                var result = await _messageService.GetByIdForPublic(messageId);
 
                 return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+        }
 
-            }
-            catch (Exception e)
-            {
-                return Results.BadRequest(e.Message);
-            }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_messageService"></param>
+        /// <param name="messageModel"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetMessageByIdForReceiver(
+            ClaimsPrincipal userClaim,
+             IMessageService _messageService, int messageId)
+        {
+                var currentUserId = int.Parse(userClaim.FindFirst("identity")!.Value);
+
+                var result = await _messageService.GetByIdForReceiver(messageId, currentUserId);
+
+                return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_messageService"></param>
+        /// <param name="messageModel"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetMessageByIdForSender(
+            ClaimsPrincipal userClaim,
+             IMessageService _messageService, int messageId)
+        {
+                var currentUserId = int.Parse(userClaim.FindFirst("identity")!.Value);
+
+                var result = await _messageService.GetByIdForSender(messageId, currentUserId);
+
+                return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
 
         /// <summary>
@@ -150,13 +173,13 @@ namespace Hydra.Crm.Api.Handler
             [FromBody] MessageModel messageModel
             )
         {
-            var currentUserId = int.Parse(userClaim?.FindFirst("identity")?.Value);
+            var currentUserId = int.Parse(userClaim.FindFirst("identity")!.Value);
 
             messageModel.FromUserId = currentUserId;
 
             messageModel.MessageType = Core.Domain.Message.MessageType.Public;
 
-            var result = await _messageService.Send(messageModel);
+            var result = await _messageService.Send(messageModel, currentUserId);
 
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
@@ -173,13 +196,13 @@ namespace Hydra.Crm.Api.Handler
             [FromBody] MessageModel messageModel
             )
         {
-            var currentUserId = int.Parse(userClaim?.FindFirst("identity")?.Value);
+            var currentUserId = int.Parse(userClaim.FindFirst("identity")!.Value);
 
             messageModel.FromUserId = currentUserId;
 
             messageModel.MessageType = Core.Domain.Message.MessageType.Private;
 
-            var result = await _messageService.Send(messageModel);
+            var result = await _messageService.Send(messageModel, currentUserId);
 
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
@@ -199,7 +222,7 @@ namespace Hydra.Crm.Api.Handler
 
             messageModel.MessageType = Core.Domain.Message.MessageType.Request;
 
-            var result = await _messageService.Send(messageModel);
+            var result = await _messageService.Send(messageModel, 0);
 
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
@@ -219,7 +242,7 @@ namespace Hydra.Crm.Api.Handler
 
             messageModel.MessageType = Core.Domain.Message.MessageType.Contact;
 
-            var result = await _messageService.Send(messageModel);
+            var result = await _messageService.Send(messageModel, 0);
 
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
@@ -230,17 +253,17 @@ namespace Hydra.Crm.Api.Handler
         /// <param name="_messageService"></param>
         /// <param name="messageModel"></param>
         /// <returns></returns>
-        public static async Task<IResult> UpdateDraftMessage(
+        public static async Task<IResult> SaveDraftMessage(
             ClaimsPrincipal userClaim,
             IMessageService _messageService,
             [FromBody] MessageModel messageModel
             )
         {
-            var currentUserId = int.Parse(userClaim?.FindFirst("identity")?.Value);
+            var currentUserId = int.Parse(userClaim.FindFirst("identity")!.Value);
 
             messageModel.FromUserId = currentUserId;
 
-            var result = await _messageService.UpdateDraft(messageModel, currentUserId);
+            var result = await _messageService.SaveDraft(messageModel, currentUserId);
 
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
@@ -255,7 +278,7 @@ namespace Hydra.Crm.Api.Handler
             ClaimsPrincipal userClaim,
              IMessageService _messageService, int messageId)
         {
-            var currentUserId = int.Parse(userClaim?.FindFirst("identity")?.Value);
+            var currentUserId = int.Parse(userClaim.FindFirst("identity")!.Value);
 
             var result = await _messageService.DeleteDraft(messageId, currentUserId);
 
@@ -272,7 +295,7 @@ namespace Hydra.Crm.Api.Handler
             ClaimsPrincipal userClaim,
              IMessageService _messageService, int messageId)
         {
-            var currentUserId = int.Parse(userClaim?.FindFirst("identity")?.Value);
+            var currentUserId = int.Parse(userClaim.FindFirst("identity")!.Value);
 
             var result = await _messageService.Delete(messageId, currentUserId);
 
@@ -290,7 +313,7 @@ namespace Hydra.Crm.Api.Handler
             ClaimsPrincipal userClaim,
              IMessageService _messageService, int messageId)
         {
-            var currentUserId = int.Parse(userClaim?.FindFirst("identity")?.Value);
+            var currentUserId = int.Parse(userClaim.FindFirst("identity")!.Value);
 
             var result = await _messageService.Pin(messageId, currentUserId);
 
@@ -307,7 +330,7 @@ namespace Hydra.Crm.Api.Handler
             ClaimsPrincipal userClaim,
              IMessageService _messageService, int messageId)
         {
-            var currentUserId = int.Parse(userClaim?.FindFirst("identity")?.Value);
+            var currentUserId = int.Parse(userClaim.FindFirst("identity")!.Value);
 
             var result = await _messageService.Read(messageId, currentUserId);
 
@@ -324,7 +347,7 @@ namespace Hydra.Crm.Api.Handler
             ClaimsPrincipal userClaim,
              IMessageService _messageService, int messageId)
         {
-            var currentUserId = int.Parse(userClaim?.FindFirst("identity")?.Value);
+            var currentUserId = int.Parse(userClaim.FindFirst("identity")!.Value);
 
             var result = await _messageService.Remove(messageId, currentUserId);
 

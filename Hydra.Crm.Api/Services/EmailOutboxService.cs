@@ -189,6 +189,8 @@ namespace Hydra.Crm.Api.Services
         /// 
         /// </summary>
         /// <param name="emailOutboxModel"></param>
+        /// <param name="fromUser"></param>
+        /// <param name="context"></param>
         /// <returns></returns>
         public async Task<Result<EmailOutboxModel>> Send(EmailOutboxModel emailOutboxModel, AuthorModel fromUser, HttpContext context)
         {

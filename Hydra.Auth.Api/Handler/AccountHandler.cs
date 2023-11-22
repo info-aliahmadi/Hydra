@@ -347,7 +347,7 @@ namespace Hydra.Auth.Api.Handler
         /// <param name="userClaim"></param>
         /// <param name="userModel"></param>
         /// <returns></returns>
-        public static async Task<IResult> UpdateCurrentUserHandler(HttpContext httpContext, UserManager<User> _userManager,
+        public static async Task<IResult> UpdateCurrentUserHandler(UserManager<User> _userManager,
             ClaimsPrincipal userClaim, IUserService userService, UserModel userModel)
         {
             try
