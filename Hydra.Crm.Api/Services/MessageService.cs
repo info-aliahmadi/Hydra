@@ -1,14 +1,10 @@
-﻿
-using Hydra.Crm.Core.Domain.Email;
-using Hydra.Crm.Core.Domain.Message;
+﻿using Hydra.Crm.Core.Domain.Message;
 using Hydra.Crm.Core.Interfaces;
-using Hydra.Crm.Core.Models.Email;
 using Hydra.Crm.Core.Models.Message;
 using Hydra.Infrastructure.Data.Extension;
 using Hydra.Kernel.Extensions;
 using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 

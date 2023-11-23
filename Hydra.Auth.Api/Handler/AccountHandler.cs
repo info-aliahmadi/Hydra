@@ -33,7 +33,6 @@ namespace Hydra.Auth.Api.Handler
         /// <returns></returns>
         public static async Task<IResult> InitializeHandler(
             IQueryRepository _repository,
-            IEmailService _emailSender,
             UserManager<User> _userManager,
             RoleManager<Role> _roleManager,
             SignInManager<User> _signInManager,
@@ -734,7 +733,7 @@ namespace Hydra.Auth.Api.Handler
 
         public static async Task<IResult> SendCodeHandler(UserManager<User> _userManager, SignInManager<User> _signInManager,
             IStringLocalizer<SharedResource> _sharedlocalizer,
-             ILogger<AccountHandler> _logger, IEmailService _emailSender, ISmsSender _smsSender, [FromBody] SendCodeModel model)
+             ILogger<AccountHandler> _logger, IEmailService _emailSender, [FromBody] SendCodeModel model)
         {
             var result = new AccountResult();
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
@@ -808,7 +807,7 @@ namespace Hydra.Auth.Api.Handler
                 };
                 try
                 {
-                    await _smsSender.SendSmsAsync(smsRequest);
+                    //await _smsSender.SendSmsAsync(smsRequest);
 
                     result.Status = AccountStatusEnum.Succeeded;
                     return Results.Ok(result);
