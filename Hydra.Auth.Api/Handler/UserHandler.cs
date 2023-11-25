@@ -39,6 +39,51 @@ namespace Hydra.Auth.Api.Handler
         /// <param name="_userService"></param>
         /// <param name="userModel"></param>
         /// <returns></returns>
+        public static async Task<IResult> GetListForSelect(
+             IUserService _userService, [FromBody] string input)
+        {
+            try
+            {
+                var result = await _userService.GetListForSelect(input);
+
+                return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_userService"></param>
+        /// <param name="userModel"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetListForSelectByIds(
+             IUserService _userService, [FromBody] int[] userIds)
+        {
+            try
+            {
+                var result = await _userService.GetListForSelectByIds(userIds);
+
+                return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
+
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_userService"></param>
+        /// <param name="userModel"></param>
+        /// <returns></returns>
         public static async Task<IResult> GetUserById(
             IUserService _userService,
             int userId

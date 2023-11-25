@@ -62,6 +62,8 @@ namespace Hydra.Cms.Api.Endpoints
             endpoints.MapPost(API_SCHEMA + "/UseRecoveryCode", AccountHandler.UseRecoveryCodeHandler).RequirePermission("AUTH.USE_RECOVERY_CODE");
 
             endpoints.MapPost(API_SCHEMA + "/GetUserList", UserHandler.GetList).RequirePermission("AUTH.GET_USER_LIST");
+            endpoints.MapPost(API_SCHEMA + "/GetUserListForSelect", UserHandler.GetListForSelect).RequirePermission("AUTH.GET_USER_LIST");
+            endpoints.MapPost(API_SCHEMA + "/GetUserListForSelectByIds", UserHandler.GetListForSelectByIds).RequirePermission("AUTH.GET_USER_LIST");
             endpoints.MapGet(API_SCHEMA + "/GetUserById", UserHandler.GetUserById).RequirePermission("AUTH.GET_USER_BY_ID");
             endpoints.MapPost(API_SCHEMA + "/AddUser", UserHandler.AddUser).RequirePermission("AUTH.ADD_USER");
             endpoints.MapPost(API_SCHEMA + "/UpdateUser", UserHandler.UpdateUser).RequirePermission("AUTH.UPDATE_USER");

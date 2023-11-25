@@ -341,36 +341,27 @@ namespace Hydra.Crm.Api.Services
             var result = new Result<MessageModel>();
             try
             {
-                var messageModel = (from user in _queryRepository.Table<MessageUser>().Include(x => x.ToUser)
-                                    join msg in _queryRepository.Table<Message>().Include(x => x.FromUser).Include(x => x.MessageAttachments) on user.MessageId equals msg.Id into messages
-                                    from userMessage in messages.DefaultIfEmpty()
-                                    where userMessage.MessageType == MessageType.Public && userMessage.Id == messageId
+                var messageModel = (from message in _queryRepository.Table<Message>().Include(x => x.FromUser).Include(x => x.MessageAttachments)
+                                    where message.MessageType == MessageType.Public && message.Id == messageId
                                     select new MessageModel()
                                     {
-                                        Id = userMessage.Id,
-                                        MessageType = userMessage.MessageType,
-                                        Name = userMessage.Name,
-                                        Subject = userMessage.Subject,
-                                        Content = userMessage.Content,
-                                        RegisterDate = userMessage.RegisterDate,
-                                        IsDraft = userMessage.IsDraft,
-                                        IsDeleted = userMessage.IsDeleted,
-                                        FromUserId = userMessage.FromUserId,
-                                        Attachments = userMessage.MessageAttachments.Select(x => x.AttachmentId).ToList(),
+                                        Id = message.Id,
+                                        MessageType = message.MessageType,
+                                        Name = message.Name,
+                                        Subject = message.Subject,
+                                        Content = message.Content,
+                                        RegisterDate = message.RegisterDate,
+                                        IsDraft = message.IsDraft,
+                                        IsDeleted = message.IsDeleted,
+                                        FromUserId = message.FromUserId,
+                                        Attachments = message.MessageAttachments.Select(x => x.AttachmentId).ToList(),
                                         FromUser = new AuthorModel()
                                         {
-                                            Id = userMessage!.FromUser!.Id,
-                                            Name = userMessage!.FromUser!.Name,
-                                            UserName = userMessage!.FromUser!.UserName,
-                                            Avatar = userMessage!.FromUser!.Avatar
-                                        },
-                                        ToUser = new MessageUserModel()
-                                        {
-                                            ToUserId = user.ToUserId,
-                                            IsDeleted = user.IsDeleted,
-                                            IsRead = user.IsRead,
-                                            IsPin = user.IsPin
-                                        },
+                                            Id = message!.FromUser!.Id,
+                                            Name = message!.FromUser!.Name,
+                                            UserName = message!.FromUser!.UserName,
+                                            Avatar = message!.FromUser!.Avatar
+                                        }
 
                                     }).FirstOrDefault();
 
@@ -395,9 +386,7 @@ namespace Hydra.Crm.Api.Services
             var result = new Result<MessageModel>();
             try
             {
-                var messageModel = await (from user in _queryRepository.Table<MessageUser>().Include(x => x.ToUser)
-                                          join msg in _queryRepository.Table<Message>().Include(x => x.FromUser).Include(x => x.MessageAttachments) on user.MessageId equals msg.Id into messages
-                                          from userMessage in messages.DefaultIfEmpty()
+                var messageModel = await (from userMessage in _queryRepository.Table<Message>().Include(x => x.FromUser).Include(x => x.MessageUsers).Include(x => x.MessageAttachments)
                                           where userMessage.FromUserId == fromUserId && userMessage.Id == messageId
                                           select new MessageModel()
                                           {
@@ -418,13 +407,7 @@ namespace Hydra.Crm.Api.Services
                                                   UserName = userMessage!.FromUser!.UserName,
                                                   Avatar = userMessage!.FromUser!.Avatar
                                               },
-                                              ToUser = new MessageUserModel()
-                                              {
-                                                  ToUserId = user.ToUserId,
-                                                  IsDeleted = user.IsDeleted,
-                                                  IsRead = user.IsRead,
-                                                  IsPin = user.IsPin
-                                              }
+                                              ToUserIds = userMessage.MessageUsers.Select(x => x.ToUserId).ToList()
 
                                           }).FirstOrDefaultAsync();
 
@@ -507,14 +490,13 @@ namespace Hydra.Crm.Api.Services
                 // Add Or Update
                 if (messageModel.Id > 0)
                 {
-                    await Update(messageModel, currentUserId);
+                    result = await Update(messageModel, currentUserId);
                 }
                 else
                 {
-                    await Add(messageModel);
+                    result = await Add(messageModel);
                 }
 
-                result.Data = messageModel;
 
                 return result;
             }
@@ -539,14 +521,12 @@ namespace Hydra.Crm.Api.Services
                 // Add Or Update
                 if (messageModel.Id > 0)
                 {
-                    await Update(messageModel, currentUserId);
+                    result = await Update(messageModel, currentUserId);
                 }
                 else
                 {
-                    await Add(messageModel);
+                    result = await Add(messageModel);
                 }
-
-                result.Data = messageModel;
 
                 return result;
             }
@@ -606,11 +586,10 @@ namespace Hydra.Crm.Api.Services
 
 
                 // Add Message Receivers
-                var messageUsers = new List<MessageUser>();
 
-                foreach (var userId in messageModel.ToUsers.Select(x => x.ToUserId).Distinct())
+                foreach (var userId in messageModel.ToUserIds.Distinct())
                 {
-                    messageUsers.Add(new MessageUser()
+                    await _commandRepository.InsertAsync(new MessageUser()
                     {
                         MessageId = message.Id,
                         ToUserId = userId,
@@ -619,21 +598,17 @@ namespace Hydra.Crm.Api.Services
                         IsPin = false
                     });
                 }
-                await _commandRepository.InsertAsync(messageUsers);
 
                 // Add Message Attachments
-                var messageAttachments = new List<MessageAttachment>();
 
                 foreach (var attachmentId in messageModel.Attachments.Distinct())
                 {
-                    messageAttachments.Add(new MessageAttachment()
+                    await _commandRepository.InsertAsync(new MessageAttachment()
                     {
                         MessageId = message.Id,
                         AttachmentId = attachmentId
                     });
                 }
-                await _commandRepository.InsertAsync(messageAttachments);
-
 
                 await _commandRepository.SaveChangesAsync();
 
@@ -713,9 +688,8 @@ namespace Hydra.Crm.Api.Services
                 // Update Users Receive Message
                 var existedUsersIds = message.MessageUsers.Select(x => x.ToUserId);
 
-                var newUsersIds = messageModel.ToUsers.Select(x => x.ToUserId);
 
-                if (existedUsersIds != newUsersIds)
+                if (existedUsersIds != messageModel.ToUserIds)
                 {
 
                     foreach (var user in message.MessageUsers)
@@ -801,7 +775,8 @@ namespace Hydra.Crm.Api.Services
                 }
                 message.IsDeleted = true;
 
-                _commandRepository.SaveChanges();
+                _commandRepository.UpdateAsync(message);
+                await _commandRepository.SaveChangesAsync();
 
                 return result;
             }
@@ -834,7 +809,8 @@ namespace Hydra.Crm.Api.Services
                 }
                 messageUser.IsDeleted = true;
 
-                _commandRepository.SaveChanges();
+                _commandRepository.UpdateAsync(messageUser);
+                await _commandRepository.SaveChangesAsync();
 
                 return result;
             }
@@ -866,7 +842,8 @@ namespace Hydra.Crm.Api.Services
                 }
                 messageUser.IsPin = !messageUser.IsPin;
 
-                _commandRepository.SaveChanges();
+                _commandRepository.UpdateAsync(messageUser);
+                await _commandRepository.SaveChangesAsync();
 
                 return result;
             }
@@ -898,7 +875,8 @@ namespace Hydra.Crm.Api.Services
                 }
                 messageUser.IsRead = true;
 
-                _commandRepository.SaveChanges();
+                _commandRepository.UpdateAsync(messageUser);
+                await _commandRepository.SaveChangesAsync();
 
                 return result;
             }

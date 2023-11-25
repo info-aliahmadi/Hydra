@@ -12,7 +12,7 @@ namespace Hydra.Crm.Core.Domain.Message
         /// <summary>
         /// 
         /// </summary>
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// 

@@ -71,6 +71,10 @@ namespace Hydra.Crm.Core.Models.Message
         /// <summary>
         /// 
         /// </summary>
+        public List<int> ToUserIds { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public List<int> Attachments { get; set; } = new();
 
 

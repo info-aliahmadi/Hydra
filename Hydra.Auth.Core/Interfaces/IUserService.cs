@@ -25,6 +25,20 @@ namespace Hydra.Auth.Core.Interfaces
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        Task<Result<List<UserModel>>> GetListForSelect(string input);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userIds"></param>
+        /// <returns></returns>
+        Task<Result<List<UserModel>>> GetListForSelectByIds(int[] userIds);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="userModel"></param>
         /// <returns></returns>
         Task<Result<UserModel>> Add(UserModel userModel);

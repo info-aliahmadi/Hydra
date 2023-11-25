@@ -75,6 +75,48 @@ namespace Hydra.Auth.Api.Services
         /// <summary>
         /// 
         /// </summary>
+        /// <returns></returns>
+        public async Task<Result<List<UserModel>>> GetListForSelect(string input)
+        {
+            var result = new Result<List<UserModel>>();
+
+            var list = await _queryRepository.Table<User>().Where(x => x.Name.Contains(input) || x.UserName.Contains(input) || x.Email.Contains(input)).Take(10).Select(user => new UserModel()
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                Name = user.Name
+            }).ToListAsync();
+
+            result.Data = list;
+
+            return result;
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Result<List<UserModel>>> GetListForSelectByIds(int[] userIds)
+        {
+            var result = new Result<List<UserModel>>();
+
+            var list = await _queryRepository.Table<User>().Where(x => userIds.Contains(x.Id)).Take(10).Select(user => new UserModel()
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                Name = user.Name
+            }).ToListAsync();
+
+            result.Data = list;
+
+            return result;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         public async Task<Result<UserModel>> GetById(int id)

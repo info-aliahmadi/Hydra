@@ -232,16 +232,16 @@ namespace Hydra.FileStorage.Api.Handler
         {
             var file = await _fileStorageService.GetFileInfoById(fileId);
 
-            return Results.File(HydraHelper.GetCurrentDomain(context) + file.FileName, contentType: "application/octet-stream", file.FileName, enableRangeProcessing: true);
+            return Results.File(HydraHelper.GetCurrentDomain(context) + file.Data.FileName, contentType: "application/octet-stream", file.Data.FileName, enableRangeProcessing: true);
         }
 
         public static async Task<IResult> DownloadFileStream(IFileStorageService _fileStorageService, HttpContext context, int fileId, CancellationToken cancellationToken)
         {
             var file = await _fileStorageService.GetFileInfoById(fileId);
 
-            var fs = new FileStream(HydraHelper.GetCurrentDomain(context) + file.FileName, FileMode.Open);
+            var fs = new FileStream(HydraHelper.GetCurrentDomain(context) + file.Data.FileName, FileMode.Open);
 
-            return Results.Stream(fs, contentType: "application/octet-stream", file.FileName, enableRangeProcessing: true);
+            return Results.Stream(fs, contentType: "application/octet-stream", file.Data.FileName, enableRangeProcessing: true);
         }
 
 
@@ -249,16 +249,16 @@ namespace Hydra.FileStorage.Api.Handler
         {
             var file = await _fileStorageService.GetFileInfoByName(fileName.Trim());
 
-            return Results.File(HydraHelper.GetCurrentDomain(context) + file.FileName, contentType: "application/octet-stream", file.FileName, enableRangeProcessing: true);
+            return Results.File(HydraHelper.GetCurrentDomain(context) + file.Data.FileName, contentType: "application/octet-stream", file.Data.FileName, enableRangeProcessing: true);
         }
 
         public static async Task<IResult> DownloadFileStreamByName(IFileStorageService _fileStorageService, HttpContext context, string fileName, CancellationToken cancellationToken)
         {
             var file = await _fileStorageService.GetFileInfoByName(fileName);
 
-            var fs = new FileStream(HydraHelper.GetCurrentDomain(context) + file.FileName, FileMode.Open);
+            var fs = new FileStream(HydraHelper.GetCurrentDomain(context) + file.Data.FileName, FileMode.Open);
 
-            return Results.Stream(fs, contentType: "application/octet-stream", file.FileName, enableRangeProcessing: true);
+            return Results.Stream(fs, contentType: "application/octet-stream", file.Data.FileName, enableRangeProcessing: true);
         }
     }
 }

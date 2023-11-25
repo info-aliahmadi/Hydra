@@ -156,11 +156,18 @@ namespace Hydra.FileStorage.Api.Services
         /// </summary>
         /// <param name="objectId"></param>
         /// <returns></returns>
-        public async Task<FileUploadModel> GetFileInfoById(int fileId)
+        public async Task<Result<FileUploadModel>> GetFileInfoById(int fileId)
         {
+            var result = new Result<FileUploadModel>();
+
             var fileUpload = await _queryRepository.Table<FileUpload>().FirstOrDefaultAsync(x => x.Id == fileId);
 
-
+            if (fileUpload is null)
+            {
+                result.Status = ResultStatusEnum.NotFound;
+                result.Message = "File Not Found";
+                return result;
+            }
 
             var fileUploadModel = new FileUploadModel()
             {
@@ -174,8 +181,9 @@ namespace Hydra.FileStorage.Api.Services
                 Tags = fileUpload.Tags,
                 UploadDate = fileUpload.UploadDate
             };
+            result.Data = fileUploadModel;
 
-            return fileUploadModel;
+            return result;
         }
 
         /// <summary>
@@ -183,11 +191,17 @@ namespace Hydra.FileStorage.Api.Services
         /// </summary>
         /// <param name="objectId"></param>
         /// <returns></returns>
-        public async Task<FileUploadModel> GetFileInfoByName(string fileName)
+        public async Task<Result<FileUploadModel>> GetFileInfoByName(string fileName)
         {
+            var result = new Result<FileUploadModel>();
             var fileUpload = await _queryRepository.Table<FileUpload>().FirstOrDefaultAsync(x => x.FileName == fileName);
 
-
+            if (fileUpload is null)
+            {
+                result.Status = ResultStatusEnum.NotFound;
+                result.Message = "File Not Found";
+                return result;
+            }
 
             var fileUploadModel = new FileUploadModel()
             {
@@ -201,8 +215,8 @@ namespace Hydra.FileStorage.Api.Services
                 Tags = fileUpload.Tags,
                 UploadDate = fileUpload.UploadDate
             };
-
-            return fileUploadModel;
+            result.Data = fileUploadModel;
+            return result;
         }
 
         /// <summary>
@@ -351,7 +365,7 @@ namespace Hydra.FileStorage.Api.Services
                 if (validateResult != ValidationFileEnum.Ok)
                 {
                     result.Status = _validationService.GetValidationStatus(validateResult);
-                    
+
                     result.Message = _validationService.GetValidationMessage(validateResult);
                     return result;
                 }
@@ -744,7 +758,7 @@ namespace Hydra.FileStorage.Api.Services
         public async Task<Result> Delete(int userId, int fileId)
         {
             var result = new Result();
-            var fileUpload = await _queryRepository.Table<FileUpload>().FirstOrDefaultAsync(x => x.Id == fileId);
+            var fileUpload = await _queryRepository.Table<FileUpload>().FirstOrDefaultAsync(x => x.Id == fileId && x.UserId== userId);
             if (fileUpload is null)
             {
                 result.Status = ResultStatusEnum.NotFound;
