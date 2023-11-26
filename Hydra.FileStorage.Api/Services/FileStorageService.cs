@@ -185,7 +185,33 @@ namespace Hydra.FileStorage.Api.Services
 
             return result;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="objectId"></param>
+        /// <returns></returns>
+        public async Task<Result<List<FileUploadModel>>> GetFilesInfoByIds(int[] fileIds)
+        {
+            var result = new Result<List<FileUploadModel>>();
 
+            var fileUploads = await _queryRepository.Table<FileUpload>().Where(x => fileIds.Contains(x.Id)).Select(fileUpload => new FileUploadModel()
+            {
+                Id = fileUpload.Id,
+                FileName = fileUpload.FileName,
+                Directory = fileUpload.Directory,
+                Thumbnail = fileUpload.Thumbnail,
+                Extension = fileUpload.Extension,
+                Size = fileUpload.Size,
+                Alt = fileUpload.Alt,
+                Tags = fileUpload.Tags,
+                UploadDate = fileUpload.UploadDate
+            }).ToListAsync();
+
+
+            result.Data = fileUploads;
+
+            return result;
+        }
         /// <summary>
         /// 
         /// </summary>

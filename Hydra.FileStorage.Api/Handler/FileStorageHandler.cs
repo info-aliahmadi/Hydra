@@ -24,6 +24,19 @@ namespace Hydra.FileStorage.Api.Handler
             var result = await _fileStorageService.GetFileInfoById(fileId);
             return Results.Ok(result);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_fileStorageService"></param>
+        /// <param name="fileId"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetFilesInfo(IFileStorageService _fileStorageService,[FromBody] int[] fileIds)
+        {
+            var result = await _fileStorageService.GetFilesInfoByIds(fileIds);
+            return Results.Ok(result);
+        }
+
         /// <summary>
         /// 
         /// </summary>

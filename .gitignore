@@ -73,6 +73,7 @@ StyleCopReport.xml
 *.jpg
 *.png
 *.pdf
+*.zip
 *.jpeg
 *.mp4
 *_i.c

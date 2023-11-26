@@ -465,6 +465,9 @@ namespace Hydra.Crm.Api.Services
 
                                           }).FirstOrDefaultAsync();
 
+                // set Read the message for current user
+                await Read(messageId, toUserId);
+
                 result.Data = messageModel;
 
                 return result;

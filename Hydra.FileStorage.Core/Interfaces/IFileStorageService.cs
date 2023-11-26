@@ -50,6 +50,13 @@ namespace Hydra.FileStorage.Core.Interfaces
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="fileIds"></param>
+        /// <returns></returns>
+        Task<Result<List<FileUploadModel>>> GetFilesInfoByIds(int[] fileIds);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="fileName"></param>
         /// <returns></returns>
         Task<Result<FileUploadModel>> GetFileInfoByName(string fileName);

@@ -31,6 +31,7 @@ namespace Hydra.FileStorage.Api.Endpoints
         {
 
             endpoints.MapGet(API_SCHEMA + "/GetFileInfo", FileStorageHandler.GetFileInfo).RequirePermission("CMS.GET_FILE_INFO");
+            endpoints.MapPost(API_SCHEMA + "/GetFilesInfo", FileStorageHandler.GetFilesInfo).RequirePermission("CMS.GET_FILE_INFO");
             endpoints.MapGet(API_SCHEMA + "/GetFileInfoByName", FileStorageHandler.GetFileInfoByName).RequirePermission("CMS.GET_FILE_INFO_BY_NAME");
             endpoints.MapGet(API_SCHEMA + "/GetFilesList", FileStorageHandler.GetFilesList).RequirePermission("CMS.GET_FILES_LIST");
             endpoints.MapGet(API_SCHEMA + "/GetGalleyFiles", FileStorageHandler.GetGalleyFiles).RequirePermission("CMS.GET_GALLEY_FILES");
