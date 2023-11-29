@@ -1,4 +1,5 @@
-﻿using Hydra.Crm.Api.Handler;
+﻿using Hydra.Cms.Api.Services;
+using Hydra.Crm.Api.Handler;
 using Hydra.Crm.Api.Services;
 using Hydra.Crm.Core.Interfaces;
 using Hydra.Infrastructure.Endpoints;
@@ -14,6 +15,7 @@ namespace Hydra.Crm.Api.Endpoints
         private const string API_SCHEMA = "/Crm";
         public IServiceCollection RegisterModules(IServiceCollection services)
         {
+            services.AddScoped<IMessageSettingsService, MessageSettingsService>();
             services.AddScoped<IMessageService, MessageService>();
             services.AddScoped<IEmailInboxService, EmailInboxService>();
             services.AddScoped<IEmailOutboxService, EmailOutboxService>();
@@ -23,6 +25,9 @@ namespace Hydra.Crm.Api.Endpoints
 
         public IEndpointRouteBuilder MapEndpoints(IEndpointRouteBuilder endpoints)
         {
+            endpoints.MapGet(API_SCHEMA + "/GetSettings", MessageSettingsHandler.GetSettings).RequirePermission("CRM.GET_SETTINGS");
+            endpoints.MapPost(API_SCHEMA + "/AddOrUpdateSettings", MessageSettingsHandler.AddOrUpdateSettings).RequirePermission("CRM.ADD_OR_UPDATE_SETTINGS");
+
             endpoints.MapPost(API_SCHEMA + "/SendPublicMessage", MessageHandler.SendPublicMessage).RequirePermission("CRM.SEND_PUBLIC_MESSAGE");
             endpoints.MapPost(API_SCHEMA + "/SendPrivateMessage", MessageHandler.SendPrivateMessage).RequirePermission("CRM.SEND_PRIVATE_MESSAGE");
             endpoints.MapPost(API_SCHEMA + "/SendRequestMessage", MessageHandler.SendRequestMessage).AllowAnonymous();
@@ -32,17 +37,19 @@ namespace Hydra.Crm.Api.Endpoints
             endpoints.MapPost(API_SCHEMA + "/GetAllMessages", MessageHandler.GetAllMessages).RequirePermission("CRM.GET_ALLMESSAGES");
             endpoints.MapPost(API_SCHEMA + "/GetInboxMessages", MessageHandler.GetInboxMessages).RequirePermission("CRM.GET_INBOX_MESSAGES");
             endpoints.MapPost(API_SCHEMA + "/GetSentMessages", MessageHandler.GetSentMessages).RequirePermission("CRM.GET_SENT_MESSAGES");
+            endpoints.MapPost(API_SCHEMA + "/GetDraftMessages", MessageHandler.GetDraftMessages).RequirePermission("CRM.GET_DRAFT_MESSAGES");
             endpoints.MapPost(API_SCHEMA + "/GetPublicInboxMessages", MessageHandler.GetPublicInboxMessages).RequirePermission("CRM.GET_PUBLIC_INBOX_MESSAGES");
             endpoints.MapPost(API_SCHEMA + "/GetDeletedInboxMessages", MessageHandler.GetDeletedInboxMessages).RequirePermission("CRM.GET_DELETED_INBOX_MESSAGES");
             endpoints.MapPost(API_SCHEMA + "/GetDeletedSentMessages", MessageHandler.GetDeletedSentMessages).RequirePermission("CRM.GET_DELETED_SENT_MESSAGES");
             endpoints.MapGet(API_SCHEMA + "/GetMessageByIdForPublic", MessageHandler.GetMessageByIdForPublic).RequirePermission("CRM.GET_MESSAGE_BY_ID_FOR_PUBLIC");
             endpoints.MapGet(API_SCHEMA + "/GetMessageByIdForSender", MessageHandler.GetMessageByIdForSender).RequirePermission("CRM.GET_MESSAGE_BY_ID_FOR_SENDER");
             endpoints.MapGet(API_SCHEMA + "/GetMessageByIdForReceiver", MessageHandler.GetMessageByIdForReceiver).RequirePermission("CRM.GET_MESSAGE_BY_ID_FOR_RECEIVER");
-            endpoints.MapGet(API_SCHEMA + "/DeleteDraftMessage", MessageHandler.DeleteDraftMessage).RequirePermission("CRM.DELETE_DRAFT_MESSAGE");
             endpoints.MapGet(API_SCHEMA + "/DeleteMessage", MessageHandler.DeleteMessage).RequirePermission("CRM.DELETE_MESSAGE");
+            endpoints.MapGet(API_SCHEMA + "/RestoreMessage", MessageHandler.RestoreMessage).RequirePermission("CRM.RESTORE_MESSAGE");
             endpoints.MapGet(API_SCHEMA + "/PinMessage", MessageHandler.PinMessage).RequirePermission("CRM.PIN_MESSAGE");
             endpoints.MapGet(API_SCHEMA + "/ReadMessage", MessageHandler.ReadMessage).RequirePermission("CRM.READ_MESSAGE");
-            endpoints.MapGet(API_SCHEMA + "/RemoveMessage", MessageHandler.RemoveMessage).RequirePermission("CRM.REMOVE_MESSAGE");
+            endpoints.MapGet(API_SCHEMA + "/DeleteDraftMessage", MessageHandler.DeleteDraftMessage).RequirePermission("CRM.DELETE_DRAFT_MESSAGE");
+            endpoints.MapGet(API_SCHEMA + "/RemoveDraftMessage", MessageHandler.RemoveDraftMessage).RequirePermission("CRM.REMOVE_DRAFT_MESSAGE");
 
 
 

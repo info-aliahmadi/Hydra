@@ -79,6 +79,9 @@ namespace Hydra.Auth.Api.Handler
 
                     }
                 }
+
+                //var setting = new setting
+
                 return Results.Ok(result);
 
             }

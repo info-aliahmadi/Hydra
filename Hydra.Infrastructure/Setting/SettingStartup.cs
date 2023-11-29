@@ -1,25 +1,17 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
+﻿using Hydra.Infrastructure.Setting.Service;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Nitro.Core.Interfaces.Settings;
 
 namespace Hydra.Infrastructure.Setting
 {
 
     public static class SettingStartup
     {
-        public static void AddSettingConfig(this WebApplicationBuilder builder)
+        public static void AddSettingConfig(this IServiceCollection services)
         {
-            // Add Email Setting to the container.
-            builder.Services.AddSingleton<ISmtpSetting>((serviceProvider) =>
-                builder.Configuration.GetSection("SmtpSetting").Get<SmtpSetting>());
-
-            // Add Sms Setting to the container.
-            builder.Services.AddSingleton<ISmsSetting>((serviceProvider) =>
-                builder.Configuration.GetSection("SmsSetting").Get<SmsSetting>());
-
+            services.AddTransient<ISettingService, SettingService>();
 
         }
-        
+
     }
 }

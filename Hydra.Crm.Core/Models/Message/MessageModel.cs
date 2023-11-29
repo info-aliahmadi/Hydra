@@ -1,5 +1,6 @@
 ﻿using Hydra.Crm.Core.Domain.Message;
 using Hydra.Kernel.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace Hydra.Crm.Core.Models.Message
 {
@@ -17,11 +18,21 @@ namespace Hydra.Crm.Core.Models.Message
         /// <summary>
         /// 
         /// </summary>
+        [Required]
+        [MaxLength(250)]
         public string Name { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        [Required]
+        [MaxLength(250)]
+        public string Family { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
+        [Required]
+        [MaxLength(250)]
         public string Email { get; set; }
 
         /// <summary>
@@ -37,11 +48,20 @@ namespace Hydra.Crm.Core.Models.Message
         /// <summary>
         /// 
         /// </summary>
+        [MaxLength(100)] 
+        public string Knowing { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Required]
+        [MaxLength(250)] 
         public string Subject { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
+        [Required]
         public string Content { get; set; }
 
         /// <summary>
@@ -72,6 +92,12 @@ namespace Hydra.Crm.Core.Models.Message
         /// 
         /// </summary>
         public List<int> ToUserIds { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool HaveAttachment { get; set; }
+
         /// <summary>
         /// 
         /// </summary>

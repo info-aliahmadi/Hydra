@@ -12,6 +12,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Hydra.Infrastructure.Email;
+using Hydra.Kernel.Interfaces.Settings;
 
 namespace Hydra.Infrastructure.Configuration
 {
@@ -54,7 +55,7 @@ namespace Hydra.Infrastructure.Configuration
 
             services.AddEmailConfig(builder.Configuration);
 
-            builder.AddSettingConfig();
+            services.AddSettingConfig();
 
             services.AddSwaggerGenConfig();
 

@@ -6,26 +6,29 @@ using MailKit;
 using MailKit.Net.Imap;
 using MailKit.Security;
 using Hydra.Infrastructure.Email.Models;
+using Hydra.Kernel.Interfaces.Settings;
 
 namespace Hydra.Infrastructure.Email.Service
 {
     public class EmailService : IEmailService
     {
-        private readonly IEmailConfiguration _emailConfiguration;
+        private readonly ISmtpSetting _smtpSetting;
+        private readonly IImapSetting _imapSetting;
 
-        public EmailService(IEmailConfiguration emailConfiguration)
+        public EmailService(ISmtpSetting smtpSetting, IImapSetting imapSetting)
         {
-            _emailConfiguration = emailConfiguration;
+            _smtpSetting = smtpSetting;
+            _imapSetting = imapSetting;
         }
 
         public List<EmailMessage> ReceiveEmail()
         {
             using (var client = new ImapClient())
             {
-                client.Connect(_emailConfiguration.ImapServer, _emailConfiguration.ImapPort, SecureSocketOptions.SslOnConnect);
+                client.Connect(_imapSetting.ImapServer, _imapSetting.ImapPort, SecureSocketOptions.SslOnConnect);
 
                 // Authenticate with the server
-                client.Authenticate(_emailConfiguration.ImapUsername, _emailConfiguration.ImapPassword);
+                client.Authenticate(_imapSetting.ImapUsername, _imapSetting.ImapPassword);
 
                 // Select the INBOX folder
                 client.Inbox.Open(FolderAccess.ReadOnly);
@@ -91,12 +94,12 @@ namespace Hydra.Infrastructure.Email.Service
             using (var emailClient = new SmtpClient())
             {
                 //The last parameter here is to use SSL (Which you should!)
-                emailClient.Connect(_emailConfiguration.SmtpServer, _emailConfiguration.SmtpPort, true);
+                emailClient.Connect(_smtpSetting.SmtpServer, _smtpSetting.SmtpPort, true);
 
                 //Remove any OAuth functionality as we won't be using it. 
                 emailClient.AuthenticationMechanisms.Remove("XOAUTH2");
 
-                emailClient.Authenticate(_emailConfiguration.SmtpUsername, _emailConfiguration.SmtpPassword);
+                emailClient.Authenticate(_smtpSetting.SmtpUsername, _smtpSetting.SmtpPassword);
 
                 emailClient.Send(message);
 

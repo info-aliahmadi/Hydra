@@ -1,13 +1,8 @@
-﻿using Hydra.Cms.Core.Domain;
-using Hydra.Cms.Core.Interfaces;
+﻿using Hydra.Cms.Core.Interfaces;
 using Hydra.Cms.Core.Models;
-using Hydra.Infrastructure.Data.Extension;
 using Hydra.Infrastructure.Setting.Domain;
 using Hydra.Infrastructure.Setting.Service;
-using Hydra.Kernel.Extensions;
-using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;
-using Microsoft.EntityFrameworkCore;
 
 
 namespace Hydra.Cms.Api.Services

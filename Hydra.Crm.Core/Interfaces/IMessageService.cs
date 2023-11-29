@@ -51,6 +51,14 @@ namespace Hydra.Crm.Core.Interfaces
         /// <param name="dataGrid"></param>
         /// <param name="fromUserId"></param>
         /// <returns></returns>
+        Task<Result<PaginatedList<MessageModel>>> GetDrafts(GridDataBound dataGrid, int fromUserId);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dataGrid"></param>
+        /// <param name="fromUserId"></param>
+        /// <returns></returns>
         Task<Result<PaginatedList<MessageModel>>> GetDeletedSent(GridDataBound dataGrid, int fromUserId);
 
         /// <summary>
@@ -125,6 +133,14 @@ namespace Hydra.Crm.Core.Interfaces
         /// 
         /// </summary>
         /// <param name="messageId"></param>
+        /// <param name="currentUserId"></param>
+        /// <returns></returns>
+        Task<Result> Restore(int messageId, int currentUserId);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="messageId"></param>
         /// <param name="currentUser"></param>
         /// <returns></returns>
         Task<Result> Pin(int messageId, int currentUserId);
@@ -142,7 +158,7 @@ namespace Hydra.Crm.Core.Interfaces
         /// </summary>
         /// <param name="messageId"></param>
         /// <returns></returns>
-        Task<Result> Remove(int messageId, int currentUserId);
+        Task<Result> RemoveDraft(int messageId, int currentUserId);
 
     }
 }

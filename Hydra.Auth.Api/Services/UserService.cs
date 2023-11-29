@@ -161,6 +161,39 @@ namespace Hydra.Auth.Api.Services
             result.Data = userModel;
             return result;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Result<UserModel>> GetAdminUser()
+        {
+            var result = new Result<UserModel>();
+
+            var user = await _queryRepository.Table<User>().Where(x => x.UserName == "admin")
+                .FirstOrDefaultAsync();
+
+            var userModel = new UserModel();
+            if (user != null)
+            {
+                userModel.Id = user.Id;
+                userModel.UserName = user.UserName;
+                userModel.Email = user.Email;
+                userModel.Name = user.Name;
+                userModel.PhoneNumber = user.PhoneNumber;
+                userModel.Avatar = user.Avatar;
+                userModel.AccessFailedCount = user.AccessFailedCount;
+                userModel.DefaultLanguage = user.DefaultLanguage;
+                userModel.RegisterDate = user.RegisterDate;
+                userModel.EmailConfirmed = user.EmailConfirmed;
+                userModel.LockoutEnabled = user.LockoutEnabled;
+                userModel.LockoutEnd = user.LockoutEnd;
+                userModel.PhoneNumberConfirmed = user.PhoneNumberConfirmed;
+
+            }
+            result.Data = userModel;
+            return result;
+        }
 
         /// <summary>
         /// 

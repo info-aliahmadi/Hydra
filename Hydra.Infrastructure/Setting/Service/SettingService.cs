@@ -2,8 +2,6 @@
 using Hydra.Infrastructure.Setting.Domain;
 using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Hydra.Infrastructure.Setting.Service
 {

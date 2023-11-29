@@ -38,12 +38,14 @@ namespace Hydra.Crm.Api.Services
                                       Id = message.Id,
                                       MessageType = message.MessageType,
                                       Name = message.Name,
+                                      Email = message.Email,
                                       Subject = message.Subject,
                                       Content = message.Content,
                                       RegisterDate = message.RegisterDate,
                                       IsDraft = message.IsDraft,
                                       IsDeleted = message.IsDeleted,
                                       FromUserId = message.FromUserId,
+                                      HaveAttachment = message.MessageAttachments.Any(),
                                       FromUser = new AuthorModel()
                                       {
                                           Id = message.FromUser.Id,
@@ -103,11 +105,13 @@ namespace Hydra.Crm.Api.Services
                                       Id = userMessage.Id,
                                       MessageType = userMessage.MessageType,
                                       Name = userMessage.Name,
+                                      Email = userMessage.Email,
                                       Subject = userMessage.Subject,
                                       Content = userMessage.Content,
                                       RegisterDate = userMessage.RegisterDate,
                                       IsDraft = userMessage.IsDraft,
                                       FromUserId = userMessage.FromUserId,
+                                      HaveAttachment = userMessage.MessageAttachments.Any(),
                                       FromUser = new AuthorModel()
                                       {
                                           Id = userMessage!.FromUser!.Id,
@@ -157,12 +161,14 @@ namespace Hydra.Crm.Api.Services
                                       Id = message.Id,
                                       MessageType = message.MessageType,
                                       Name = message.Name,
+                                      Email = message.Email,
                                       Subject = message.Subject,
                                       Content = message.Content,
                                       RegisterDate = message.RegisterDate,
                                       IsDraft = message.IsDraft,
                                       IsDeleted = message.IsDeleted,
                                       FromUserId = message.FromUserId,
+                                      HaveAttachment = message.MessageAttachments.Any(),
                                       FromUser = new AuthorModel()
                                       {
                                           Id = message!.FromUser!.Id,
@@ -206,12 +212,14 @@ namespace Hydra.Crm.Api.Services
                                       Id = userMessage.Id,
                                       MessageType = userMessage.MessageType,
                                       Name = userMessage.Name,
+                                      Email = userMessage.Email,
                                       Subject = userMessage.Subject,
                                       Content = userMessage.Content,
                                       RegisterDate = userMessage.RegisterDate,
                                       IsDraft = userMessage.IsDraft,
                                       IsDeleted = userMessage.IsDeleted,
                                       FromUserId = userMessage.FromUserId,
+                                      HaveAttachment = userMessage.MessageAttachments.Any(),
                                       FromUser = new AuthorModel()
                                       {
                                           Id = userMessage!.FromUser!.Id,
@@ -254,7 +262,7 @@ namespace Hydra.Crm.Api.Services
             {
 
                 var list = await (from message in _queryRepository.Table<Message>().Include(x => x.MessageUsers).ThenInclude(x => x.ToUser)
-                                  where message.FromUserId == fromUserId && message.IsDeleted == false
+                                  where message.FromUserId == fromUserId && message.IsDeleted == false && message.IsDraft == false
                                   select new MessageModel()
                                   {
                                       Id = message.Id,
@@ -265,18 +273,72 @@ namespace Hydra.Crm.Api.Services
                                       IsDraft = message.IsDraft,
                                       IsDeleted = message.IsDeleted,
                                       FromUserId = message.FromUserId,
-                                      //ToUsers = message.MessageUsers!.Select(x => new MessageUserModel()
-                                      //{
-                                      //    ToUserId = x.ToUserId,
-                                      //    IsRead = x.IsRead,
-                                      //    ToUser = new AuthorModel()
-                                      //    {
-                                      //        Id = x.ToUser.Id,
-                                      //        Name = x.ToUser.Name,
-                                      //        UserName = x!.ToUser!.UserName,
-                                      //        Avatar = x.ToUser.Avatar
-                                      //    }
-                                      //}).ToList(),
+                                      HaveAttachment = message.MessageAttachments.Any(),
+                                      ToUsers = message.MessageUsers!.Select(x => new MessageUserModel()
+                                      {
+                                          ToUserId = x.ToUserId,
+                                          IsRead = x.IsRead,
+                                          ToUser = new AuthorModel()
+                                          {
+                                              Id = x.ToUser.Id,
+                                              Name = x.ToUser.Name,
+                                              UserName = x!.ToUser!.UserName,
+                                              Avatar = x.ToUser.Avatar
+                                          }
+                                      }).ToList(),
+
+                                  }).OrderByDescending(x => x.RegisterDate).ToPaginatedListAsync(dataGrid);
+
+
+                result.Data = list;
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dataGrid"></param>
+        /// <param name="fromUserId"></param>
+        /// <returns></returns>
+        public async Task<Result<PaginatedList<MessageModel>>> GetDrafts(GridDataBound dataGrid, int fromUserId)
+        {
+            var result = new Result<PaginatedList<MessageModel>>();
+            try
+            {
+
+                var list = await (from message in _queryRepository.Table<Message>().Include(x => x.MessageUsers).ThenInclude(x => x.ToUser)
+                                  where message.FromUserId == fromUserId && message.IsDeleted == false && message.IsDraft == true
+                                  select new MessageModel()
+                                  {
+                                      Id = message.Id,
+                                      MessageType = message.MessageType,
+                                      Subject = message.Subject,
+                                      Content = message.Content,
+                                      RegisterDate = message.RegisterDate,
+                                      IsDraft = message.IsDraft,
+                                      IsDeleted = message.IsDeleted,
+                                      FromUserId = message.FromUserId,
+                                      HaveAttachment = message.MessageAttachments.Any(),
+                                      ToUsers = message.MessageUsers!.Select(x => new MessageUserModel()
+                                      {
+                                          ToUserId = x.ToUserId,
+                                          IsRead = x.IsRead,
+                                          ToUser = new AuthorModel()
+                                          {
+                                              Id = x.ToUser.Id,
+                                              Name = x.ToUser.Name,
+                                              UserName = x!.ToUser!.UserName,
+                                              Avatar = x.ToUser.Avatar
+                                          }
+                                      }).ToList(),
 
                                   }).OrderByDescending(x => x.RegisterDate).ToPaginatedListAsync(dataGrid);
 
@@ -393,6 +455,7 @@ namespace Hydra.Crm.Api.Services
                                               Id = userMessage.Id,
                                               MessageType = userMessage.MessageType,
                                               Name = userMessage.Name,
+                                              Email = userMessage.Email,
                                               Subject = userMessage.Subject,
                                               Content = userMessage.Content,
                                               RegisterDate = userMessage.RegisterDate,
@@ -407,7 +470,19 @@ namespace Hydra.Crm.Api.Services
                                                   UserName = userMessage!.FromUser!.UserName,
                                                   Avatar = userMessage!.FromUser!.Avatar
                                               },
-                                              ToUserIds = userMessage.MessageUsers.Select(x => x.ToUserId).ToList()
+                                              ToUserIds = userMessage.MessageUsers.Select(x => x.ToUserId).ToList(),
+                                              ToUsers = userMessage.MessageUsers!.Select(x => new MessageUserModel()
+                                              {
+                                                  ToUserId = x.ToUserId,
+                                                  IsRead = x.IsRead,
+                                                  ToUser = new AuthorModel()
+                                                  {
+                                                      Id = x.ToUser.Id,
+                                                      Name = x.ToUser.Name,
+                                                      UserName = x!.ToUser!.UserName,
+                                                      Avatar = x.ToUser.Avatar
+                                                  }
+                                              }).ToList()
 
                                           }).FirstOrDefaultAsync();
 
@@ -435,12 +510,13 @@ namespace Hydra.Crm.Api.Services
                 var messageModel = await (from user in _queryRepository.Table<MessageUser>().Include(x => x.ToUser)
                                           join msg in _queryRepository.Table<Message>().Include(x => x.FromUser).Include(x => x.MessageAttachments) on user.MessageId equals msg.Id into messages
                                           from userMessage in messages.DefaultIfEmpty()
-                                          where user.ToUserId == toUserId && user.IsDeleted == false && userMessage.IsDraft == false && userMessage.Id == messageId
+                                          where user.ToUserId == toUserId && userMessage.IsDraft == false && userMessage.Id == messageId
                                           select new MessageModel()
                                           {
                                               Id = userMessage.Id,
                                               MessageType = userMessage.MessageType,
                                               Name = userMessage.Name,
+                                              Email = userMessage.Email,
                                               Subject = userMessage.Subject,
                                               Content = userMessage.Content,
                                               RegisterDate = userMessage.RegisterDate,
@@ -671,21 +747,10 @@ namespace Hydra.Crm.Api.Services
                     return result;
                 }
 
-                bool isEdited = false;
-                // Prevent Unnecessary Update
-                if (message.Subject != messageModel.Subject)
-                {
-                    message.Subject = messageModel.Subject;
-                    isEdited = true;
-                }
-                if (message.Content != messageModel.Content)
-                {
-                    message.Content = messageModel.Content;
-                    isEdited = true;
-                }
-
-                if (isEdited)
-                    _commandRepository.UpdateAsync(message);
+                message.Subject = messageModel.Subject;
+                message.Content = messageModel.Content;
+                message.IsDraft = messageModel.IsDraft;
+                _commandRepository.UpdateAsync(message);
 
 
                 // Update Users Receive Message
@@ -700,12 +765,12 @@ namespace Hydra.Crm.Api.Services
                         _commandRepository.DeleteAsync(user);
                     }
 
-                    foreach (var user in messageModel.ToUsers)
+                    foreach (var userId in messageModel.ToUserIds)
                     {
                         await _commandRepository.InsertAsync(new MessageUser()
                         {
                             MessageId = message.Id,
-                            ToUserId = user.ToUserId,
+                            ToUserId = userId,
                             IsRead = false,
                             IsDeleted = false,
                             IsPin = false
@@ -825,6 +890,39 @@ namespace Hydra.Crm.Api.Services
             }
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="messageId"></param>
+        /// <param name="currentUser"></param>
+        /// <returns></returns>
+        public async Task<Result> Restore(int messageId, int currentUserId)
+        {
+            var result = new Result();
+            try
+            {
+                var messageUser = await _queryRepository.Table<MessageUser>().FirstOrDefaultAsync(x => x.MessageId == messageId && x.ToUserId == currentUserId);
+                if (messageUser is null)
+                {
+                    result.Status = ResultStatusEnum.NotFound;
+                    result.Message = "The Message not found";
+                    return result;
+                }
+                messageUser.IsDeleted = false;
+
+                _commandRepository.UpdateAsync(messageUser);
+                await _commandRepository.SaveChangesAsync();
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                return result;
+            }
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -896,7 +994,7 @@ namespace Hydra.Crm.Api.Services
         /// </summary>
         /// <param name="messageId"></param>
         /// <returns></returns>
-        public async Task<Result> Remove(int messageId, int currentUserId)
+        public async Task<Result> RemoveDraft(int messageId, int currentUserId)
         {
             var result = new Result();
             try

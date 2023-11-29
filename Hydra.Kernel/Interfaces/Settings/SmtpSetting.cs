@@ -1,14 +1,10 @@
-﻿
-
-namespace Nitro.Core.Interfaces.Settings
+﻿namespace Hydra.Kernel.Interfaces.Settings
 {
     public class SmtpSetting : ISmtpSetting
     {
-        public string From { get; set; }
-        public string DisplayName { get; set; }
         public string SmtpServer { get; set; }
-        public int Port { get; set; }
-        public string UserName { get; set; }
-        public string Password { get; set; }
+        public int SmtpPort { get; set; }
+        public string SmtpUsername { get; set; }
+        public string SmtpPassword { get; set; }
     }
 }

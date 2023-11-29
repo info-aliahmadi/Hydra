@@ -4,12 +4,12 @@ using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
-using Hydra.Infrastructure.Setting;
 using Hydra.FileStorage.Core.Interfaces;
 using Hydra.FileStorage.Core.Domain;
 using Hydra.FileStorage.Core.Models;
 using Hydra.FileStorage.Core.Settings;
 using Hydra.Kernel.Extensions;
+using Hydra.Kernel.Interfaces.Settings;
 
 namespace Hydra.FileStorage.Api.Services
 {
@@ -916,7 +916,7 @@ namespace Hydra.FileStorage.Api.Services
         /// <returns></returns>
         public string[] GetDirectories()
         {
-            string[] directories = { "images/", "audio/", "music/", "documents/", "others/", };
+            string[] directories = { "images/", "videos/", "audio/", "documents/", "others/", };
             return directories;
         }
         /// <summary>

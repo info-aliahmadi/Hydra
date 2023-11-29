@@ -36,8 +36,8 @@ namespace Hydra.Infrastructure.localization
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(
-               Path.Combine(app.Environment.ContentRootPath, "uploads/music")),
-                RequestPath = "/music"
+               Path.Combine(app.Environment.ContentRootPath, "uploads/audio")),
+                RequestPath = "/audio"
             });
             app.UseStaticFiles(new StaticFileOptions
             {
