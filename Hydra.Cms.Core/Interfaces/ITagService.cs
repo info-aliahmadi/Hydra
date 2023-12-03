@@ -38,6 +38,13 @@ namespace Hydra.Cms.Core.Interfaces
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="title"></param>
+        /// <returns></returns>
+        Task<Result<TagModel>> GetByTitle(string title);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="tagModel"></param>
         /// <returns></returns>
         Task<Result<TagModel>> Add(TagModel tagModel);

@@ -1,4 +1,5 @@
-﻿using Hydra.Cms.Core.Domain;
+﻿using EFCoreSecondLevelCacheInterceptor;
+using Hydra.Cms.Core.Domain;
 using Hydra.Cms.Core.Interfaces;
 using Hydra.Cms.Core.Models;
 using Hydra.FileStorage.Core.Domain;
@@ -48,7 +49,7 @@ namespace Hydra.Cms.Api.Services
                 Order = link.Order,
                 UserId = link.UserId,
                 UserName = link.User.UserName ?? string.Empty,
-            }).OrderByDescending(x => x.Order).ToListAsync();
+            }).OrderByDescending(x => x.Order).Cacheable().ToListAsync();
 
 
             var listIds = linkList.Where(x => x.ImagePreviewId != null).Select(x => x.ImagePreviewId).ToArray();

@@ -20,6 +20,8 @@ namespace Hydra.Cms.Api.Endpoints
             services.AddScoped<ITopicService, TopicService>();
             services.AddScoped<ITagService, TagService>();
             services.AddScoped<IPageService, PageService>();
+            services.AddScoped<ILinkSectionService, LinkSectionService>();
+            services.AddScoped<ILinkService, LinkService>();
             services.AddScoped<IMenuService, MenuService>();
             services.AddScoped<ISlideshowService, SlideshowService>();
 
@@ -29,7 +31,14 @@ namespace Hydra.Cms.Api.Endpoints
         public IEndpointRouteBuilder MapEndpoints(IEndpointRouteBuilder endpoints)
         {
 
+            // Anonymous Endpoints
+
             endpoints.MapGet(API_SCHEMA + "/GetSettings", SettingsHandler.GetSettings).AllowAnonymous();
+            endpoints.MapGet(API_SCHEMA + "/GetMenu", MenuHandler.GetMenu).AllowAnonymous();
+            endpoints.MapGet(API_SCHEMA + "/GetArticlesList", ArticleHandler.GetListForVisitors).AllowAnonymous();
+
+
+
             endpoints.MapPost(API_SCHEMA + "/AddOrUpdateSettings", SettingsHandler.AddOrUpdateSettings).RequirePermission("CMS.ADD_OR_UPDATE_SETTINGS");
 
             endpoints.MapGet(API_SCHEMA + "/GetTopicsHierarchy", TopicHandler.GetTopicsHierarchy).RequirePermission("CMS.GET_TOPIC_LIST");
@@ -62,6 +71,20 @@ namespace Hydra.Cms.Api.Endpoints
             endpoints.MapPost(API_SCHEMA + "/UpdatePage", PageHandler.UpdatePage).RequirePermission("CMS.UPDATE_PAGE");
             endpoints.MapGet(API_SCHEMA + "/DeletePage", PageHandler.DeletePage).RequirePermission("CMS.DELETE_PAGE");
 
+            endpoints.MapGet(API_SCHEMA + "/GetLinkSectionList", LinkSectionHandler.GetList).RequirePermission("CMS.GET_PAGE_LIST");
+            endpoints.MapGet(API_SCHEMA + "/GetLinkSectionById", LinkSectionHandler.GetLinkSectionById).RequirePermission("CMS.GET_PAGE_BY_ID");
+            endpoints.MapGet(API_SCHEMA + "/VisibleLinkSection", LinkSectionHandler.VisibleLinkSection).RequirePermission("CMS.UPDATE_PAGE");
+            endpoints.MapPost(API_SCHEMA + "/AddLinkSection", LinkSectionHandler.AddLinkSection).RequirePermission("CMS.ADD_PAGE");
+            endpoints.MapPost(API_SCHEMA + "/UpdateLinkSection", LinkSectionHandler.UpdateLinkSection).RequirePermission("CMS.UPDATE_PAGE");
+            endpoints.MapGet(API_SCHEMA + "/DeleteLinkSection", LinkSectionHandler.DeleteLinkSection).RequirePermission("CMS.DELETE_PAGE");
+
+            endpoints.MapGet(API_SCHEMA + "/GetLinkList", LinkHandler.GetList).RequirePermission("CMS.GET_PAGE_LIST");
+            endpoints.MapGet(API_SCHEMA + "/GetLinkById", LinkHandler.GetLinkById).RequirePermission("CMS.GET_PAGE_BY_ID");
+            endpoints.MapPost(API_SCHEMA + "/UpdateLinkOrders", LinkHandler.UpdateOrders).RequirePermission("CMS.UPDATE_MENU");
+            endpoints.MapPost(API_SCHEMA + "/AddLink", LinkHandler.AddLink).RequirePermission("CMS.ADD_PAGE");
+            endpoints.MapPost(API_SCHEMA + "/UpdateLink", LinkHandler.UpdateLink).RequirePermission("CMS.UPDATE_PAGE");
+            endpoints.MapGet(API_SCHEMA + "/DeleteLink", LinkHandler.DeleteLink).RequirePermission("CMS.DELETE_PAGE");
+
 
             endpoints.MapGet(API_SCHEMA + "/GetMenusHierarchy", MenuHandler.GetMenusHierarchy).RequirePermission("CMS.GET_MENU_LIST");
             endpoints.MapGet(API_SCHEMA + "/GetMenuById", MenuHandler.GetMenuById).RequirePermission("CMS.GET_MENU_BY_ID");
@@ -69,7 +92,6 @@ namespace Hydra.Cms.Api.Endpoints
             endpoints.MapPost(API_SCHEMA + "/UpdateMenu", MenuHandler.UpdateMenu).RequirePermission("CMS.UPDATE_MENU");
             endpoints.MapPost(API_SCHEMA + "/UpdateMenuOrders", MenuHandler.UpdateOrders).RequirePermission("CMS.UPDATE_MENU");
             endpoints.MapGet(API_SCHEMA + "/DeleteMenu", MenuHandler.DeleteMenu).RequirePermission("CMS.DELETE_MENU");
-            endpoints.MapGet(API_SCHEMA + "/GetMenu", MenuHandler.GetMenu).AllowAnonymous();
 
             endpoints.MapGet(API_SCHEMA + "/GetSlideshowList", SlideshowHandler.GetList).RequirePermission("CMS.GET_SLIDESHOW_LIST");
             endpoints.MapGet(API_SCHEMA + "/GetSlideshowById", SlideshowHandler.GetSlideshowById).RequirePermission("CMS.GET_SLIDESHOW_BY_ID");

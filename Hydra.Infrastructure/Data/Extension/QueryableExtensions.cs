@@ -15,17 +15,16 @@ namespace Hydra.Infrastructure.Data.Extension
     public static class QueryableExtensions
     {
         /// <summary>
-        /// Convert the <see cref="IQueryable{T}"/> into paginated list.
+        /// 
         /// </summary>
-        /// <typeparam name="T">Type of the <see cref="IQueryable"/>.</typeparam>
-        /// <param name="source">The type to be extended.</param>
-        /// <param name="pageIndex">The current page index.</param>
-        /// <param name="pagePageSize">PageSize of the pagiantion.</param>
-        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
-        /// <returns>Returns <see cref="PaginatedList{T}"/>.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="source"/> is <see langword="null"/>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="pageIndex"/> is smaller than 1.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="pagePageSize"/> is smaller than 1.</exception>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="pageIndex"></param>
+        /// <param name="pagePageSize"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static async Task<PaginatedList<T>> ToPaginatedListAsync<T>(
             this IQueryable<T> source,
             int pageIndex,
@@ -57,18 +56,18 @@ namespace Hydra.Infrastructure.Data.Extension
             PaginatedList<T> paginatedList = new PaginatedList<T>(items, count, pageIndex, pagePageSize);
             return paginatedList;
         }
-        /// <summary>
-        /// Convert the <see cref="IQueryable{T}"/> into paginated list.
-        /// </summary>
-        /// <typeparam name="T">Type of the <see cref="IQueryable"/>.</typeparam>
-        /// <param name="source">The type to be extended.</param>
-        /// <param name="pageIndex">The current page index.</param>
-        /// <param name="pagePageSize">PageSize of the pagiantion.</param>
-        /// <param name="cancellationToken"> A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
-        /// <returns>Returns <see cref="PaginatedList{T}"/>.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="source"/> is <see langword="null"/>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="pageIndex"/> is smaller than 1.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="pagePageSize"/> is smaller than 1.</exception>
+
+       /// <summary>
+       /// 
+       /// </summary>
+       /// <typeparam name="T"></typeparam>
+       /// <param name="source"></param>
+       /// <param name="pageIndex"></param>
+       /// <param name="pagePageSize"></param>
+       /// <param name="cancellationToken"></param>
+       /// <returns></returns>
+       /// <exception cref="ArgumentNullException"></exception>
+       /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static IQueryable<T> ToPaginatedQuery<T>(
             this IQueryable<T> source,
             int pageIndex,
@@ -91,11 +90,9 @@ namespace Hydra.Infrastructure.Data.Extension
                 throw new ArgumentOutOfRangeException(nameof(pagePageSize), "The value of pagePageSize must be greater than 0.");
             }
 
-            //int skipe = (pageIndex - 1) * pagePageSize;
-            // Edited Because of reactive Grid do that
-            int skipe = (pageIndex) * pagePageSize;
+            int skip = (pageIndex) * pagePageSize;
 
-            IQueryable<T> query = source.Skip(skipe).Take(pagePageSize);
+            IQueryable<T> query = source.Skip(skip).Take(pagePageSize);
 
             return query;
         }

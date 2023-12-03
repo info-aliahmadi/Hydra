@@ -16,6 +16,7 @@ namespace Hydra.Cms.Core.EntityConfiguration
             builder.Property(o => o.Subject).HasMaxLength(250);
 
 
+            builder.HasOne(x => x.PreviewImage).WithMany().HasForeignKey(x => x.PreviewImageId);
 
             builder.HasMany(e => e.Tags)
                    .WithMany(e => e.Articles)

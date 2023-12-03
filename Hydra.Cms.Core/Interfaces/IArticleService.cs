@@ -9,9 +9,21 @@ namespace Hydra.Cms.Core.Interfaces
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="searchInput"></param>
+        /// <param name="categoryName"></param>
+        /// <param name="tagName"></param>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        Task<Result<PaginatedList<ArticleModel>>> GetListForVisitors(string? searchInput, string? categoryName, string? tagName, int pageIndex, int pageSize);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="dataGrid"></param>
         /// <returns></returns>
         Task<Result<PaginatedList<ArticleModel>>> GetList(GridDataBound dataGrid);
+
         /// <summary>
         /// 
         /// </summary>

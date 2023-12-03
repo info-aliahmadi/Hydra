@@ -96,6 +96,34 @@ namespace Hydra.Cms.Api.Services
                 tag.Id = record.Id;
                 tag.Title = record.Title;
             }
+            else
+            {
+                result.Status = ResultStatusEnum.NotFound;
+            }
+            result.Data = tag;
+            return result;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Result<TagModel>> GetByTitle(string title)
+        {
+            var result = new Result<TagModel>();
+
+            var record = await _queryRepository.Table<Tag>().Where(x => x.Title == title)
+                .FirstOrDefaultAsync();
+            var tag = new TagModel();
+            if (record != null)
+            {
+                tag.Id = record.Id;
+                tag.Title = record.Title;
+            }
+            else
+            {
+                result.Status = ResultStatusEnum.NotFound;
+            }
             result.Data = tag;
             return result;
         }

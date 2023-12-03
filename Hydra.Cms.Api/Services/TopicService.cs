@@ -127,6 +127,35 @@ namespace Hydra.Cms.Api.Services
                 topic.Title = record.Title;
                 topic.ParentId = record.ParentId;
             }
+            else
+            {
+                result.Status = ResultStatusEnum.NotFound;
+            }
+            result.Data = topic;
+            return result;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Result<TopicModel>> GetByTitle(string title)
+        {
+            var result = new Result<TopicModel>();
+
+            var record = await _queryRepository.Table<Topic>().Where(x => x.Title == title)
+                .FirstOrDefaultAsync();
+            var topic = new TopicModel();
+            if (record != null)
+            {
+                topic.Id = record.Id;
+                topic.Title = record.Title;
+                topic.ParentId = record.ParentId;
+            }
+            else
+            {
+                result.Status = ResultStatusEnum.NotFound;
+            }
             result.Data = topic;
             return result;
         }

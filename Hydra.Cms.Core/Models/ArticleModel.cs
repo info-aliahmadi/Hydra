@@ -1,4 +1,5 @@
-﻿using Hydra.Kernel.Models;
+﻿using Hydra.FileStorage.Core.Models;
+using Hydra.Kernel.Models;
 
 namespace Hydra.Cms.Core.Models
 {
@@ -21,16 +22,17 @@ namespace Hydra.Cms.Core.Models
         /// 
         /// </summary>
         public int? PreviewImageId { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public FileUploadModel? PreviewImage { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
         public string? PreviewImageUrl { get; set; }
 
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public List<string> Tags { get; set; } = new List<string>();
 
         /// <summary>
         /// 
@@ -85,6 +87,16 @@ namespace Hydra.Cms.Core.Models
         /// 
         /// </summary>
         public List<int> TopicsIds { get; set; } = new List<int>();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<string> Tags { get; set; } = new List<string>();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<string> Topics { get; set; } = new List<string>();
 
 
     }

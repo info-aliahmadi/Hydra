@@ -20,5 +20,9 @@ namespace Hydra.Cms.Core.Domain
         public bool IsVisible { get; set; } = true;
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<Link> Links { get; set; } = new();
     }
 }

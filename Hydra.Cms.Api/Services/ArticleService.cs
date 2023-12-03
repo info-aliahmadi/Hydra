@@ -1,4 +1,5 @@
-﻿using Hydra.Cms.Core.Domain;
+﻿using EFCoreSecondLevelCacheInterceptor;
+using Hydra.Cms.Core.Domain;
 using Hydra.Cms.Core.Interfaces;
 using Hydra.Cms.Core.Models;
 using Hydra.Infrastructure.Data.Extension;
@@ -15,12 +16,111 @@ namespace Hydra.Cms.Api.Services
         private readonly IQueryRepository _queryRepository;
         private readonly ICommandRepository _commandRepository;
         private readonly ITagService _tagService;
+        private readonly ITopicService _topicService;
+        private readonly ISiteSettingsService _sittingService;
 
-        public ArticleService(IQueryRepository queryRepository, ICommandRepository commandRepository, ITagService tagService)
+        public ArticleService(IQueryRepository queryRepository, ICommandRepository commandRepository, ITagService tagService, ITopicService topicService, ISiteSettingsService sittingService)
         {
             _queryRepository = queryRepository;
             _commandRepository = commandRepository;
             _tagService = tagService;
+            _topicService = topicService;
+            _sittingService = sittingService;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dataGrid"></param>
+        /// <returns></returns>
+        public async Task<Result<PaginatedList<ArticleModel>>> GetListForVisitors(string? searchInput, string? categoryName, string? tagName, int pageIndex, int pageSize)
+        {
+            var result = new Result<PaginatedList<ArticleModel>>();
+            try
+            {
+                var dateNow = DateTime.UtcNow;
+
+                var query = _queryRepository.Table<Article>().Include(x => x.PreviewImage).Include(x => x.Tags).Include(x => x.Topics).Where(x => x.IsDeleted == false && x.IsDraft == false && x.PublishDate <= dateNow);
+
+                if (!string.IsNullOrEmpty(searchInput!.Trim()))
+                {
+                    query = query.Where(x => x.Subject.Contains(searchInput) || x.Body.Contains(searchInput));
+                }
+                if (!string.IsNullOrEmpty(categoryName!.Trim()))
+                {
+                    var category = _topicService.GetByTitle(categoryName.Trim());
+                    if (category.Result.Succeeded)
+                    {
+                        var topicId = category.Result.Data.Id;
+                        query = query.Where(x => x.ArticleTopics.Any(c => c.TopicId == topicId));
+                    }
+                }
+                if (!string.IsNullOrEmpty(tagName!.Trim()))
+                {
+                    var tag = _tagService.GetByTitle(tagName.Trim());
+                    if (tag.Result.Succeeded)
+                    {
+                        var tagId = tag.Result.Data.Id;
+                        query = query.Where(x => x.ArticleTags.Any(c => c.TagId == tagId));
+                    }
+                }
+
+                if (pageSize <= 0)
+                {
+                    pageSize = _sittingService.GetSettings().Data.NumberOfPostsPerList;
+                }
+                var itemsCount = query.Count();
+                var listItems = await query.ToPaginatedQuery(pageIndex-1, pageSize).Select(article => new ArticleModel()
+                {
+                    Id = article.Id,
+                    Subject = article.Subject,
+                    Body = article.Body,
+                    PreviewImageId = article.PreviewImageId,
+                    PreviewImage = new FileStorage.Core.Models.FileUploadModel()
+                    {
+                        Id = article.PreviewImage!.Id,
+                        FileName = article.PreviewImage!.FileName,
+                        Extension = article.PreviewImage!.Extension,
+                        Directory = article.PreviewImage!.Directory,
+                        Thumbnail = article.PreviewImage!.Thumbnail
+                    },
+                    PreviewImageUrl = article.PreviewImageUrl,
+                    PublishDate = article.PublishDate,
+                    EditDate = article.EditDate,
+                    RegisterDate = article.RegisterDate,
+                    WriterId = article.WriterId,
+                    EditorId = article.EditorId,
+                    Writer = new AuthorModel()
+                    {
+                        Id = article.Writer.Id,
+                        Name = article.Writer.Name,
+                        UserName = article.Writer.UserName,
+                        Avatar = article.Writer.Avatar
+                    },
+                    Editor = new AuthorModel()
+                    {
+                        Id = article.Editor!.Id,
+                        Name = article.Editor!.Name ?? "",
+                        UserName = article.Editor!.UserName ?? "",
+                        Avatar = article.Editor!.Avatar ?? ""
+                    },
+                    Topics = article.Topics.Select(x => x.Title).ToList(),
+                    Tags = article.Tags.Select(x => x.Title).ToList()
+
+                }).OrderByDescending(x => x.PublishDate).Cacheable().ToListAsync();
+
+
+
+                result.Data = new PaginatedList<ArticleModel>(listItems, itemsCount, pageIndex, pageSize);
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                return result;
+            }
         }
 
         /// <summary>
@@ -31,45 +131,53 @@ namespace Hydra.Cms.Api.Services
         public async Task<Result<PaginatedList<ArticleModel>>> GetList(GridDataBound dataGrid)
         {
             var result = new Result<PaginatedList<ArticleModel>>();
-
-            var list = await (from article in _queryRepository.Table<Article>().Where(x => !x.IsDeleted).Include(x => x.Writer).Include(x => x.Editor)
-                              select new ArticleModel()
-                              {
-                                  Id = article.Id,
-                                  Subject = article.Subject,
-                                  Body = article.Body,
-                                  PreviewImageId = article.PreviewImageId,
-                                  PreviewImageUrl = article.PreviewImageUrl,
-                                  PublishDate = article.PublishDate,
-                                  EditDate = article.EditDate,
-                                  RegisterDate = article.RegisterDate,
-                                  WriterId = article.WriterId,
-                                  EditorId = article.EditorId,
-                                  Writer = new AuthorModel()
+            try
+            {
+                var list = await (from article in _queryRepository.Table<Article>().Include(x => x.Writer).Include(x => x.Editor).Where(x => !x.IsDeleted)
+                                  select new ArticleModel()
                                   {
-                                      Id = article.Writer.Id,
-                                      Name = article.Writer.Name,
-                                      UserName = article.Writer.UserName,
-                                      Avatar = article.Writer.Avatar
-                                  },
-                                  Editor = new AuthorModel()
-                                  {
-                                      Id = article.Editor!.Id,
-                                      Name = article.Editor!.Name ?? "",
-                                      UserName = article.Editor!.UserName ?? "",
-                                      Avatar = article.Editor!.Avatar ?? ""
-                                  },
-                                  IsDraft = article.IsDraft,
-                                  IsPinned = article.IsPinned,
-                                  Tags = article.Tags.Select(x => x.Title).ToList(),
-                                  TopicsIds = article.Topics.Select(x => x.Id).ToList()
+                                      Id = article.Id,
+                                      Subject = article.Subject,
+                                      Body = article.Body,
+                                      PreviewImageId = article.PreviewImageId,
+                                      PreviewImageUrl = article.PreviewImageUrl,
+                                      PublishDate = article.PublishDate,
+                                      EditDate = article.EditDate,
+                                      RegisterDate = article.RegisterDate,
+                                      WriterId = article.WriterId,
+                                      EditorId = article.EditorId,
+                                      Writer = new AuthorModel()
+                                      {
+                                          Id = article.Writer.Id,
+                                          Name = article.Writer.Name,
+                                          UserName = article.Writer.UserName,
+                                          Avatar = article.Writer.Avatar
+                                      },
+                                      Editor = new AuthorModel()
+                                      {
+                                          Id = article.Editor!.Id,
+                                          Name = article.Editor!.Name ?? "",
+                                          UserName = article.Editor!.UserName ?? "",
+                                          Avatar = article.Editor!.Avatar ?? ""
+                                      },
+                                      IsDraft = article.IsDraft,
+                                      IsPinned = article.IsPinned,
+                                      Tags = article.Tags.Select(x => x.Title).ToList(),
+                                      TopicsIds = article.Topics.Select(x => x.Id).ToList()
 
-                              }).OrderByDescending(x=>x.IsPinned).ThenByDescending(x=>x.PublishDate).ToPaginatedListAsync(dataGrid);
+                                  }).OrderByDescending(x => x.IsPinned).ThenByDescending(x => x.PublishDate).ToPaginatedListAsync(dataGrid);
 
 
-            result.Data = list;
+                result.Data = list;
 
-            return result;
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                return result;
+            }
         }
 
         /// <summary>
@@ -80,45 +188,53 @@ namespace Hydra.Cms.Api.Services
         public async Task<Result<PaginatedList<ArticleModel>>> GetTrashList(GridDataBound dataGrid)
         {
             var result = new Result<PaginatedList<ArticleModel>>();
-
-            var list = await (from article in _queryRepository.Table<Article>().Where(x => x.IsDeleted).Include(x => x.Writer).Include(x => x.Editor)
-                              select new ArticleModel()
-                              {
-                                  Id = article.Id,
-                                  Subject = article.Subject,
-                                  Body = article.Body,
-                                  PreviewImageId = article.PreviewImageId,
-                                  PreviewImageUrl = article.PreviewImageUrl,
-                                  PublishDate = article.PublishDate,
-                                  EditDate = article.EditDate,
-                                  RegisterDate = article.RegisterDate,
-                                  WriterId = article.WriterId,
-                                  EditorId = article.EditorId,
-                                  Writer = new AuthorModel()
+            try
+            {
+                var list = await (from article in _queryRepository.Table<Article>().Where(x => x.IsDeleted).Include(x => x.Writer).Include(x => x.Editor)
+                                  select new ArticleModel()
                                   {
-                                      Id = article.Writer.Id,
-                                      Name = article.Writer.Name,
-                                      UserName = article.Writer.UserName,
-                                      Avatar = article.Writer.Avatar
-                                  },
-                                  Editor = new AuthorModel()
-                                  {
-                                      Id = article.Editor!.Id,
-                                      Name = article.Editor!.Name ?? "",
-                                      UserName = article.Editor!.UserName ?? "",
-                                      Avatar = article.Editor!.Avatar ?? ""
-                                  },
-                                  IsPinned = article.IsPinned,
-                                  IsDraft = article.IsDraft,
-                                  Tags = article.Tags.Select(x => x.Title).ToList(),
-                                  TopicsIds = article.Topics.Select(x => x.Id).ToList()
+                                      Id = article.Id,
+                                      Subject = article.Subject,
+                                      Body = article.Body,
+                                      PreviewImageId = article.PreviewImageId,
+                                      PreviewImageUrl = article.PreviewImageUrl,
+                                      PublishDate = article.PublishDate,
+                                      EditDate = article.EditDate,
+                                      RegisterDate = article.RegisterDate,
+                                      WriterId = article.WriterId,
+                                      EditorId = article.EditorId,
+                                      Writer = new AuthorModel()
+                                      {
+                                          Id = article.Writer.Id,
+                                          Name = article.Writer.Name,
+                                          UserName = article.Writer.UserName,
+                                          Avatar = article.Writer.Avatar
+                                      },
+                                      Editor = new AuthorModel()
+                                      {
+                                          Id = article.Editor!.Id,
+                                          Name = article.Editor!.Name ?? "",
+                                          UserName = article.Editor!.UserName ?? "",
+                                          Avatar = article.Editor!.Avatar ?? ""
+                                      },
+                                      IsPinned = article.IsPinned,
+                                      IsDraft = article.IsDraft,
+                                      Tags = article.Tags.Select(x => x.Title).ToList(),
+                                      TopicsIds = article.Topics.Select(x => x.Id).ToList()
 
-                              }).ToPaginatedListAsync(dataGrid);
+                                  }).ToPaginatedListAsync(dataGrid);
 
 
-            result.Data = list;
+                result.Data = list;
 
-            return result;
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                return result;
+            }
         }
         /// <summary>
         /// 

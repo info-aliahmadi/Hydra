@@ -18,6 +18,7 @@ namespace Hydra.Cms.Core.EntityConfiguration
             builder.Property(o => o.Url).HasMaxLength(300);
             builder.Property(o => o.Description).HasMaxLength(300);
 
+            builder.HasOne(x => x.LinkSection).WithMany(x => x.Links).HasForeignKey(x => x.LinkSectionId);
 
         }
     }

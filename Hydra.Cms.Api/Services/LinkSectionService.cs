@@ -1,4 +1,5 @@
-﻿using Hydra.Cms.Core.Domain;
+﻿using EFCoreSecondLevelCacheInterceptor;
+using Hydra.Cms.Core.Domain;
 using Hydra.Cms.Core.Interfaces;
 using Hydra.Cms.Core.Models;
 using Hydra.Kernel.Interfaces.Data;
@@ -31,21 +32,31 @@ namespace Hydra.Cms.Api.Services
         {
             var result = new Result<List<LinkSectionModel>>();
 
-            var linkList = (await _linkService.GetList()).Data;
+            //var linkList = (await _linkService.GetList()).Data;
 
-            var linkSectionList = await _queryRepository.Table<LinkSection>().Select(linkSection => new LinkSectionModel()
+            var linkSectionList = await _queryRepository.Table<LinkSection>().Include(x=>x.Links).Select(linkSection => new LinkSectionModel()
             {
                 Id = linkSection.Id,
                 Key = linkSection.Key,
                 Title = linkSection.Title,
-                IsVisible = linkSection.IsVisible
-            }).ToListAsync();
+                IsVisible = linkSection.IsVisible,
+                Links = linkSection.Links.OrderByDescending(x => x.Order).Select(link => new LinkModel()
+                {
+                    Id = link.Id,
+                    Description = link.Description,
+                    Url = link.Url,
+                    Title = link.Title,
+                    ImagePreviewId = link.ImagePreviewId,
+                    LinkSectionId = link.LinkSectionId,
+                    Order = link.Order,
+                }).ToList()
+            }).Cacheable().ToListAsync();
 
-            foreach (var linkSection in linkSectionList)
-            {
+            //foreach (var linkSection in linkSectionList)
+            //{
 
-                linkSection.Links = linkList.Where(x => x.LinkSectionId == linkSection.Id).OrderByDescending(x => x.Order).ToList();
-            }
+            //    linkSection.Links = linkList.Where(x => x.LinkSectionId == linkSection.Id).OrderByDescending(x => x.Order).ToList();
+            //}
 
             result.Data = linkSectionList;
 
