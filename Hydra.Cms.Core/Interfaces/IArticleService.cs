@@ -20,6 +20,13 @@ namespace Hydra.Cms.Core.Interfaces
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<Result<ArticleModel>> GetByIdForVisitors(int id);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="dataGrid"></param>
         /// <returns></returns>
         Task<Result<PaginatedList<ArticleModel>>> GetList(GridDataBound dataGrid);

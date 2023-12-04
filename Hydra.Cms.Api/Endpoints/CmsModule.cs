@@ -36,6 +36,8 @@ namespace Hydra.Cms.Api.Endpoints
             endpoints.MapGet(API_SCHEMA + "/GetSettings", SettingsHandler.GetSettings).AllowAnonymous();
             endpoints.MapGet(API_SCHEMA + "/GetMenu", MenuHandler.GetMenu).AllowAnonymous();
             endpoints.MapGet(API_SCHEMA + "/GetArticlesList", ArticleHandler.GetListForVisitors).AllowAnonymous();
+            endpoints.MapGet(API_SCHEMA + "/GetTopicsList", TopicHandler.GetList).AllowAnonymous();
+            endpoints.MapGet(API_SCHEMA + "/GetArticle", ArticleHandler.GetArticleByIdForVisitors).AllowAnonymous();
 
 
 

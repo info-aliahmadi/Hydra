@@ -77,7 +77,6 @@ namespace Hydra.Cms.Api.Services
             {
                 Id = x.Id,
                 Title = x.Title,
-                //Parent = x.Parent != null ? new TopicModel() { Id = x.ParentId ?? 0, Title = x.Parent.Title } : new TopicModel(),
                 ParentId = x.ParentId
             }).ToListAsync();
 
@@ -92,6 +91,29 @@ namespace Hydra.Cms.Api.Services
 
             return result;
         }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Result<List<TopicModel>>> GetList()
+        {
+            var result = new Result<List<TopicModel>>();
+
+            var list = await _queryRepository.Table<Topic>().Select(x => new TopicModel()
+            {
+                Id = x.Id,
+                Title = x.Title,
+                ParentId = x.ParentId
+            }).OrderByDescending(x => x.Id).ToListAsync();
+
+
+            result.Data = list;
+
+            return result;
+        }
+
         List<TopicModel> resultList = new List<TopicModel>();
         private List<TopicModel> GetChildOfSelect(TopicModel topic, string space, List<TopicModel> topics)
         {
@@ -262,6 +284,13 @@ namespace Hydra.Cms.Api.Services
             {
                 result.Status = ResultStatusEnum.IsNotAllowed;
                 result.Message = "Is Not Allowed. because this topic parent of another topic";
+                return result;
+            }
+
+            if (_queryRepository.Table<ArticleTopic>().Any(x => x.TopicId == id))
+            {
+                result.Status = ResultStatusEnum.IsNotAllowed;
+                result.Message = "Is Not Allowed. because this topic is related to some Articles";
                 return result;
             }
 

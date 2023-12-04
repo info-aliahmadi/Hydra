@@ -33,6 +33,7 @@ namespace Hydra.Cms.Api.Handler
             }
 
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -59,6 +60,24 @@ namespace Hydra.Cms.Api.Handler
             }
 
         }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_articleService"></param>
+        /// <param name="articleId"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetArticleByIdForVisitors(
+            IArticleService _articleService,
+            int articleId
+            )
+        {
+            var result = await _articleService.GetByIdForVisitors(articleId);
+
+            return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+        }
+
         /// <summary>
         /// 
         /// </summary>

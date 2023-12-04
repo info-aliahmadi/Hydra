@@ -40,7 +40,7 @@ namespace Hydra.Cms.Api.Services
             {
                 var dateNow = DateTime.UtcNow;
 
-                var query = _queryRepository.Table<Article>().Include(x => x.PreviewImage).Include(x => x.Tags).Include(x => x.Topics).Where(x => x.IsDeleted == false && x.IsDraft == false && x.PublishDate <= dateNow);
+                var query = _queryRepository.Table<Article>().Include(x => x.Tags).Include(x => x.Topics).Where(x => x.IsDeleted == false && x.IsDraft == false && x.PublishDate <= dateNow);
 
                 if (!string.IsNullOrEmpty(searchInput!.Trim()))
                 {
@@ -67,10 +67,10 @@ namespace Hydra.Cms.Api.Services
 
                 if (pageSize <= 0)
                 {
-                    pageSize = _sittingService.GetSettings().Data.NumberOfPostsPerList;
+                    pageSize = 2;// _sittingService.GetSettings().Data.NumberOfPostsPerList;
                 }
                 var itemsCount = query.Count();
-                var listItems = await query.ToPaginatedQuery(pageIndex-1, pageSize).Select(article => new ArticleModel()
+                var listItems = await query.OrderByDescending(x => x.PublishDate).ThenByDescending(x => x.RegisterDate).ToPaginatedQuery(pageIndex - 1, pageSize).Select(article => new ArticleModel()
                 {
                     Id = article.Id,
                     Subject = article.Subject,
@@ -78,11 +78,11 @@ namespace Hydra.Cms.Api.Services
                     PreviewImageId = article.PreviewImageId,
                     PreviewImage = new FileStorage.Core.Models.FileUploadModel()
                     {
-                        Id = article.PreviewImage!.Id,
-                        FileName = article.PreviewImage!.FileName,
-                        Extension = article.PreviewImage!.Extension,
-                        Directory = article.PreviewImage!.Directory,
-                        Thumbnail = article.PreviewImage!.Thumbnail
+                        Id = article.PreviewImage != null ? article.PreviewImage.Id : 0,
+                        FileName = article.PreviewImage!.FileName ?? "",
+                        Extension = article.PreviewImage!.Extension ?? "",
+                        Directory = article.PreviewImage!.Directory ?? "",
+                        Thumbnail = article.PreviewImage!.Thumbnail ?? ""
                     },
                     PreviewImageUrl = article.PreviewImageUrl,
                     PublishDate = article.PublishDate,
@@ -107,7 +107,7 @@ namespace Hydra.Cms.Api.Services
                     Topics = article.Topics.Select(x => x.Title).ToList(),
                     Tags = article.Tags.Select(x => x.Title).ToList()
 
-                }).OrderByDescending(x => x.PublishDate).Cacheable().ToListAsync();
+                }).ToListAsync();
 
 
 
@@ -123,6 +123,68 @@ namespace Hydra.Cms.Api.Services
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dataGrid"></param>
+        /// <returns></returns>
+        public async Task<Result<ArticleModel>> GetByIdForVisitors(int id)
+        {
+            var result = new Result<ArticleModel>();
+            try
+            {
+                var dateNow = DateTime.UtcNow;
+
+                var article = await _queryRepository.Table<Article>().Include(x => x.Tags).Include(x => x.Topics).Where(x => x.IsDeleted == false && x.IsDraft == false && x.Id == id && x.PublishDate <= dateNow).Select(article => new ArticleModel()
+                {
+                    Id = article.Id,
+                    Subject = article.Subject,
+                    Body = article.Body,
+                    PreviewImageId = article.PreviewImageId,
+                    PreviewImage = new FileStorage.Core.Models.FileUploadModel()
+                    {
+                        Id = article.PreviewImage != null ? article.PreviewImage.Id : 0,
+                        FileName = article.PreviewImage!.FileName ?? "",
+                        Extension = article.PreviewImage!.Extension ?? "",
+                        Directory = article.PreviewImage!.Directory ?? "",
+                        Thumbnail = article.PreviewImage!.Thumbnail ?? ""
+                    },
+                    PreviewImageUrl = article.PreviewImageUrl,
+                    PublishDate = article.PublishDate,
+                    EditDate = article.EditDate,
+                    RegisterDate = article.RegisterDate,
+                    WriterId = article.WriterId,
+                    EditorId = article.EditorId,
+                    Writer = new AuthorModel()
+                    {
+                        Id = article.Writer.Id,
+                        Name = article.Writer.Name,
+                        UserName = article.Writer.UserName,
+                        Avatar = article.Writer.Avatar
+                    },
+                    Editor = new AuthorModel()
+                    {
+                        Id = article.Editor!.Id,
+                        Name = article.Editor!.Name ?? "",
+                        UserName = article.Editor!.UserName ?? "",
+                        Avatar = article.Editor!.Avatar ?? ""
+                    },
+                    Topics = article.Topics.Select(x => x.Title).ToList(),
+                    Tags = article.Tags.Select(x => x.Title).ToList()
+
+                }).FirstOrDefaultAsync();
+
+                result.Data = article;
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                return result;
+            }
+        }
         /// <summary>
         /// 
         /// </summary>

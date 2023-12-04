@@ -51,6 +51,26 @@ namespace Hydra.Cms.Api.Handler
             }
 
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_topicService"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetList(ITopicService _topicService)
+        {
+            try
+            {
+                var result = await _topicService.GetList();
+
+                return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
+
+        }
 
         /// <summary>
         /// 
