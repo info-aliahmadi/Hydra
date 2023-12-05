@@ -33,6 +33,30 @@ namespace Hydra.Cms.Api.Handler
             }
 
         }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_linkService"></param>
+        /// <param name="sectionKey"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetLinksByKeyList(
+             ILinkService _linkService,
+            string sectionKey)
+        {
+            try
+            {
+                var result = await _linkService.GetByKeyList(sectionKey);
+
+                return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
+
+        }
 
         /// <summary>
         /// 

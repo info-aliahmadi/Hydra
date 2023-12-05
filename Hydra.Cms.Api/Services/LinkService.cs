@@ -77,6 +77,32 @@ namespace Hydra.Cms.Api.Services
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="dataGrid"></param>
+        /// <returns></returns>
+        public async Task<Result<List<LinkModel>>> GetByKeyList(string sectionKey)
+        {
+            var result = new Result<List<LinkModel>>();
+
+            var linkList = await _queryRepository.Table<Link>().Include(x => x.LinkSection).Where(x=>x.LinkSection.Key == sectionKey).Select(link => new LinkModel()
+            {
+                Id = link.Id,
+                Description = link.Description,
+                Url = link.Url,
+                Title = link.Title,
+                ImagePreviewId = link.ImagePreviewId,
+                LinkSectionId = link.LinkSectionId,
+                Order = link.Order,
+                UserId = link.UserId
+            }).OrderByDescending(x => x.Order).Cacheable().ToListAsync();
+
+
+            result.Data = linkList;
+
+            return result;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         public async Task<Result<LinkModel>> GetById(int id)

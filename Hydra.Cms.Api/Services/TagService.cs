@@ -46,6 +46,27 @@ namespace Hydra.Cms.Api.Services
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="dataGrid"></param>
+        /// <returns></returns>
+        public async Task<Result<List<TagModel>>> GetAllList()
+        {
+            var result = new Result<List<TagModel>>();
+
+            var list = await (from article in _queryRepository.Table<Tag>()
+                              select new TagModel()
+                              {
+                                  Id = article.Id,
+                                  Title = article.Title
+
+                              }).ToListAsync();
+
+            result.Data = list;
+
+            return result;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         public async Task<Result<List<TagModel>>> GetListByTitle(string[] tags)

@@ -67,7 +67,7 @@ namespace Hydra.Cms.Api.Services
 
                 if (pageSize <= 0)
                 {
-                    pageSize = 2;// _sittingService.GetSettings().Data.NumberOfPostsPerList;
+                    pageSize = _sittingService.GetSettings().Data.NumberOfPostsPerList;
                 }
                 var itemsCount = query.Count();
                 var listItems = await query.OrderByDescending(x => x.PublishDate).ThenByDescending(x => x.RegisterDate).ToPaginatedQuery(pageIndex - 1, pageSize).Select(article => new ArticleModel()
@@ -112,6 +112,146 @@ namespace Hydra.Cms.Api.Services
 
 
                 result.Data = new PaginatedList<ArticleModel>(listItems, itemsCount, pageIndex, pageSize);
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dataGrid"></param>
+        /// <returns></returns>
+        public async Task<Result<List<ArticleModel>>> GetRelatedForVisitors(int articleId, int takeCount)
+        {
+            var result = new Result<List<ArticleModel>>();
+            try
+            {
+                var dateNow = DateTime.UtcNow;
+
+                var article = GetById(articleId);
+
+
+
+                var query = _queryRepository.Table<Article>().Include(x => x.Tags).Include(x => x.Topics).Where(x => x.IsDeleted == false && x.IsDraft == false && x.PublishDate <= dateNow);
+
+                if (article.Result.Succeeded)
+                {
+                    var topics = article.Result.Data.TopicsIds;
+                    query = query.Where(x => x.ArticleTopics.Any(c => topics.Contains(c.TopicId)));
+                }
+
+                var listItems = await query.Where(x => x.Id != articleId).OrderByDescending(x => x.PublishDate).ThenByDescending(x => x.RegisterDate).Take(takeCount).Select(article => new ArticleModel()
+                {
+                    Id = article.Id,
+                    Subject = article.Subject,
+                    Body = article.Body,
+                    PreviewImageId = article.PreviewImageId,
+                    PreviewImage = new FileStorage.Core.Models.FileUploadModel()
+                    {
+                        Id = article.PreviewImage != null ? article.PreviewImage.Id : 0,
+                        FileName = article.PreviewImage!.FileName ?? "",
+                        Extension = article.PreviewImage!.Extension ?? "",
+                        Directory = article.PreviewImage!.Directory ?? "",
+                        Thumbnail = article.PreviewImage!.Thumbnail ?? ""
+                    },
+                    PreviewImageUrl = article.PreviewImageUrl,
+                    PublishDate = article.PublishDate,
+                    EditDate = article.EditDate,
+                    RegisterDate = article.RegisterDate,
+                    WriterId = article.WriterId,
+                    EditorId = article.EditorId,
+                    Writer = new AuthorModel()
+                    {
+                        Id = article.Writer.Id,
+                        Name = article.Writer.Name,
+                        UserName = article.Writer.UserName,
+                        Avatar = article.Writer.Avatar
+                    },
+                    Editor = new AuthorModel()
+                    {
+                        Id = article.Editor!.Id,
+                        Name = article.Editor!.Name ?? "",
+                        UserName = article.Editor!.UserName ?? "",
+                        Avatar = article.Editor!.Avatar ?? ""
+                    },
+                    Topics = article.Topics.Select(x => x.Title).ToList(),
+                    Tags = article.Tags.Select(x => x.Title).ToList()
+
+                }).ToListAsync();
+
+
+
+                result.Data = listItems;
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dataGrid"></param>
+        /// <returns></returns>
+        public async Task<Result<ArticleModel>> GetTopForVisitors()
+        {
+            var result = new Result<ArticleModel>();
+            try
+            {
+                var dateNow = DateTime.UtcNow;
+
+                var article = await _queryRepository.Table<Article>().Include(x => x.Tags).Include(x => x.Topics).Where(x => x.IsDeleted == false && x.IsDraft == false && x.PublishDate <= dateNow && x.IsPinned).Select(article => new ArticleModel()
+                {
+                    Id = article.Id,
+                    Subject = article.Subject,
+                    Body = article.Body,
+                    PreviewImageId = article.PreviewImageId,
+                    PreviewImage = new FileStorage.Core.Models.FileUploadModel()
+                    {
+                        Id = article.PreviewImage != null ? article.PreviewImage.Id : 0,
+                        FileName = article.PreviewImage!.FileName ?? "",
+                        Extension = article.PreviewImage!.Extension ?? "",
+                        Directory = article.PreviewImage!.Directory ?? "",
+                        Thumbnail = article.PreviewImage!.Thumbnail ?? ""
+                    },
+                    PreviewImageUrl = article.PreviewImageUrl,
+                    PublishDate = article.PublishDate,
+                    EditDate = article.EditDate,
+                    RegisterDate = article.RegisterDate,
+                    WriterId = article.WriterId,
+                    EditorId = article.EditorId,
+                    Writer = new AuthorModel()
+                    {
+                        Id = article.Writer.Id,
+                        Name = article.Writer.Name,
+                        UserName = article.Writer.UserName,
+                        Avatar = article.Writer.Avatar
+                    },
+                    Editor = new AuthorModel()
+                    {
+                        Id = article.Editor!.Id,
+                        Name = article.Editor!.Name ?? "",
+                        UserName = article.Editor!.UserName ?? "",
+                        Avatar = article.Editor!.Avatar ?? ""
+                    },
+                    Topics = article.Topics.Select(x => x.Title).ToList(),
+                    Tags = article.Tags.Select(x => x.Title).ToList()
+
+                }).FirstOrDefaultAsync();
+
+                result.Data = article;
 
                 return result;
             }

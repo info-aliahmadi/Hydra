@@ -33,7 +33,27 @@ namespace Hydra.Cms.Api.Handler
             {
                 return Results.BadRequest(e.Message);
             }
+        }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_tagService"></param>
+        /// <param name="tagModel"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetAllList(
+             ITagService _tagService)
+        {
+            try
+            {
+                var result = await _tagService.GetAllList();
+
+                return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
         }
 
         /// <summary>

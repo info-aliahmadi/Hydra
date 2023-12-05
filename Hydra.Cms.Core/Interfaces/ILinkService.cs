@@ -11,6 +11,14 @@ namespace Hydra.Cms.Core.Interfaces
         /// </summary>
         /// <returns></returns>
         Task<Result<List<LinkModel>>> GetList();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sectionKey"></param>
+        /// <returns></returns>
+        Task<Result<List<LinkModel>>> GetByKeyList(string sectionKey);
+
         /// <summary>
         /// 
         /// </summary>

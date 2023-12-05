@@ -20,6 +20,20 @@ namespace Hydra.Cms.Core.Interfaces
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="categoryName"></param>
+        /// <param name="takeCount"></param>
+        /// <returns></returns>
+        Task<Result<List<ArticleModel>>> GetRelatedForVisitors(int articleId, int takeCount);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        Task<Result<ArticleModel>> GetTopForVisitors();
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         Task<Result<ArticleModel>> GetByIdForVisitors(int id);
