@@ -76,6 +76,14 @@ namespace Hydra.Cms.Api.Services
             var result = new Result<SubscribeModel>();
             try
             {
+                var notExistLabelId = await _queryRepository.Table<SubscribeLabel>().AnyAsync(x => x.Id == subscribeModel.SubscribeLabelId);
+                if (!notExistLabelId)
+                {
+                    result.Status = ResultStatusEnum.NotFound;
+                    result.Message = "The SubscribeLabel not found";
+                    return result;
+                }                
+                
                 var isExist = await _queryRepository.Table<Subscribe>().AnyAsync(x => x.Email == subscribeModel.Email);
                 if (isExist)
                 {
@@ -125,6 +133,15 @@ namespace Hydra.Cms.Api.Services
                     result.Message = "The Subscribe not found";
                     return result;
                 }
+
+                var notExistLabelId = await _queryRepository.Table<SubscribeLabel>().AnyAsync(x => x.Id == subscribeModel.SubscribeLabelId);
+                if (!notExistLabelId)
+                {
+                    result.Status = ResultStatusEnum.NotFound;
+                    result.Message = "The SubscribeLabel not found";
+                    return result;
+                }
+
                 var isExist = await _queryRepository.Table<Subscribe>().AnyAsync(x => x.Id != subscribeModel.Id && x.Email == subscribeModel.Email);
                 if (isExist)
                 {

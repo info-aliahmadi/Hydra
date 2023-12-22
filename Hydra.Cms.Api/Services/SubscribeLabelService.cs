@@ -80,7 +80,7 @@ namespace Hydra.Cms.Api.Services
                     result.Errors.Add(new Error(nameof(subscribeLabelModel.Id), "The Title already exist"));
                     return result;
                 }
-                var subscribeLabel = new SubscribeLabel()
+                var subscribeLabel = new SubscribeLabel
                 {
                     Title = subscribeLabelModel.Title,
                     InsertDate = DateTime.Now
