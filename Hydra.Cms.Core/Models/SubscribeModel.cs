@@ -16,7 +16,7 @@ namespace Hydra.Cms.Core.Models
         /// <summary>
         /// 
         /// </summary>
-        public string SubscribeLabeTitle { get; set; }
+        public string SubscribeLabelTitle { get; set; }
         
         /// <summary>
         /// 
@@ -26,6 +26,6 @@ namespace Hydra.Cms.Core.Models
         /// <summary>
         /// 
         /// </summary>
-        public DateTime InsertDate { get; set; }
+        public string InsertDate { get; set; }
     }
 }

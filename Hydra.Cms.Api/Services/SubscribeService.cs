@@ -33,9 +33,9 @@ namespace Hydra.Cms.Api.Services
                               {
                                   Id = subscribe.Id,
                                   Email = subscribe.Email,
-                                  InsertDate = subscribe.InsertDate,
+                                  InsertDate = subscribe.InsertDate.ToShortDateString(),
                                   SubscribeLabelId = subscribe.SubscribeLabelId,
-                                  SubscribeLabeTitle = subscribe.SubscribeLabel.Title,
+                                  SubscribeLabelTitle = subscribe.SubscribeLabel.Title,
                               }).OrderByDescending(x => x.Id).ToPaginatedListAsync(dataGrid);
 
             result.Data = list;
@@ -57,9 +57,9 @@ namespace Hydra.Cms.Api.Services
             {
                 Id = subscribe.Id,
                 Email = subscribe.Email,
-                InsertDate = subscribe.InsertDate,
+                InsertDate = subscribe.InsertDate.ToShortDateString(),
                 SubscribeLabelId = subscribe.SubscribeLabelId,
-                SubscribeLabeTitle = subscribe.SubscribeLabel.Title,
+                SubscribeLabelTitle = subscribe.SubscribeLabel.Title,
             };
             result.Data = subscribeModel;
 

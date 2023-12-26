@@ -32,6 +32,25 @@ namespace Hydra.Cms.Api.Handler
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="labelService"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetListForSelect(ISubscribeLabelService labelService)
+        {
+            try
+            {
+                var result = await labelService.GetListForSelect();
+                return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
+
+        }
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="subscribeLabelService"></param>
         /// <param name="subscribeLabelId"></param>
         /// <returns></returns>

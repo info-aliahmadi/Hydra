@@ -33,8 +33,28 @@ namespace Hydra.Cms.Api.Services
                               {
                                   Id = subscribeLabel.Id,
                                   Title = subscribeLabel.Title,
-                                  InsertDate = subscribeLabel.InsertDate
+                                  InsertDate = subscribeLabel.InsertDate,
                               }).OrderByDescending(x => x.Id).ToPaginatedListAsync(dataGrid);
+
+            result.Data = list;
+
+            return result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Result<List<SubscribeLabelModel>>> GetListForSelect()
+        {
+            var result = new Result<List<SubscribeLabelModel>>();
+
+            var list = await _queryRepository.Table<SubscribeLabel>().Select(x => new SubscribeLabelModel()
+            {
+                Id = x.Id,
+                Title = x.Title,
+                InsertDate = x.InsertDate,
+            }).ToListAsync();
 
             result.Data = list;
 

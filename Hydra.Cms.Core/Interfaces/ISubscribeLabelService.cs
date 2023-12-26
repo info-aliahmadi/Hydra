@@ -17,6 +17,12 @@ namespace Hydra.Cms.Core.Interfaces
         /// <summary>
         /// 
         /// </summary>
+        /// <returns></returns>
+        Task<Result<List<SubscribeLabelModel>>> GetListForSelect();
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         Task<Result<SubscribeLabelModel>> GetById(int id);
