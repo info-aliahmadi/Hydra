@@ -1,7 +1,7 @@
 ﻿using Hydra.Auth.Api.Handler;
 using Hydra.Auth.Api.Services;
 using Hydra.Auth.Core.Interfaces;
-using Hydra.Infrastructure.Endpoints;
+using Hydra.Infrastructure.ModuleExtension;
 using Hydra.Infrastructure.Security.Extensions;
 using Hydra.Infrastructure.Security.Service;
 using Hydra.Kernel.Interfaces;
@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using System.Security.Claims;
 
-namespace Hydra.Cms.Api.Endpoints
+namespace Hydra.Auth.Api.Endpoints
 {
     public class AuthModule : IModule
     {

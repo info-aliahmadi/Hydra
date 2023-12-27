@@ -1,7 +1,7 @@
 ﻿using Hydra.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace Nitro.Migrations
+namespace Hydra.Migrations
 {
     public class MigrationContext : ApplicationDbContext
     {

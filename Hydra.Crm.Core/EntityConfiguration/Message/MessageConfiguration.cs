@@ -2,12 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-
-namespace Hydra.Crm.Core.EntityConfiguration.MessageConfig
+namespace Hydra.Crm.Core.EntityConfiguration.Message
 {
-    public class MessageConfiguration : IEntityTypeConfiguration<Message>
+    public class MessageConfiguration : IEntityTypeConfiguration<Domain.Message.Message>
     {
-        public void Configure(EntityTypeBuilder<Message> builder)
+        public void Configure(EntityTypeBuilder<Domain.Message.Message> builder)
         {
             builder.ToTable("Message", "Crm");
 

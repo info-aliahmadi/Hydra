@@ -1,13 +1,13 @@
-﻿using Hydra.Cms.Core.Domain;
-using Hydra.Cms.Core.Interfaces;
-using Hydra.Cms.Core.Models;
+﻿using Hydra.Crm.Core.Domain.Subscribe;
+using Hydra.Crm.Core.Interfaces;
+using Hydra.Crm.Core.Models.Subscribe;
 using Hydra.Infrastructure.Data.Extension;
 using Hydra.Kernel.Extensions;
 using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Hydra.Cms.Api.Services
+namespace Hydra.Crm.Api.Services
 {
     public class SubscribeLabelService : ISubscribeLabelService
     {

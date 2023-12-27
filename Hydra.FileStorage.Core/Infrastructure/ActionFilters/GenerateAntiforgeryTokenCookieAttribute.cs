@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Hydra.FileStorage.Infrastructure.ActionFilters
+namespace Hydra.FileStorage.Core.Infrastructure.ActionFilters
 {
     public class GenerateAntiforgeryTokenCookieAttribute : ResultFilterAttribute
     {

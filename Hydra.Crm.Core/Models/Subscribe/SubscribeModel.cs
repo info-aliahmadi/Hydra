@@ -1,5 +1,4 @@
-﻿
-namespace Hydra.Cms.Core.Models
+﻿namespace Hydra.Crm.Core.Models.Subscribe
 {
     public class SubscribeModel
     {
@@ -17,7 +16,7 @@ namespace Hydra.Cms.Core.Models
         /// 
         /// </summary>
         public string SubscribeLabelTitle { get; set; }
-        
+
         /// <summary>
         /// 
         /// </summary>

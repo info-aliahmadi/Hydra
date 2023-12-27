@@ -1,7 +1,7 @@
 ﻿using Hydra.Infrastructure.Security.Domain;
 using Hydra.Kernel;
 
-namespace Hydra.Crm.Core.Domain
+namespace Hydra.Crm.Core.Domain.Chat
 {
     public class ChatUser : BaseEntity<int>
     {

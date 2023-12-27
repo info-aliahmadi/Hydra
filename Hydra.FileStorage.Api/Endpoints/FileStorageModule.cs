@@ -3,7 +3,7 @@ using Hydra.FileStorage.Api.Services;
 using Hydra.FileStorage.Core.Interfaces;
 using Hydra.FileStorage.Core.SignatureVerify;
 using Hydra.Infrastructure.Data;
-using Hydra.Infrastructure.Endpoints;
+using Hydra.Infrastructure.ModuleExtension;
 using Hydra.Infrastructure.Security.Extensions;
 using Hydra.Kernel.Interfaces.Data;
 using Microsoft.AspNetCore.Builder;

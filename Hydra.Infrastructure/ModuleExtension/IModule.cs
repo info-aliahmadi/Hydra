@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Hydra.Infrastructure.Endpoints
+namespace Hydra.Infrastructure.ModuleExtension
 {
     public interface IModule
     {

@@ -1,6 +1,4 @@
-﻿
-
-namespace Nitro.Core.Interfaces.Settings
+﻿namespace Hydra.Kernel.Interfaces.Settings
 {
     public interface ISmsSetting
     {

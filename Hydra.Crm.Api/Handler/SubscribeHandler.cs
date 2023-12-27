@@ -1,12 +1,12 @@
 ﻿
 using System.Security.Claims;
-using Hydra.Cms.Core.Interfaces;
-using Hydra.Cms.Core.Models;
+using Hydra.Crm.Core.Interfaces;
+using Hydra.Crm.Core.Models.Subscribe;
 using Hydra.Kernel.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Hydra.Cms.Api.Handler
+namespace Hydra.Crm.Api.Handler
 {
     public static class SubscribeHandler
     {

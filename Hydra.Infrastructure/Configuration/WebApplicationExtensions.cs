@@ -5,6 +5,7 @@ using Hydra.Infrastructure.localization;
 using Hydra.Infrastructure.ModuleExtension;
 using Hydra.Infrastructure.Security.Extensions;
 using Microsoft.Extensions.FileProviders;
+using Hydra.Infrastructure.StaticFiles;
 
 namespace Hydra.Infrastructure.Configuration
 {

@@ -1,9 +1,8 @@
-﻿
-using Hydra.Cms.Core.Models;
+﻿using Hydra.Crm.Core.Models.Subscribe;
 using Hydra.Kernel.Extensions;
 using Hydra.Kernel.Models;
 
-namespace Hydra.Cms.Core.Interfaces
+namespace Hydra.Crm.Core.Interfaces
 {
     public interface ISubscribeLabelService
     {

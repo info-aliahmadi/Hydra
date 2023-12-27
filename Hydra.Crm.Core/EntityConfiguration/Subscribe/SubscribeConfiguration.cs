@@ -1,14 +1,13 @@
-﻿using Hydra.Cms.Core.Domain;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Hydra.Cms.Core.EntityConfiguration
+namespace Hydra.Crm.Core.EntityConfiguration.Subscribe
 {
-    public class SubscribeConfiguration : IEntityTypeConfiguration<Subscribe>
+    public class SubscribeConfiguration : IEntityTypeConfiguration<Domain.Subscribe.Subscribe>
     {
-        public void Configure(EntityTypeBuilder<Subscribe> entity)
+        public void Configure(EntityTypeBuilder<Domain.Subscribe.Subscribe> entity)
         {
-            entity.ToTable(nameof(Subscribe), "Cms");
+            entity.ToTable(nameof(Domain.Subscribe.Subscribe), "Cms");
             entity.HasKey(e => e.Id);
 
             entity.Property(e => e.Email)

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 
-namespace Nitro.Migrations
+namespace Hydra.Migrations
 {
     public static class SeedExtensions
     {

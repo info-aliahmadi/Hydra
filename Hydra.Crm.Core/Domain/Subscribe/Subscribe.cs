@@ -1,6 +1,6 @@
 ﻿using Hydra.Kernel;
 
-namespace Hydra.Cms.Core.Domain
+namespace Hydra.Crm.Core.Domain.Subscribe
 {
     public class Subscribe : BaseEntity<long>
     {
@@ -8,7 +8,7 @@ namespace Hydra.Cms.Core.Domain
         /// 
         /// </summary>
         public int SubscribeLabelId { get; set; }
-        
+
         /// <summary>
         /// 
         /// </summary>

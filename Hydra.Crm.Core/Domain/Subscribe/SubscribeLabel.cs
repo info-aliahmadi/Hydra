@@ -1,6 +1,6 @@
 ﻿using Hydra.Kernel;
 
-namespace Hydra.Cms.Core.Domain
+namespace Hydra.Crm.Core.Domain.Subscribe
 {
     public class SubscribeLabel : BaseEntity<int>
     {

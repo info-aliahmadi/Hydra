@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Hydra.FileStorage.Infrastructure
+namespace Hydra.FileStorage.Core.Infrastructure
 {
     public class AutoDeleteService : IHostedService, IDisposable
     {

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 
-namespace Hydra.Crm.Core.EntityConfiguration.MessageConfig
+namespace Hydra.Crm.Core.EntityConfiguration.Message
 {
     public class MessageUserConfiguration : IEntityTypeConfiguration<MessageUser>
     {

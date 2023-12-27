@@ -1,7 +1,4 @@
-﻿
-
-
-namespace Nitro.Core.Interfaces.Settings
+﻿namespace Hydra.Kernel.Interfaces.Settings
 {
     public class SmsSetting : ISmsSetting
     {

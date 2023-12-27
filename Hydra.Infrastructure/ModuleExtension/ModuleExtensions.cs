@@ -1,5 +1,4 @@
-﻿using Hydra.Infrastructure.Endpoints;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Hydra.Infrastructure.ModuleExtension

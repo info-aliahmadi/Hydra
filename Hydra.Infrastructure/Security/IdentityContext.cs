@@ -3,12 +3,12 @@ using Hydra.Infrastructure.Security.EntityConfiguration;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Hydra.Infrastructure
+namespace Hydra.Infrastructure.Security
 {
     /// <summary>
     /// 
     /// </summary>
-    public class IdentityContext : IdentityDbContext<User,Role,int,UserClaim,UserRole,UserLogin,RoleClaim,UserToken>
+    public class IdentityContext : IdentityDbContext<User, Role, int, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>
     {
         public IdentityContext(DbContextOptions options) : base(options)
         {

@@ -1,8 +1,8 @@
-﻿using Hydra.Cms.Core.Domain;
+﻿using Hydra.Crm.Core.Domain.Subscribe;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Hydra.Cms.Core.EntityConfiguration
+namespace Hydra.Crm.Core.EntityConfiguration.Subscribe
 {
     public class SubscribeLabelConfiguration : IEntityTypeConfiguration<SubscribeLabel>
     {

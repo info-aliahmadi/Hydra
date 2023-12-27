@@ -1,7 +1,7 @@
 ﻿using Hydra.Cms.Api.Handler;
 using Hydra.Cms.Api.Services;
 using Hydra.Cms.Core.Interfaces;
-using Hydra.Infrastructure.Endpoints;
+using Hydra.Infrastructure.ModuleExtension;
 using Hydra.Infrastructure.Security.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
@@ -23,8 +23,6 @@ namespace Hydra.Cms.Api.Endpoints
             services.AddScoped<ILinkService, LinkService>();
             services.AddScoped<IMenuService, MenuService>();
             services.AddScoped<ISlideshowService, SlideshowService>();
-            services.AddScoped<ISubscribeService, SubscribeService>();
-            services.AddScoped<ISubscribeLabelService, SubscribeLabelService>();
 
             return services;
         }
@@ -107,19 +105,6 @@ namespace Hydra.Cms.Api.Endpoints
             endpoints.MapPost(API_SCHEMA + "/UpdateSlideshowOrders", SlideshowHandler.UpdateOrders).RequirePermission("CMS.UPDATE_SLIDESHOW");
             endpoints.MapGet(API_SCHEMA + "/VisibleSlideshow", SlideshowHandler.VisibleSlideshow).RequirePermission("CMS.VISIBLE_SLIDESHOW");
             endpoints.MapGet(API_SCHEMA + "/DeleteSlideshow", SlideshowHandler.DeleteSlideshow).RequirePermission("CMS.DELETE_SLIDESHOW");
-
-            endpoints.MapPost(API_SCHEMA + "/GetSubscribeList", SubscribeHandler.GetList).AllowAnonymous();
-            endpoints.MapGet(API_SCHEMA + "/GetSubscribeById", SubscribeHandler.GetSubscribeById).AllowAnonymous();
-            endpoints.MapPost(API_SCHEMA + "/AddSubscribe", SubscribeHandler.AddSubscribe).AllowAnonymous();
-            endpoints.MapPut(API_SCHEMA + "/UpdateSubscribe", SubscribeHandler.UpdateSubscribe).AllowAnonymous();
-            endpoints.MapGet(API_SCHEMA + "/DeleteSubscribe", SubscribeHandler.DeleteSubscribe).AllowAnonymous();
-
-            endpoints.MapPost(API_SCHEMA + "/GetSubscribeLabelList", SubscribeLabelHandler.GetList).AllowAnonymous();
-            endpoints.MapGet(API_SCHEMA + "/GetSubscribeLabelListForSelect", SubscribeLabelHandler.GetListForSelect).AllowAnonymous();
-            endpoints.MapGet(API_SCHEMA + "/GetSubscribeLabelById", SubscribeLabelHandler.GetSubscribeLabelById).AllowAnonymous();
-            endpoints.MapPost(API_SCHEMA + "/AddSubscribeLabel", SubscribeLabelHandler.AddSubscribeLabel).AllowAnonymous();
-            endpoints.MapPost(API_SCHEMA + "/UpdateSubscribeLabel", SubscribeLabelHandler.UpdateSubscribeLabel).AllowAnonymous();
-            endpoints.MapGet(API_SCHEMA + "/DeleteSubscribeLabel", SubscribeLabelHandler.DeleteSubscribeLabel).AllowAnonymous();
 
             return endpoints;
         }

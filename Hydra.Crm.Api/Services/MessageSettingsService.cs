@@ -5,7 +5,7 @@ using Hydra.Infrastructure.Setting.Service;
 using Hydra.Kernel.Models;
 using System.Text.Json;
 
-namespace Hydra.Cms.Api.Services
+namespace Hydra.Crm.Api.Services
 {
     public class MessageSettingsService : IMessageSettingsService
     {
@@ -52,7 +52,7 @@ namespace Hydra.Cms.Api.Services
                 _settingService.AddOrUpdate(new SiteSetting()
                 {
                     Key = nameof(messageSettingModel.RecipientIdsForContactMessage),
-                    Value = string.Join(";", messageSettingModel.RecipientIdsForContactMessage) ,
+                    Value = string.Join(";", messageSettingModel.RecipientIdsForContactMessage),
                     ValueType = Infrastructure.Setting.SettingValueTypeEnum.IntegerArray
                 });
                 _settingService.AddOrUpdate(new SiteSetting()

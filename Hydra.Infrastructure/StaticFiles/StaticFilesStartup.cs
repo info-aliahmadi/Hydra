@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.FileProviders;
 
-namespace Hydra.Infrastructure.localization
+namespace Hydra.Infrastructure.StaticFiles
 {
     public static class StaticFilesStartup
     {
