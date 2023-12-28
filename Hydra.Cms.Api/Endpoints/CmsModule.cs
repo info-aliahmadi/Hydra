@@ -29,7 +29,6 @@ namespace Hydra.Cms.Api.Endpoints
 
         public IEndpointRouteBuilder MapEndpoints(IEndpointRouteBuilder endpoints)
         {
-
             // Anonymous Endpoints
 
             endpoints.MapGet(API_SCHEMA + "/GetSettings", SettingsHandler.GetSettings).AllowAnonymous();
@@ -54,7 +53,7 @@ namespace Hydra.Cms.Api.Endpoints
             endpoints.MapGet(API_SCHEMA + "/DeleteTopic", TopicHandler.DeleteTopic).RequirePermission("CMS.DELETE_TOPIC");
 
             endpoints.MapPost(API_SCHEMA + "/GetTagList", TagHandler.GetList).RequirePermission("CMS.GET_TAG_LIST");
-            endpoints.MapGet(API_SCHEMA + "/GetTagListForSelect", TagHandler.GetListForSelect).RequirePermission("CMS.GET_TAG_LIST");
+            endpoints.MapGet(API_SCHEMA + "/GetTagListForSelect", TagHandler.GetListForSelect).RequirePermission("CMS_GET.TAG.LIST");
             endpoints.MapGet(API_SCHEMA + "/GetTagById", TagHandler.GetTagById).RequirePermission("CMS.GET_TAG_BY_ID");
             endpoints.MapPost(API_SCHEMA + "/AddTag", TagHandler.AddTag).RequirePermission("CMS.ADD_TAG");
             endpoints.MapPost(API_SCHEMA + "/UpdateTag", TagHandler.UpdateTag).RequirePermission("CMS.UPDATE_TAG");

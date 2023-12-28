@@ -102,28 +102,36 @@ namespace Hydra.Auth.Api.Services
         public async Task<Result<RoleModel>> Add(RoleModel roleModel)
         {
             var result = new Result<RoleModel>();
-
-            var isExist = await _queryRepository.Table<Role>().AnyAsync(x => x.Name == roleModel.Name || (x.NormalizedName == roleModel.NormalizedName && x.NormalizedName != null));
-            if (isExist)
+            try
             {
-                result.Status = ResultStatusEnum.ItsDuplicate;
-                result.Message = "The role existed";
-                result.Errors.Add(new Error(nameof(roleModel.Name), "The role existed"));
+                var isExist = await _queryRepository.Table<Role>().AnyAsync(x => x.Name == roleModel.Name || (x.NormalizedName == roleModel.NormalizedName && x.NormalizedName != null));
+                if (isExist)
+                {
+                    result.Status = ResultStatusEnum.ItsDuplicate;
+                    result.Message = "The role existed";
+                    result.Errors.Add(new Error(nameof(roleModel.Name), "The role existed"));
+                    return result;
+                }
+
+                var role = new Role()
+                {
+                    Name = roleModel.Name,
+                    ConcurrencyStamp = roleModel.ConcurrencyStamp,
+                    NormalizedName = roleModel.NormalizedName
+                };
+                await _commandRepository.InsertAsync(role);
+                await _commandRepository.SaveChangesAsync();
+
+                roleModel.Id = role.Id;
+                result.Data = roleModel;
                 return result;
             }
-
-            var role = new Role()
+            catch (Exception e)
             {
-                Name = roleModel.Name,
-                ConcurrencyStamp = roleModel.ConcurrencyStamp,
-                NormalizedName = roleModel.NormalizedName
-            };
-            await _commandRepository.InsertAsync(role);
-            await _commandRepository.SaveChangesAsync();
-
-            roleModel.Id = role.Id;
-            result.Data = roleModel;
-            return result;
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                result.Message = e.Message;
+                return result;
+            }
         }
 
 
@@ -136,29 +144,37 @@ namespace Hydra.Auth.Api.Services
         public async Task<Result> DismissPermissionToRoleAsync(int permissionId, int roleId)
         {
             var result = new Result();
-
-            var permission = await _queryRepository.Table<Permission>().FirstOrDefaultAsync(x => x.Id == permissionId);
-            if (permission is null)
+            try
             {
-                result.Status = ResultStatusEnum.NotFound;
-                result.Message = "The permission Not Found";
-                result.Errors.Add(new Error(nameof(roleId), "The role existed"));
+                var permission = await _queryRepository.Table<Permission>().FirstOrDefaultAsync(x => x.Id == permissionId);
+                if (permission is null)
+                {
+                    result.Status = ResultStatusEnum.NotFound;
+                    result.Message = "The permission Not Found";
+                    result.Errors.Add(new Error(nameof(roleId), "The role existed"));
+                    return result;
+                }
+
+                var role = await _queryRepository.Table<Role>().Include(x => x.Permissions).FirstOrDefaultAsync(x => x.Id == roleId);
+                if (role is null)
+                {
+                    result.Status = ResultStatusEnum.NotFound;
+                    result.Message = "The role Not Found";
+                    return result;
+                }
+
+                role.Permissions.Remove(permission);
+
+                await _queryRepository.SaveChangesAsync();
+
                 return result;
             }
-
-            var role = await _queryRepository.Table<Role>().Include(x => x.Permissions).FirstOrDefaultAsync(x => x.Id == roleId);
-            if (role is null)
+            catch (Exception e)
             {
-                result.Status = ResultStatusEnum.NotFound;
-                result.Message = "The role Not Found";
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                result.Message = e.Message;
                 return result;
             }
-
-            role.Permissions.Remove(permission);
-
-            await _queryRepository.SaveChangesAsync();
-
-            return result;
         }
         /// <summary>
         /// 
@@ -169,31 +185,39 @@ namespace Hydra.Auth.Api.Services
         public async Task<Result<PermissionModel>> AssignPermissionToRoleAsync(int permissionId, int roleId)
         {
             var result = new Result<PermissionModel>();
-
-            var role = await _queryRepository.Table<Role>().Include(x => x.Permissions).FirstOrDefaultAsync(x => x.Id == roleId);
-
-            var permission = await _queryRepository.Table<Permission>().FirstOrDefaultAsync(x => x.Id == permissionId);
-
-
-            var isExist = role.Permissions.Any(x => x.Id == permissionId);
-
-            if (isExist)
+            try
             {
-                result.Status = ResultStatusEnum.ItsDuplicate;
-                result.Errors.Add(new Error(nameof(permissionId), "The role and permission assigned already"));
-                result.Message = "The role and permission assigned already";
+                var role = await _queryRepository.Table<Role>().Include(x => x.Permissions).FirstOrDefaultAsync(x => x.Id == roleId);
+
+                var permission = await _queryRepository.Table<Permission>().FirstOrDefaultAsync(x => x.Id == permissionId);
+
+
+                var isExist = role.Permissions.Any(x => x.Id == permissionId);
+
+                if (isExist)
+                {
+                    result.Status = ResultStatusEnum.ItsDuplicate;
+                    result.Errors.Add(new Error(nameof(permissionId), "The role and permission assigned already"));
+                    result.Message = "The role and permission assigned already";
+                    return result;
+                }
+                role.Permissions.Add(permission);
+                await _queryRepository.SaveChangesAsync();
+                result.Data = new PermissionModel()
+                {
+                    Name = permission.Name,
+                    Id = permission.Id,
+                    NormalizedName = permission.NormalizedName
+                };
+
                 return result;
             }
-            role.Permissions.Add(permission);
-            await _queryRepository.SaveChangesAsync();
-            result.Data = new PermissionModel()
+            catch (Exception e)
             {
-                Name = permission.Name,
-                Id = permission.Id,
-                NormalizedName = permission.NormalizedName
-            };
-
-            return result;
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                result.Message = e.Message;
+                return result;
+            }
         }
 
         /// <summary>
@@ -204,34 +228,43 @@ namespace Hydra.Auth.Api.Services
         public async Task<Result<RoleModel>> Update(RoleModel roleModel)
         {
             var result = new Result<RoleModel>();
-            var role = await _queryRepository.Table<Role>().FirstOrDefaultAsync(x => x.Id == roleModel.Id);
-            if (role is null)
+            try
             {
-                result.Status = ResultStatusEnum.NotFound;
-                result.Message = "The role not found";
+                var role = await _queryRepository.Table<Role>().FirstOrDefaultAsync(x => x.Id == roleModel.Id);
+                if (role is null)
+                {
+                    result.Status = ResultStatusEnum.NotFound;
+                    result.Message = "The role not found";
+                    return result;
+                }
+
+
+                var isExist = await _queryRepository.Table<Role>().AnyAsync(x => x.Id != roleModel.Id && (x.Name == roleModel.Name || (x.NormalizedName == roleModel.NormalizedName && x.NormalizedName != null)));
+                if (isExist)
+                {
+                    result.Status = ResultStatusEnum.ItsDuplicate;
+                    result.Errors.Add(new Error(nameof(roleModel.Name), "The role name existed"));
+                    result.Message = "The role name existed";
+                    return result;
+                }
+
+                role.Name = roleModel.Name;
+                role.ConcurrencyStamp = roleModel.ConcurrencyStamp;
+                role.NormalizedName = roleModel.NormalizedName;
+
+                _commandRepository.UpdateAsync(role);
+
+                await _commandRepository.SaveChangesAsync();
+
+                result.Data = roleModel;
                 return result;
             }
-
-
-            var isExist = await _queryRepository.Table<Role>().AnyAsync(x => x.Id != roleModel.Id && (x.Name == roleModel.Name || (x.NormalizedName == roleModel.NormalizedName && x.NormalizedName != null)));
-            if (isExist)
+            catch (Exception e)
             {
-                result.Status = ResultStatusEnum.ItsDuplicate;
-                result.Errors.Add(new Error(nameof(roleModel.Name), "The role name existed"));
-                result.Message = "The role name existed";
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                result.Message = e.Message;
                 return result;
             }
-
-            role.Name = roleModel.Name;
-            role.ConcurrencyStamp = roleModel.ConcurrencyStamp;
-            role.NormalizedName = roleModel.NormalizedName;
-
-            _commandRepository.UpdateAsync(role);
-
-            await _commandRepository.SaveChangesAsync();
-
-            result.Data = roleModel;
-            return result;
         }
 
         /// <summary>
@@ -240,10 +273,10 @@ namespace Hydra.Auth.Api.Services
         /// <returns></returns>
         public async Task<Result> Delete(int id)
         {
+            var result = new Result();
             try
             {
-                var result = new Result();
-                var role = await _queryRepository.GetAsync<Role>(x => x.Id == id);
+                var role = await _queryRepository.Table<Role>().Include(x => x.Permissions).Include(x => x.UserRoles).FirstOrDefaultAsync(x => x.Id == id);
                 if (role is null)
                 {
                     result.Status = ResultStatusEnum.NotFound;
@@ -258,8 +291,7 @@ namespace Hydra.Auth.Api.Services
                     return result;
                 }
 
-                var haveUser = await _queryRepository.Table<UserRole>().AnyAsync(x => x.RoleId == id);
-                if (haveUser)
+                if (role.UserRoles.Any())
                 {
                     result.Status = ResultStatusEnum.IsNotAllowed;
                     result.Message = "Is Not Allowed. because this role have User";
@@ -274,8 +306,9 @@ namespace Hydra.Auth.Api.Services
             }
             catch (Exception e)
             {
-
-                throw e;
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                result.Message = e.Message;
+                return result;
             }
 
         }

@@ -14,6 +14,7 @@ namespace Hydra.Auth.Core.Models
         public string? AvatarFile { get; set; }
         public DateTime? RegisterDate { get; set; }
         public string? DefaultLanguage { get; set; }
+        public string? DefaultTheme { get; set; }
         public string? Password { get; set; }
 
         public bool EmailConfirmed { get; set; }
@@ -25,7 +26,8 @@ namespace Hydra.Auth.Core.Models
         public bool LockoutEnabled { get; set; }
 
         public int AccessFailedCount { get; set; }
-        public List<int> RoleIds { get; set; }
+        public IList<int> RoleIds { get; set; }
+        public IList<string> Roles { get; set; }
 
     }
 }

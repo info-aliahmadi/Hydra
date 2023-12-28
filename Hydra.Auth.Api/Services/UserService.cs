@@ -334,7 +334,7 @@ namespace Hydra.Auth.Api.Services
                 user.Id = userModel.Id;
                 user.UserName = userModel.UserName;
                 user.Email = userModel.Email;
-                user.Name = userModel.UserName;
+                user.Name = userModel.Name;
                 user.PhoneNumber = userModel.PhoneNumber;
                 user.AccessFailedCount = userModel.AccessFailedCount;
                 user.DefaultLanguage = userModel.DefaultLanguage;
@@ -431,9 +431,9 @@ namespace Hydra.Auth.Api.Services
         /// <returns></returns>
         public async Task<Result> AssignRoleToUser(int userId, int roleId)
         {
+            var result = new Result();
             try
             {
-                var result = new Result();
 
                 var role = await _roleManager.FindByIdAsync(roleId.ToString());
 
@@ -452,10 +452,11 @@ namespace Hydra.Auth.Api.Services
                 return result;
 
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
-                throw;
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                result.Message = e.Message;
+                return result;
             }
         }
 

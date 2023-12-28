@@ -194,6 +194,7 @@ namespace Hydra.Auth.Api.Handler
             }
         }
 
+
         /// <summary>
         /// 
         /// </summary>
@@ -203,6 +204,79 @@ namespace Hydra.Auth.Api.Handler
         /// <param name="rememberMe"></param>
         /// <returns></returns>
         public static async Task<IResult> LoginHandler(
+            UserManager<User> _userManager,
+            SignInManager<User> _signInManager,
+            string username,
+            string password)
+        {
+            try
+            {
+                var result = new AccountResult();
+                // This doesn't count login failures towards account lockout
+                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+
+                var user = await _userManager.FindByNameAsync(username);
+                
+                if (user == null)
+                {
+                    result.Status = AccountStatusEnum.Invalid;
+                    return Results.Ok(result);
+                }
+
+                var signInResult = await _signInManager.CheckPasswordSignInAsync(user, password, true);
+                if (signInResult.Succeeded)
+                {
+                     result.Status = AccountStatusEnum.Succeeded;
+
+                    if (signInResult.RequiresTwoFactor)
+                    {
+                        result.Status = AccountStatusEnum.RequiresTwoFactor;
+                        return Results.Ok(result);
+                    }
+
+                    if (signInResult.IsLockedOut)
+                    {
+                        result.Status = AccountStatusEnum.IsLockedOut;
+                        return Results.Ok(result);
+                    }
+                    var roles = await _userManager.GetRolesAsync(user);
+                    var userModel = new UserModel()
+                    {
+                        Id = user.Id,
+                        Name = user.Name,
+                        UserName = user.UserName,
+                        Email = user.Email,
+
+
+
+                        DefaultLanguage = user.DefaultLanguage,
+                        DefaultTheme = user.DefaultTheme,
+                        Roles = roles
+                    };
+                    return Results.Ok(userModel);
+                }
+                else
+                {
+                    return Results.BadRequest("BadRequest");
+                }
+
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest("BadRequest");
+            }
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tokenService"></param>
+        /// <param name="_userManager"></param>
+        /// <param name="_signInManager"></param>
+        /// <param name="rememberMe"></param>
+        /// <returns></returns>
+        public static async Task<IResult> LoginWithJwtHandler(
             ITokenService tokenService,
             UserManager<User> _userManager,
             SignInManager<User> _signInManager,
