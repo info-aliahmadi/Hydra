@@ -246,9 +246,7 @@ namespace Hydra.Auth.Api.Handler
                         Name = user.Name,
                         UserName = user.UserName,
                         Email = user.Email,
-
-
-
+                        Avatar = user.Avatar,
                         DefaultLanguage = user.DefaultLanguage,
                         DefaultTheme = user.DefaultTheme,
                         Roles = roles
