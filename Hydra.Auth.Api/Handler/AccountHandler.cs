@@ -204,10 +204,12 @@ namespace Hydra.Auth.Api.Handler
         /// <param name="rememberMe"></param>
         /// <returns></returns>
         public static async Task<IResult> LoginHandler(
+            ITokenService tokenService,
             UserManager<User> _userManager,
             SignInManager<User> _signInManager,
             string username,
-            string password)
+            string password,
+            bool rememberMe)
         {
             try
             {
@@ -239,6 +241,9 @@ namespace Hydra.Auth.Api.Handler
                         result.Status = AccountStatusEnum.IsLockedOut;
                         return Results.Ok(result);
                     }
+                    DateTime? expireDate = rememberMe ? DateTime.Now.AddMonths(6) : null;
+                    var token = tokenService.CreateToken(user, expireDate);
+
                     var roles = await _userManager.GetRolesAsync(user);
                     var userModel = new UserModel()
                     {
@@ -249,7 +254,8 @@ namespace Hydra.Auth.Api.Handler
                         Avatar = user.Avatar,
                         DefaultLanguage = user.DefaultLanguage,
                         DefaultTheme = user.DefaultTheme,
-                        Roles = roles
+                        Roles = roles,
+                        AccessToken = token
                     };
                     return Results.Ok(userModel);
                 }
@@ -337,9 +343,17 @@ namespace Hydra.Auth.Api.Handler
         {
             try
             {
-                var userName = userPrincipal.FindFirstValue(ClaimTypes.Name);
+
+                var userIdentity = userPrincipal.FindFirst("identity").Value;
+
+                if (userIdentity == null)
+                {
+                    return Results.BadRequest("ERROR: PLEASE LOGIN");
+
+                }
+                var user = await _userManager.FindByIdAsync(userIdentity);
+
                 var expireDate = DateTimeOffset.FromUnixTimeSeconds(long.Parse(userPrincipal.FindFirst("exp").Value)).DateTime;
-                var user = await _userManager.FindByNameAsync(userName);
 
                 var token = tokenService.CreateToken(user, expireDate);
 
@@ -366,9 +380,15 @@ namespace Hydra.Auth.Api.Handler
         {
             try
             {
-                var userId = int.Parse(user.FindFirst("identity").Value);
+                var userIdentity = user.FindFirst("identity").Value;
 
-                var userPermissions = permission.GetPermissionsOfUser(userId);
+                if (userIdentity == null)
+                {
+                    return Results.BadRequest("ERROR: PLEASE LOGIN");
+
+                }
+
+                var userPermissions = permission.GetPermissionsOfUser(int.Parse(userIdentity));
 
                 return Results.Ok(userPermissions);
 
@@ -402,6 +422,11 @@ namespace Hydra.Auth.Api.Handler
             ClaimsPrincipal userClaim, UserManager<User> _userManager)
         {
             var userId = userClaim?.FindFirst("identity")?.Value;
+            if (userId == null)
+            {
+                return Results.BadRequest("ERROR: PLEASE LOGIN");
+            }
+
             var user = await _userManager.FindByIdAsync(userId);
             var userModel = new UserModel()
             {
@@ -421,12 +446,19 @@ namespace Hydra.Auth.Api.Handler
         /// <param name="userClaim"></param>
         /// <param name="userModel"></param>
         /// <returns></returns>
-        public static async Task<IResult> UpdateCurrentUserHandler(UserManager<User> _userManager,
+        public static async Task<IResult> UpdateCurrentUserHandler(
+            ITokenService tokenService, UserManager<User> _userManager,
             ClaimsPrincipal userClaim, IUserService userService, UserModel userModel)
         {
             try
             {
                 var userId = userClaim?.FindFirst("identity")?.Value;
+
+                if (userId == null)
+                {
+                    return Results.BadRequest("ERROR: PLEASE LOGIN");
+                }
+
                 var user = await _userManager.FindByIdAsync(userId);
                 user.Name = userModel.Name;
                 user.UserName = userModel.UserName;
@@ -438,10 +470,17 @@ namespace Hydra.Auth.Api.Handler
                 {
                     user.Avatar = saveFileResult.Data;
                 }
+                userModel.Avatar = user.Avatar;
 
                 var result = await _userManager.UpdateAsync(user);
 
-                return Results.Ok(result);
+                var expireDate = DateTimeOffset.FromUnixTimeSeconds(long.Parse(userClaim.FindFirst("exp").Value)).DateTime;
+
+                var token = tokenService.CreateToken(user, expireDate);
+
+                userModel.AccessToken = token;
+
+                return Results.Ok(userModel);
 
             }
             catch (Exception e)
@@ -458,6 +497,12 @@ namespace Hydra.Auth.Api.Handler
             ClaimsPrincipal userClaim, UserManager<User> _userManager)
         {
             var userId = userClaim?.FindFirst("identity")?.Value;
+
+            if (userId == null)
+            {
+                return Results.BadRequest("ERROR: PLEASE LOGIN");
+            }
+
             var user = await _userManager.FindByIdAsync(userId);
 
             return Results.Ok(user.DefaultLanguage);
@@ -474,6 +519,12 @@ namespace Hydra.Auth.Api.Handler
             ClaimsPrincipal userClaim)
         {
             var userId = userClaim?.FindFirst("identity")?.Value;
+
+            if (userId == null)
+            {
+                return Results.BadRequest("ERROR: PLEASE LOGIN");
+            }
+
             var user = await _userManager.FindByIdAsync(userId);
             user.DefaultLanguage = defaultLanguage;
             var result = await _userManager.UpdateAsync(user);
@@ -490,6 +541,11 @@ namespace Hydra.Auth.Api.Handler
             ClaimsPrincipal userClaim, UserManager<User> _userManager)
         {
             var userId = userClaim?.FindFirst("identity")?.Value;
+            if (userId == null)
+            {
+                return Results.BadRequest("ERROR: PLEASE LOGIN");
+            }
+
             var user = await _userManager.FindByIdAsync(userId);
 
             return Results.Ok(user.DefaultTheme);
@@ -506,6 +562,11 @@ namespace Hydra.Auth.Api.Handler
             ClaimsPrincipal userClaim)
         {
             var userId = userClaim?.FindFirst("identity")?.Value;
+            if (userId == null)
+            {
+                return Results.BadRequest("ERROR: PLEASE LOGIN");
+            }
+
             var user = await _userManager.FindByIdAsync(userId);
             user.DefaultTheme = defaultTheme;
             var result = await _userManager.UpdateAsync(user);

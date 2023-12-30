@@ -39,17 +39,21 @@ namespace Hydra.Infrastructure.Security.Extensions
                 // if it is not serving, redirect 
                 if (null != perAttr && !string.IsNullOrEmpty(perAttr.PermissionName))
                 {
-                    var userName = int.Parse(context.User.FindFirst("identity").Value);
-
-                    if (!_permissionChecker.IsAuthorized(userName, perAttr.PermissionName))
+                    var identity = context.User.FindFirst("identity").Value;
+                    if (identity == null)
                     {
-
-                        context.Response.StatusCode = 403;
-
-                        // and short circuit 
+                        context.Response.StatusCode = 405;
                         return Task.CompletedTask;
                     }
 
+                    var userId = int.Parse(identity);
+
+                    if (!_permissionChecker.IsAuthorized(userId, perAttr.PermissionName))
+                    {
+                        context.Response.StatusCode = 403;
+                        // and short circuit 
+                        return Task.CompletedTask;
+                    }
                 }
             }
 

@@ -161,6 +161,7 @@ namespace Hydra.Cms.Api.Handler
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="userClaim"></param>
         /// <param name="_articleService"></param>
         /// <param name="articleModel"></param>
         /// <returns></returns>
@@ -180,6 +181,7 @@ namespace Hydra.Cms.Api.Handler
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="userClaim"></param>
         /// <param name="_articleService"></param>
         /// <param name="articleModel"></param>
         /// <returns></returns>
@@ -195,6 +197,7 @@ namespace Hydra.Cms.Api.Handler
 
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -218,6 +221,7 @@ namespace Hydra.Cms.Api.Handler
                 return Results.BadRequest(e.Message);
             }
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -241,6 +245,7 @@ namespace Hydra.Cms.Api.Handler
                 return Results.BadRequest(e.Message);
             }
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -264,6 +269,7 @@ namespace Hydra.Cms.Api.Handler
                 return Results.BadRequest(e.Message);
             }
         }
+
         /// <summary>
         /// 
         /// </summary>

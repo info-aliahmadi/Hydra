@@ -16,6 +16,7 @@ namespace Hydra.Auth.Core.Models
         public string? DefaultLanguage { get; set; }
         public string? DefaultTheme { get; set; }
         public string? Password { get; set; }
+        public string? AccessToken { get; set; }
 
         public bool EmailConfirmed { get; set; }
 
