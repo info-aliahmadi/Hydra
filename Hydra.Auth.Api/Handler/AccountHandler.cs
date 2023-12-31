@@ -554,7 +554,7 @@ namespace Hydra.Auth.Api.Handler
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="defaultLanguage"></param>
+        /// <param name="defaultTheme"></param>
         /// <param name="_userManager"></param>
         /// <param name="userClaim"></param>
         /// <returns></returns>
