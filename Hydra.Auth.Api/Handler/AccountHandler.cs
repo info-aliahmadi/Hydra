@@ -400,6 +400,31 @@ namespace Hydra.Auth.Api.Handler
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tokenService"></param>
+        /// <param name="_userManager"></param>
+        /// <param name="_signInManager"></param>
+        /// <param name="rememberMe"></param>
+        /// <returns></returns>
+        public static IResult GetPermissions(
+            IPermissionChecker permission)
+        {
+            try
+            {
+
+                var userPermissions = permission.GetPermissions();
+
+                return Results.Ok(userPermissions);
+
+
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest("BadRequest");
+            }
+        }
 
         public static async Task<IResult> SignOutHandler(
             SignInManager<User> _signInManager,

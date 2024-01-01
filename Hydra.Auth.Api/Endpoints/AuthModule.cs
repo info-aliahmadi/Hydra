@@ -39,6 +39,7 @@ namespace Hydra.Auth.Api.Endpoints
 
             endpoints.MapGet(API_SCHEMA + "/RefreshToken", AccountHandler.RefreshToken);
             endpoints.MapGet(API_SCHEMA + "/GetPermissionsOfCurrentUser", AccountHandler.GetPermissionsOfCurrentUser);
+            endpoints.MapGet(API_SCHEMA + "/GetPermissions", AccountHandler.GetPermissions).AllowAnonymous();
 
 
             endpoints.MapGet(API_SCHEMA + "/GetDefaultLanguage", AccountHandler.GetDefaultLanguageHandler);
