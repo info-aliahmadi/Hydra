@@ -4,8 +4,6 @@ namespace Hydra.Sale.Core.Domain;
 
 public class ProductCategory : BaseEntity<int>
 {
-    public int Id { get; set; }
-
     public int CategoryId { get; set; }
 
     public int ProductId { get; set; }

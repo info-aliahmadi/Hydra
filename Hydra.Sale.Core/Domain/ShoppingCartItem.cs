@@ -5,8 +5,6 @@ namespace Hydra.Sale.Core.Domain;
 
 public class ShoppingCartItem : BaseEntity<int>
 {
-    public int Id { get; set; }
-
     public int UserId { get; set; }
 
     public int ProductId { get; set; }

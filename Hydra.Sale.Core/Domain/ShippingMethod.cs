@@ -4,8 +4,6 @@ namespace Hydra.Sale.Core.Domain;
 
 public class ShippingMethod : BaseEntity<int>
 {
-    public int Id { get; set; }
-
     public string Name { get; set; }
 
     public string Description { get; set; }

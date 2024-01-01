@@ -4,8 +4,6 @@ namespace Hydra.Sale.Core.Domain;
 
 public class StateProvince : BaseEntity<int>
 {
-    public int Id { get; set; }
-
     public string Name { get; set; }
 
     public string Abbreviation { get; set; }

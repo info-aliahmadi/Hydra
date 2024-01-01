@@ -4,8 +4,6 @@ namespace Hydra.Sale.Core.Domain;
 
 public class OrderDiscount : BaseEntity<int>
 {
-    public int Id { get; set; }
-
     public int DiscountId { get; set; }
 
     public int OrderId { get; set; }

@@ -4,8 +4,6 @@ namespace Hydra.Sale.Core.Domain;
 
 public class Shipment : BaseEntity<int>
 {
-    public int Id { get; set; }
-
     public int OrderId { get; set; }
 
     public string TrackingNumber { get; set; }

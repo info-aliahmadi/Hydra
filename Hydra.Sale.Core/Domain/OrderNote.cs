@@ -5,8 +5,6 @@ namespace Hydra.Sale.Core.Domain;
 
 public class OrderNote : BaseEntity<int>
 {
-    public int Id { get; set; }
-
     public string Note { get; set; }
 
     public int UserId { get; set; }

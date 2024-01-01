@@ -4,8 +4,6 @@ namespace Hydra.Sale.Core.Domain;
 
 public class ProductManufacturer : BaseEntity<int>
 {
-    public int Id { get; set; }
-
     public int ManufacturerId { get; set; }
 
     public int ProductId { get; set; }

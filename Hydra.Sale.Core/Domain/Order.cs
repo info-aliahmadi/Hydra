@@ -1,11 +1,10 @@
 ﻿using Hydra.Infrastructure.Security.Domain;
+using Hydra.Kernel;
 
 namespace Hydra.Sale.Core.Domain;
 
-public class Order
+public class Order : BaseEntity<int>
 {
-    public int Id { get; set; }
-
     public int UserId { get; set; }
 
     public int? ShipmentId { get; set; }

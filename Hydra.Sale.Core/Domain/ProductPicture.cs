@@ -4,8 +4,6 @@ namespace Hydra.Sale.Core.Domain;
 
 public class ProductPicture : BaseEntity<int>
 {
-    public int Id { get; set; }
-
     public int PictureId { get; set; }
 
     public int ProductId { get; set; }

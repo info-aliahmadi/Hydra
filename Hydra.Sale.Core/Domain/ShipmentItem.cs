@@ -4,8 +4,6 @@ namespace Hydra.Sale.Core.Domain;
 
 public class ShipmentItem : BaseEntity<int>
 {
-    public int Id { get; set; }
-
     public int ShipmentId { get; set; }
 
     public int OrderItemId { get; set; }

@@ -4,8 +4,6 @@ namespace Hydra.Sale.Core.Domain;
 
 public class TaxRate : BaseEntity<int>
 {
-    public int Id { get; set; }
-
     public int TaxCategoryId { get; set; }
 
     public int CountryId { get; set; }
