@@ -1,30 +1,46 @@
-using Hydra.Infrastructure;
 using Hydra.Infrastructure.Configuration;
 using Hydra.Infrastructure.Logs;
+using Hydra.Migrations;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System.Reflection;
 
-    SerilogStartup.ConfigureLogging();
+SerilogStartup.ConfigureLogging();
 
-    try
+try
+{
+    var builder = WebApplication.CreateBuilder(args);
+
+
+    builder.Services.ConfigureApplicationServices(builder);
+
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+
+
+    // Update Database
+    builder.Services.AddDbContext<MigrationContext>((serviceProvider, options) =>
+        options.UseSqlServer(connectionString), ServiceLifetime.Transient);
+
+
+    using (ServiceProvider serviceProvider = builder.Services.BuildServiceProvider())
     {
-        var builder = WebApplication.CreateBuilder(args);
-
-
-        builder.Services.ConfigureApplicationServices(builder);
-
-
-        var app = builder.Build();
-
-        // Configure the HTTP request pipeline.
-        app.ConfigureRequestPipeline();
-
-
-        app.Run();
+        var context = serviceProvider.GetRequiredService<MigrationContext>();
+        context.Database.Migrate();
     }
-    catch (System.Exception ex)
-    {
-        Log.Fatal($"Failed to start {Assembly.GetExecutingAssembly().GetName().Name}", ex);
-        throw;
-    }
-    public partial class Program { }
+
+
+    var app = builder.Build();
+
+    // Configure the HTTP request pipeline.
+    app.ConfigureRequestPipeline();
+
+
+    app.Run();
+}
+catch (System.Exception ex)
+{
+    Log.Fatal($"Failed to start {Assembly.GetExecutingAssembly().GetName().Name}", ex);
+    throw;
+}
+public partial class Program { }

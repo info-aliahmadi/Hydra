@@ -26,13 +26,14 @@ namespace Hydra.Crm.Api.Endpoints
 
         public IEndpointRouteBuilder MapEndpoints(IEndpointRouteBuilder endpoints)
         {
+            endpoints.MapPost(API_SCHEMA + "/SendRequestMessage", MessageHandler.SendRequestMessage).AllowAnonymous();
+            endpoints.MapPost(API_SCHEMA + "/SendContactMessage", MessageHandler.SendContactMessage).AllowAnonymous();
+
             endpoints.MapGet(API_SCHEMA + "/GetSettings", MessageSettingsHandler.GetSettings).RequirePermission("CRM.GET_SETTINGS");
             endpoints.MapPost(API_SCHEMA + "/AddOrUpdateSettings", MessageSettingsHandler.AddOrUpdateSettings).RequirePermission("CRM.ADD_OR_UPDATE_SETTINGS");
 
             endpoints.MapPost(API_SCHEMA + "/SendPublicMessage", MessageHandler.SendPublicMessage).RequirePermission("CRM.SEND_PUBLIC_MESSAGE");
             endpoints.MapPost(API_SCHEMA + "/SendPrivateMessage", MessageHandler.SendPrivateMessage).RequirePermission("CRM.SEND_PRIVATE_MESSAGE");
-            endpoints.MapPost(API_SCHEMA + "/SendRequestMessage", MessageHandler.SendRequestMessage).AllowAnonymous();
-            endpoints.MapPost(API_SCHEMA + "/SendContactMessage", MessageHandler.SendContactMessage).AllowAnonymous();
             endpoints.MapPost(API_SCHEMA + "/SaveDraftMessage", MessageHandler.SaveDraftMessage).RequirePermission("CRM.SAVE_DRAFT_MESSAGE");
 
             endpoints.MapPost(API_SCHEMA + "/GetAllMessages", MessageHandler.GetAllMessages).RequirePermission("CRM.GET_ALLMESSAGES");

@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Hydra.Infrastructure.Email;
 using Hydra.Kernel.Interfaces.Settings;
+using Microsoft.EntityFrameworkCore;
 
 namespace Hydra.Infrastructure.Configuration
 {
@@ -29,6 +30,7 @@ namespace Hydra.Infrastructure.Configuration
         public static void ConfigureApplicationServices(this IServiceCollection services,
             WebApplicationBuilder builder)
         {
+
             builder.AddSerilogConfig();
 
             // Allow large file upload
