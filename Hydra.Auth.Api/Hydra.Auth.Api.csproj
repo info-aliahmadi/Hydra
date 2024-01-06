@@ -7,7 +7,7 @@
 		<!--<BaseOutputPath>$(SolutionDir)\Hydra.Web\bin</BaseOutputPath>-->
 	</PropertyGroup>
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="xcopy /y  &quot;$(TargetPath)&quot; &quot;$(SolutionDir)Hydra.Web\$(OutDir)&quot;" />
+		<Exec Command="xcopy /y  &quot;$(TargetPath)&quot; &quot;$(SolutionDir)Hydra.Web/$(OutDir)&quot;" />
 	</Target>
 	<!--<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="xcopy /y  &quot;$(TargetPath)&quot; &quot;$(SolutionDir)Hydra.Web\$(OutDir)&quot;" />
