@@ -4,10 +4,11 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<OutputPath>$(SolutionDir)Hydra.Web/bin/$(Configuration)/$(OutDir)/</OutputPath>
 	</PropertyGroup>
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	<!--<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="xcopy /y  &quot;$(TargetPath)&quot; &quot;$(SolutionDir)Hydra.Web/$(OutDir)&quot;" />
-	</Target>
+	</Target>-->
 
 	<ItemGroup>
 		<ProjectReference Include="..\Hydra.Auth.Core\Hydra.Auth.Core.csproj" />
