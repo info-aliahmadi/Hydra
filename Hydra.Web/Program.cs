@@ -1,11 +1,10 @@
 using Hydra.Infrastructure.Configuration;
-using Hydra.Infrastructure.Logs;
 using Hydra.Migrations;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
+//using Serilog;
 using System.Reflection;
 
-SerilogStartup.ConfigureLogging();
+//SerilogStartup.ConfigureLogging();
 
 try
 {
@@ -40,7 +39,7 @@ try
 }
 catch (System.Exception ex)
 {
-    Log.Fatal($"Failed to start {Assembly.GetExecutingAssembly().GetName().Name}", ex);
-    throw;
+    //Log.Fatal($"Failed to start {Assembly.GetExecutingAssembly().GetName().Name}", ex);
+    //throw;
 }
 public partial class Program { }

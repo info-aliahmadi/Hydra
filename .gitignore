@@ -366,3 +366,7 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /Hydra.Web/appsettings.Production.json
+
+/.cloud/
+.cloud/
+/.cloud
