@@ -9,7 +9,7 @@ namespace Hydra.Infrastructure
     {
         public static Assembly[] GetAssemblies(Func<string, bool> func, SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
-            var assemblies = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll",
+            var assemblies = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "publish", "*.dll",
                 searchOption)
                 .Where(x => func(Path.GetFileName(x)))
                 .Select(x => Assembly.LoadFrom(x));
@@ -31,6 +31,25 @@ namespace Hydra.Infrastructure
         public static string GetUploadsDirectory()
         {
             return Directory.GetCurrentDirectory() + @"\\uploads\\";
+        }
+        public static void DirectorySearch(string dir)
+        {
+            try
+            {
+                foreach (string f in Directory.GetFiles(dir))
+                {
+                    Console.WriteLine(Path.GetFileName(f));
+                }
+                foreach (string d in Directory.GetDirectories(dir))
+                {
+                    Console.WriteLine(Path.GetFileName(d));
+                    DirectorySearch(d);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }
