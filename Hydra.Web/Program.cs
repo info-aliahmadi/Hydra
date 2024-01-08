@@ -12,12 +12,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.ConfigureApplicationServices(builder);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+//var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 
 // Update Database
-builder.Services.AddDbContext<MigrationContext>((serviceProvider, options) =>
-    options.UseSqlServer(connectionString), ServiceLifetime.Transient);
+//builder.Services.AddDbContext<MigrationContext>((serviceProvider, options) =>
+//    options.UseSqlServer(connectionString), ServiceLifetime.Transient);
 //try
 //{
 

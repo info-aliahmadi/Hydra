@@ -27,22 +27,22 @@ namespace Hydra.Infrastructure.Configuration
                 app.UseSwaggerUI();
             //}
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
-            app.UseStaticFiles();
+            //app.UseStaticFiles();
 
-            app.UseCors("ReactOrigin");
-            app.UseAuthentication();
-            app.UseAuthorization();
+            //app.UseCors("ReactOrigin");
+            //app.UseAuthentication();
+            //app.UseAuthorization();
 
-            app.UsePermission();
+            //app.UsePermission();
 
             // Collect all Endpoints from Modules
-            app.MapModulesEndpoints();
+            //app.MapModulesEndpoints();
 
             
 
-            app.UseLocalization();
+            //app.UseLocalization();
 
         }
     }

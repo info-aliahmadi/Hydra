@@ -34,30 +34,30 @@ namespace Hydra.Infrastructure.Configuration
             //builder.AddSerilogConfig();
 
             // Allow large file upload
-            builder.WebHost.ConfigureKestrel(serverOptions =>
-            {
-                serverOptions.Limits.MaxRequestBodySize = null;
-            });
-            services.AddSingleton<IUploadFileSetting>((serviceProvider) =>
-                    builder.Configuration.GetSection("UploadFileSetting").Get<UploadFileSetting>());
+            //builder.WebHost.ConfigureKestrel(serverOptions =>
+            //{
+            //    serverOptions.Limits.MaxRequestBodySize = null;
+            //});
+            //services.AddSingleton<IUploadFileSetting>((serviceProvider) =>
+            //        builder.Configuration.GetSection("UploadFileSetting").Get<UploadFileSetting>());
 
 
-            services.AddServices();
+            //services.AddServices();
 
             // Collect all services from Modules
-            services.AddModulesService();
+            //services.AddModulesService();
 
-            services.AddCacheProvider(builder.Configuration);
+            //services.AddCacheProvider(builder.Configuration);
 
-            services.AddDbContextConfig(builder.Configuration);
+            //services.AddDbContextConfig(builder.Configuration);
 
-            services.AddIdentityConfig(builder.Configuration);
+            //services.AddIdentityConfig(builder.Configuration);
 
-            services.AddlocalizationConfig();
+            //services.AddlocalizationConfig();
 
-            services.AddEmailConfig(builder.Configuration);
+            //services.AddEmailConfig(builder.Configuration);
 
-            services.AddSettingConfig();
+            //services.AddSettingConfig();
 
             services.AddSwaggerGenConfig();
 
