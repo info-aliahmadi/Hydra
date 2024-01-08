@@ -42,7 +42,7 @@ namespace Hydra.Infrastructure.Configuration
 
 
 
-            //app.UseLocalization();
+            app.UseLocalization();
 
         }
     }

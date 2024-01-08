@@ -42,11 +42,12 @@ namespace Hydra.Infrastructure.Configuration
                     builder.Configuration.GetSection("UploadFileSetting").Get<UploadFileSetting>());
 
 
+            services.AddlocalizationConfig();
+
             services.AddServices();
 
             services.AddEmailConfig(builder.Configuration);
 
-            services.AddSettingConfig();
 
 
             // Collect all services from Modules
@@ -58,7 +59,6 @@ namespace Hydra.Infrastructure.Configuration
 
             services.AddIdentityConfig(builder.Configuration);
 
-            services.AddlocalizationConfig();
 
 
             services.AddSwaggerGenConfig();
