@@ -32,15 +32,15 @@ namespace Hydra.Infrastructure.Configuration
             //app.UseStaticFiles();
 
             //app.UseCors("ReactOrigin");
-            //app.UseAuthentication();
-            //app.UseAuthorization();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             //app.UsePermission();
 
             // Collect all Endpoints from Modules
             //app.MapModulesEndpoints();
 
-            
+
 
             //app.UseLocalization();
 
