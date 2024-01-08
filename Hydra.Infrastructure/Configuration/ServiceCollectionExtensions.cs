@@ -44,6 +44,11 @@ namespace Hydra.Infrastructure.Configuration
 
             services.AddServices();
 
+            services.AddEmailConfig(builder.Configuration);
+
+            services.AddSettingConfig();
+
+
             // Collect all services from Modules
             services.AddModulesService();
 
@@ -53,11 +58,8 @@ namespace Hydra.Infrastructure.Configuration
 
             services.AddIdentityConfig(builder.Configuration);
 
-            //services.AddlocalizationConfig();
+            services.AddlocalizationConfig();
 
-            //services.AddEmailConfig(builder.Configuration);
-
-            //services.AddSettingConfig();
 
             services.AddSwaggerGenConfig();
 
