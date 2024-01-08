@@ -6,6 +6,11 @@ namespace Hydra.Sale.Core.Interfaces
 {
     public interface ICountryService
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        Task<string> GetCountrySeed();
 
         /// <summary>
         ///

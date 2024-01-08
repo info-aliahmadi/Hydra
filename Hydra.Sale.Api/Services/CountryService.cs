@@ -1,4 +1,5 @@
-﻿using Hydra.Infrastructure.Data.Extension;
+﻿using System.Text;
+using Hydra.Infrastructure.Data.Extension;
 using Hydra.Kernel.Extensions;
 using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;
@@ -17,6 +18,55 @@ namespace Hydra.Sale.Api.Services
         {
             _queryRepository = queryRepository;
             _commandRepository = commandRepository;
+        }
+
+        public async Task<string> GetCountrySeed()
+        {
+            var items = await _queryRepository.Table<Country>().Include(x => x.StateProvinces).ToListAsync();
+
+            var strCountry = new StringBuilder();
+            var strProvince = new StringBuilder();
+
+            foreach (var country in items)
+            {
+                foreach (var province in country.StateProvinces)
+                {
+                    strProvince.Append(
+$@"
+                new StateProvince()
+                {{
+                    Id = {province.Id},
+                    CountryId = {province.CountryId},
+                    Name = ""{province.Name}"",
+                    Abbreviation = ""{province.Abbreviation}"",
+                    Published = {province.Published.ToString().ToLower()},
+                    DisplayOrder = {province.DisplayOrder}
+                }},
+");
+                }
+
+                strCountry.Append
+                (
+                    $@" 
+                new Country()
+                {{
+                    Id = {country.Id},
+                    Name = ""{country.Name}"",
+                    TwoLetterIsoCode = ""{country.TwoLetterIsoCode}"",
+                    ThreeLetterIsoCode = ""{country.ThreeLetterIsoCode}"",
+                    AllowsBilling = {country.AllowsBilling.ToString().ToLower()},
+                    AllowsShipping = {country.AllowsShipping.ToString().ToLower()},
+                    NumericIsoCode = {country.NumericIsoCode},
+                    SubjectToVat = {country.SubjectToVat.ToString().ToLower()},
+                    Published = {country.Published.ToString().ToLower()},
+                    DisplayOrder = {country.DisplayOrder},
+                    LimitedToStores = {country.LimitedToStores.ToString().ToLower()}
+                }},
+");
+            }
+
+            strCountry.AppendLine(strProvince.ToString());
+            return strCountry.ToString();
         }
 
         /// <summary>

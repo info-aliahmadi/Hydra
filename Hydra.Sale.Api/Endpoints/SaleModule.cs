@@ -62,6 +62,7 @@ namespace Hydra.Sale.Api.Endpoints
             endpoints.MapPost(API_SCHEMA + "/DeleteCategory", CategoryHandler.DeleteCategory).RequirePermission("");
 
             endpoints.MapPost(API_SCHEMA + "/GetCountryList", CountryHandler.GetList).RequirePermission("");
+            endpoints.MapGet(API_SCHEMA + "/GetCountrySeed", CountryHandler.GetCountrySeed).AllowAnonymous();
             endpoints.MapGet(API_SCHEMA + "/GetCountryById", CountryHandler.GetCountryById).RequirePermission("");
             endpoints.MapPost(API_SCHEMA + "/AddCountry", CountryHandler.AddCountry).RequirePermission("");
             endpoints.MapPost(API_SCHEMA + "/UpdateCountry", CountryHandler.UpdateCountry).RequirePermission("");
