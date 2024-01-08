@@ -45,7 +45,7 @@ namespace Hydra.Infrastructure.Configuration
             services.AddServices();
 
             // Collect all services from Modules
-            //services.AddModulesService();
+            services.AddModulesService();
 
             services.AddCacheProvider(builder.Configuration);
 

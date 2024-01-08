@@ -38,7 +38,7 @@ namespace Hydra.Infrastructure.Configuration
             //app.UsePermission();
 
             // Collect all Endpoints from Modules
-            //app.MapModulesEndpoints();
+            app.MapModulesEndpoints();
 
 
 
