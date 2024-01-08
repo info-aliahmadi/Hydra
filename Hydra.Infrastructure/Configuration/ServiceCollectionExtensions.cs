@@ -42,16 +42,16 @@ namespace Hydra.Infrastructure.Configuration
                     builder.Configuration.GetSection("UploadFileSetting").Get<UploadFileSetting>());
 
 
-            //services.AddServices();
+            services.AddServices();
 
             // Collect all services from Modules
             //services.AddModulesService();
 
             services.AddCacheProvider(builder.Configuration);
 
-            //services.AddDbContextConfig(builder.Configuration);
+            services.AddDbContextConfig(builder.Configuration);
 
-            //services.AddIdentityConfig(builder.Configuration);
+            services.AddIdentityConfig(builder.Configuration);
 
             //services.AddlocalizationConfig();
 
