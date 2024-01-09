@@ -10,7 +10,7 @@ namespace Hydra.Infrastructure.Data
     /// <summary>
     /// 
     /// </summary>
-    public class ApplicationDbContext : IdentityContext , IDataProtectionKeyContext
+    public class ApplicationDbContext : IdentityContext //, IDataProtectionKeyContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -34,7 +34,7 @@ namespace Hydra.Infrastructure.Data
             #endregion
         }
         public DbSet<SiteSetting> Setting { get; set; }
-        public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
+        //public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
 
     }
 }
