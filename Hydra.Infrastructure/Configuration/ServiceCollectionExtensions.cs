@@ -36,7 +36,7 @@ namespace Hydra.Infrastructure.Configuration
             // Allow large file upload
             builder.WebHost.ConfigureKestrel(serverOptions =>
             {
-                //serverOptions.Limits.MaxRequestBodySize = null;
+                serverOptions.Limits.MaxRequestBodySize = null;
             });
             services.AddSingleton<IUploadFileSetting>((serviceProvider) =>
                     builder.Configuration.GetSection("UploadFileSetting").Get<UploadFileSetting>());
