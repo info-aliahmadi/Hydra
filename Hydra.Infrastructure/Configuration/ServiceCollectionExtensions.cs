@@ -43,7 +43,7 @@ namespace Hydra.Infrastructure.Configuration
                     builder.Configuration.GetSection("UploadFileSetting").Get<UploadFileSetting>());
 
             services.AddDataProtection()
-        .PersistKeysToFileSystem(new DirectoryInfo(@"\\server\share\directory\"));
+        .PersistKeysToFileSystem(new DirectoryInfo(@"/"));
 
             services.AddlocalizationConfig();
 
