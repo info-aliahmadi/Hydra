@@ -17,6 +17,23 @@ namespace Hydra.Sale.Core.EntityConfiguration
             .HasMaxLength(100);
             entity.Property(e => e.ThreeLetterIsoCode).HasMaxLength(3);
             entity.Property(e => e.TwoLetterIsoCode).HasMaxLength(2);
+
+            entity.HasData(
+
+                new Country()
+                {
+                    Id = 1,
+                    Name = "Afghanistan",
+                    TwoLetterIsoCode = "AF",
+                    ThreeLetterIsoCode = "AFG",
+                    AllowsBilling = true,
+                    AllowsShipping = true,
+                    NumericIsoCode = 4,
+                    SubjectToVat = false,
+                    Published = true,
+                    DisplayOrder = 100,
+                    LimitedToStores = false
+                });
         }
     }
 }

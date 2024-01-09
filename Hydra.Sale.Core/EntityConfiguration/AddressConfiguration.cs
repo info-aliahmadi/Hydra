@@ -44,6 +44,7 @@ namespace Hydra.Sale.Core.EntityConfiguration
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("FK_Address_User");
 
+
         }
     }
 }

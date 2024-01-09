@@ -6,6 +6,10 @@
     <Nullable>enable</Nullable>
 	  <OutputPath>$(SolutionDir)Hydra.Web/bin/$(Configuration)/$(OutDir)/</OutputPath>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="SeedExtensions.cs" />
+  </ItemGroup>
   <!--<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="xcopy /y  &quot;$(TargetPath)&quot; &quot;$(SolutionDir)Hydra.Web/$(OutDir)&quot;" />
 	</Target>-->

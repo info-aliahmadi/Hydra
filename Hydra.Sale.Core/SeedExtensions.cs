@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 
-namespace Hydra.Migrations
+namespace Hydra.Sale.Core
 {
     public static class SeedExtensions
     {
