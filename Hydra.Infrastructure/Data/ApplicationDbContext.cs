@@ -2,6 +2,7 @@
 using Hydra.Infrastructure.Security.EntityConfiguration;
 using Hydra.Infrastructure.Setting.Domain;
 using Hydra.Infrastructure.Setting.EntityConfiguration;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hydra.Infrastructure.Data
@@ -9,7 +10,7 @@ namespace Hydra.Infrastructure.Data
     /// <summary>
     /// 
     /// </summary>
-    public class ApplicationDbContext : IdentityContext
+    public class ApplicationDbContext : IdentityContext , IDataProtectionKeyContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -33,6 +34,7 @@ namespace Hydra.Infrastructure.Data
             #endregion
         }
         public DbSet<SiteSetting> Setting { get; set; }
+        public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
 
     }
 }

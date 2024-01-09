@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using EFCoreSecondLevelCacheInterceptor;
+using Microsoft.AspNetCore.DataProtection;
+using Hydra.Infrastructure.Security;
 
 namespace Hydra.Infrastructure.Data
 {
@@ -23,11 +25,12 @@ namespace Hydra.Infrastructure.Data
                 //{
                 //    builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
                 //}
-                )
-                    .AddInterceptors(serviceProvider.GetRequiredService<SecondLevelCacheInterceptor>())
+                ).AddInterceptors(serviceProvider.GetRequiredService<SecondLevelCacheInterceptor>())
             , ServiceLifetime.Transient); // the default pool size in 1024 
 
             services.AddDatabaseDeveloperPageExceptionFilter();
+
+            services.AddDataProtection().PersistKeysToDbContext<ApplicationDbContext>();
 
         }
     }
