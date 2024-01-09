@@ -1,5 +1,4 @@
-﻿using Hydra.Sale.Core.Domain;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 
 namespace Hydra.Migrations

@@ -11,7 +11,6 @@ namespace Hydra.Migrations
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Seed();
             base.OnModelCreating(modelBuilder);
         }
     }

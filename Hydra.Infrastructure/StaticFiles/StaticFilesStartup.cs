@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.FileProviders;
-using System.IO;
 
 namespace Hydra.Infrastructure.StaticFiles
 {
