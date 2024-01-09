@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Hydra.Infrastructure.Email;
 using Hydra.Kernel.Interfaces.Settings;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace Hydra.Infrastructure.Configuration
 {
@@ -41,6 +42,8 @@ namespace Hydra.Infrastructure.Configuration
             services.AddSingleton<IUploadFileSetting>((serviceProvider) =>
                     builder.Configuration.GetSection("UploadFileSetting").Get<UploadFileSetting>());
 
+            services.AddDataProtection()
+        .PersistKeysToFileSystem(new DirectoryInfo(@"\\server\share\directory\"));
 
             services.AddlocalizationConfig();
 
