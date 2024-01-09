@@ -23,6 +23,58 @@ namespace Hydra.Sale.Core.EntityConfiguration
             .HasMaxLength(50);
             entity.Property(e => e.Rate).HasColumnType("decimal(18, 4)");
             entity.Property(e => e.UpdatedOnUtc).HasPrecision(6);
+
+            #region Currency Seed
+
+            entity.HasData(
+                new Currency()
+                {
+                    Id = 1,
+                    Name = "US Dollar",
+                    CurrencyCode = "USD",
+                    DisplayLocale = "en-US",
+                    CustomFormatting = string.Empty,
+                    Rate = Convert.ToDecimal(1.0000),
+                    LimitedToStores = false,
+                    Published = true,
+                    DisplayOrder = 1,
+                    CreatedOnUtc = DateTime.UtcNow,
+                    UpdatedOnUtc = DateTime.UtcNow,
+                    RoundingTypeId = 0
+                },
+                new Currency()
+                {
+                    Id = 2,
+                    Name = "Euro",
+                    CurrencyCode = "EUR",
+                    DisplayLocale = string.Empty,
+                    CustomFormatting = "€0.00",
+                    Rate = Convert.ToDecimal(0.8600),
+                    LimitedToStores = false,
+                    Published = true,
+                    DisplayOrder = 2,
+                    CreatedOnUtc = DateTime.UtcNow,
+                    UpdatedOnUtc = DateTime.UtcNow,
+                    RoundingTypeId = 0
+                },
+                new Currency()
+                {
+                    Id = 3,
+                    Name = "Iranian",
+                    CurrencyCode = "Rial",
+                    DisplayLocale = "fa-IR",
+                    CustomFormatting = string.Empty,
+                    Rate = Convert.ToDecimal(1.0000),
+                    LimitedToStores = false,
+                    Published = true,
+                    DisplayOrder = 3,
+                    CreatedOnUtc = DateTime.UtcNow,
+                    UpdatedOnUtc = DateTime.UtcNow,
+                    RoundingTypeId = 0
+                }
+                );
+
+            #endregion
         }
     }
 }
