@@ -30,7 +30,7 @@ namespace Hydra.Infrastructure.Data
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddDataProtection().PersistKeysToDbContext<ApplicationDbContext>();
+            //services.AddDataProtection().PersistKeysToDbContext<ApplicationDbContext>();
 
         }
     }
