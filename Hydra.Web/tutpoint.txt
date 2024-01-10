@@ -1,0 +1,1 @@
+connectionString : Server=.;Database=Hydra;User Id=sa;password=1;Trusted_Connection=true;Encrypt=false;TrustServerCertificate=True;MultipleActiveResultSets=true;--------------------Microsoft.EntityFrameworkCoreThe seed entity for entity type 'Country' cannot be added because no value was provided for the required property 'title'.
