@@ -16,7 +16,7 @@ namespace Hydra.Cms.Core.Models
         /// <summary>
         /// 
         /// </summary>
-        public int PreviewImageId { get; set; }
+        public int? PreviewImageId { get; set; }
 
         /// <summary>
         /// 

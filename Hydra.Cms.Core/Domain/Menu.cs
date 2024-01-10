@@ -17,7 +17,7 @@ namespace Hydra.Cms.Core.Domain
         /// <summary>
         /// 
         /// </summary>
-        public int PreviewImageId { get; set; }
+        public int? PreviewImageId { get; set; }
 
         /// <summary>
         /// 

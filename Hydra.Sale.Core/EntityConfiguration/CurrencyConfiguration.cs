@@ -38,8 +38,8 @@ namespace Hydra.Sale.Core.EntityConfiguration
                     LimitedToStores = false,
                     Published = true,
                     DisplayOrder = 1,
-                    CreatedOnUtc = DateTime.UtcNow,
-                    UpdatedOnUtc = DateTime.UtcNow,
+                    CreatedOnUtc = DateTime.Parse("2024-01-10 10:58:14.7398970"),
+                    UpdatedOnUtc = DateTime.Parse("2024-01-10 10:58:14.7398970"),
                     RoundingTypeId = 0
                 },
                 new Currency()
@@ -53,8 +53,8 @@ namespace Hydra.Sale.Core.EntityConfiguration
                     LimitedToStores = false,
                     Published = true,
                     DisplayOrder = 2,
-                    CreatedOnUtc = DateTime.UtcNow,
-                    UpdatedOnUtc = DateTime.UtcNow,
+                    CreatedOnUtc = DateTime.Parse("2024-01-10 10:58:14.7398970"),
+                    UpdatedOnUtc = DateTime.Parse("2024-01-10 10:58:14.7398970"),
                     RoundingTypeId = 0
                 },
                 new Currency()
@@ -68,8 +68,8 @@ namespace Hydra.Sale.Core.EntityConfiguration
                     LimitedToStores = false,
                     Published = true,
                     DisplayOrder = 3,
-                    CreatedOnUtc = DateTime.UtcNow,
-                    UpdatedOnUtc = DateTime.UtcNow,
+                    CreatedOnUtc = DateTime.Parse("2024-01-10 10:58:14.7398970"),
+                    UpdatedOnUtc = DateTime.Parse("2024-01-10 10:58:14.7398970"),
                     RoundingTypeId = 0
                 }
                 );

@@ -15,6 +15,19 @@ namespace Hydra.Cms.Core.EntityConfiguration
 
             builder.Property(o => o.Title).HasMaxLength(300);
 
+            builder.HasData(new LinkSection()
+            {
+                Id = 1,
+                Title = "Categories",
+                Key = "Categories",
+                IsVisible = true,
+            }, new LinkSection()
+            {
+                Id = 2,
+                Title = "Recent Post",
+                Key = "RecentPosts",
+                IsVisible = true,
+            });
         }
     }
 }

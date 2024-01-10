@@ -18,6 +18,47 @@ namespace Hydra.Cms.Core.EntityConfiguration
 
             builder.Property(o => o.Url).HasMaxLength(300);
 
+            builder.HasData(new Menu()
+            {
+                Id = 1,
+                Order = 0,
+                Title = "About",
+                Url = "/About",
+                UserId = 1,
+            },
+            new Menu()
+            {
+                Id = 2,
+                Order = 1,
+                Title = "Service",
+                Url = "/Service",
+                UserId = 1,
+            },
+            new Menu()
+            {
+                Id = 3,
+                Order = 2,
+                Title = "Pricing",
+                Url = "/Pricing",
+                UserId = 1,
+            },
+            new Menu()
+            {
+                Id = 4,
+                Order = 3,
+                Title = "Contact",
+                Url = "/Contact",
+                UserId = 1,
+            },
+            new Menu()
+            {
+                Id = 5,
+                Order = 4,
+                Title = "Blog",
+                Url = "/Blog",
+                UserId = 1,
+            });
+
         }
     }
 }
