@@ -28,7 +28,7 @@ try
 }
 catch (Exception ex)
 {
-    var loc = HydraHelper.GetApplicationDirectory() + @"\" + "MigrationErrors.txt";
+    var loc = HydraHelper.GetApplicationDirectory() + @"\" + "AMigrationErrors.txt";
     var dateNow = DateTime.Now;
     string inform = dateNow + " | ConnectionString : " + connectionString + "- - - - - - - - - - - - - - - - - - - - - -" +  ex.Source + ex.Message;
     File.WriteAllText(loc, inform);
