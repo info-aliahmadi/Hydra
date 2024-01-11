@@ -1,4 +1,7 @@
-﻿namespace Hydra.Sale.Core.Models
+﻿using Hydra.Sale.Core.Domain;
+using Microsoft.OpenApi.Extensions;
+
+namespace Hydra.Sale.Core.Models
 {
     public class OrderModel
     {
@@ -9,13 +12,17 @@
         /// <returns></returns>
         public int Id { get; set; }
 
-
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
         public int UserId { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public string UserName { get; set; }
 
         /// <summary>
         /// 
@@ -37,6 +44,10 @@
         /// <returns></returns>
         public int? ShippingMethodId { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public string ShippingMethodTitle { get; set; }
 
         /// <summary>
         /// 
@@ -44,27 +55,35 @@
         /// <returns></returns>
         public byte OrderStatusId { get; set; }
 
-
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
         public byte ShippingStatusId { get; set; }
-
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public string ShippingStatusTitle => ((ShippingStatus)ShippingStatusId).GetDisplayName();
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
         public byte PaymentStatusId { get; set; }
-
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public string PaymentStatusTitle => ((PaymentStatus)PaymentStatusId).GetDisplayName();
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
         public byte? PaymentMethodId { get; set; }
-
 
         /// <summary>
         /// 
@@ -142,6 +161,11 @@
         /// <returns></returns>
         public DateTime CreatedOnUtc { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public string CreatedOnUtcString => CreatedOnUtc.ToString("g");
+
 
         /// <summary>
         /// 
@@ -176,7 +200,5 @@
         /// </summary>
         /// <returns></returns>
         public int Shipments { get; set; }
-
-
     }
 }

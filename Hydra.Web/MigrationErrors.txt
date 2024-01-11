@@ -1,0 +1,2 @@
+1/11/2024 2:41:00 PM | ConnectionString : Server=.;Database=Hydra;User Id=sa;password=1;Trusted_Connection=true;Encrypt=false;TrustServerCertificate=True;MultipleActiveResultSets=true;- - - - - - - - - - - - - - - - - - - - - -Core Microsoft SqlClient Data ProviderViolation of PRIMARY KEY constraint 'PK_Permission'. Cannot insert duplicate key in object 'Auth.Permission'. The duplicate key value is (1).
+The statement has been terminated.

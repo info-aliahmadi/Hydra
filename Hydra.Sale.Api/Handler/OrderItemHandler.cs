@@ -9,18 +9,17 @@ namespace Hydra.Sale.Api.Handler
 {
     public static class OrderItemHandler
     {
-
         /// <summary>
-        ///
+        /// 
         /// </summary>
         /// <param name="orderItemService"></param>
-        /// <param name="dataGrid"></param>
+        /// <param name="orderId"></param>
         /// <returns></returns>
-        public static async Task<IResult> GetList(IOrderItemService orderItemService, GridDataBound dataGrid)
+        public static async Task<IResult> GetList(IOrderItemService orderItemService, [FromQuery] int orderId)
         {
             try
             {
-                var result = await orderItemService.GetList(dataGrid);
+                var result = await orderItemService.GetListByOrderId(orderId);
                 return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
             }
             catch (Exception e)

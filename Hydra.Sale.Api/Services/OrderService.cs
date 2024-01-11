@@ -29,13 +29,17 @@ namespace Hydra.Sale.Api.Services
             var result = new Result<PaginatedList<OrderModel>>();
 
             var list = await (from order in _queryRepository.Table<Order>()
+                    .Include(x => x.User)
+                    .Include(x => x.ShippingMethod)
                               select new OrderModel()
                               {
                                   Id = order.Id,
                                   UserId = order.UserId,
+                                  UserName = order.User.Name,
                                   ShipmentId = order.ShipmentId,
                                   AddressId = order.AddressId,
                                   ShippingMethodId = order.ShippingMethodId,
+                                  ShippingMethodTitle = order.ShippingMethod.Name,
                                   OrderStatusId = order.OrderStatusId,
                                   ShippingStatusId = order.ShippingStatusId,
                                   PaymentStatusId = order.PaymentStatusId,

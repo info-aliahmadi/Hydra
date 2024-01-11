@@ -8,11 +8,11 @@ namespace Hydra.Sale.Core.Interfaces
     {
 
         /// <summary>
-        ///
+        /// 
         /// </summary>
-        /// <param name="dataGrid"></param>
+        /// <param name="orderId"></param>
         /// <returns></returns>
-        Task<Result<PaginatedList<OrderItemModel>>> GetList(GridDataBound dataGrid);
+        Task<Result<List<OrderItemModel>>> GetListByOrderId(int orderId);
 
         /// <summary>
         /// 

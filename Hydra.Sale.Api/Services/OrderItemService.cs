@@ -1,6 +1,4 @@
-﻿using Hydra.Infrastructure.Data.Extension;
-using Hydra.Kernel.Extensions;
-using Hydra.Kernel.Interfaces.Data;
+﻿using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;
 using Hydra.Sale.Core.Domain;
 using Hydra.Sale.Core.Interfaces;
@@ -20,31 +18,30 @@ namespace Hydra.Sale.Api.Services
         }
 
         /// <summary>
-        ///
+        /// 
         /// </summary>
-        /// <param name="dataGrid"></param>
+        /// <param name="orderId"></param>
         /// <returns></returns>
-        public async Task<Result<PaginatedList<OrderItemModel>>> GetList(GridDataBound dataGrid)
+        public async Task<Result<List<OrderItemModel>>> GetListByOrderId(int orderId)
         {
-            var result = new Result<PaginatedList<OrderItemModel>>();
-
+            var result = new Result<List<OrderItemModel>>();
             var list = await (from orderItem in _queryRepository.Table<OrderItem>()
+                              .Include(x => x.Product)
+                              where orderItem.OrderId == orderId
                               select new OrderItemModel()
                               {
                                   Id = orderItem.Id,
                                   OrderId = orderItem.OrderId,
                                   ProductId = orderItem.ProductId,
+                                  ProductName = orderItem.Product.Name,
                                   Quantity = orderItem.Quantity,
                                   UnitPriceTax = orderItem.UnitPriceTax,
                                   PriceTax = orderItem.PriceTax,
                                   DiscountAmountTax = orderItem.DiscountAmountTax,
                                   UnitPrice = orderItem.UnitPrice,
-                                  //ShipmentItems = orderItem.ShipmentItems,
-
-                              }).OrderByDescending(x => x.Id).ToPaginatedListAsync(dataGrid);
+                              }).OrderByDescending(x => x.Id).ToListAsync();
 
             result.Data = list;
-
             return result;
         }
 
