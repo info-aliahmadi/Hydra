@@ -62,7 +62,13 @@ namespace Hydra.Kernel.Models
         FileIsTooLarge = 505,
 
         [Description("File Is Too Small")]
-        FileIsTooSmall = 506
+        FileIsTooSmall = 506,
+
+        [Description("Requires Two Factor")]
+        RequiresTwoFactor = 507,
+
+        [Description("User Is Locked")]
+        IsLockedOut = 508
 
     }
     public static class EnumExtensions

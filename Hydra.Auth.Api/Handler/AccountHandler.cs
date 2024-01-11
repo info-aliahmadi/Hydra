@@ -213,7 +213,7 @@ namespace Hydra.Auth.Api.Handler
         {
             try
             {
-                var result = new AccountResult();
+                var result = new Result<UserModel>();
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
 
@@ -221,24 +221,21 @@ namespace Hydra.Auth.Api.Handler
                 
                 if (user == null)
                 {
-                    result.Status = AccountStatusEnum.Invalid;
+                    result.Status = ResultStatusEnum.NotFound;
                     return Results.Ok(result);
                 }
-
                 var signInResult = await _signInManager.CheckPasswordSignInAsync(user, password, true);
                 if (signInResult.Succeeded)
                 {
-                     result.Status = AccountStatusEnum.Succeeded;
-
                     if (signInResult.RequiresTwoFactor)
                     {
-                        result.Status = AccountStatusEnum.RequiresTwoFactor;
+                        result.Status = ResultStatusEnum.RequiresTwoFactor;
                         return Results.Ok(result);
                     }
 
                     if (signInResult.IsLockedOut)
                     {
-                        result.Status = AccountStatusEnum.IsLockedOut;
+                        result.Status = ResultStatusEnum.IsLockedOut;
                         return Results.Ok(result);
                     }
                     DateTime? expireDate = rememberMe ? DateTime.Now.AddMonths(6) : null;
@@ -257,7 +254,8 @@ namespace Hydra.Auth.Api.Handler
                         Roles = roles,
                         AccessToken = token
                     };
-                    return Results.Ok(userModel);
+                    result.Data = userModel;
+                    return Results.Ok(result);
                 }
                 else
                 {
