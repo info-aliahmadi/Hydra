@@ -4,12 +4,9 @@ using Hydra.Auth.Core.Interfaces;
 using Hydra.Infrastructure.ModuleExtension;
 using Hydra.Infrastructure.Security.Extensions;
 using Hydra.Infrastructure.Security.Service;
-using Hydra.Kernel.Interfaces;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
-using System.Security.Claims;
 
 namespace Hydra.Auth.Api.Endpoints
 {
@@ -53,7 +50,7 @@ namespace Hydra.Auth.Api.Endpoints
             endpoints.MapGet(API_SCHEMA + "/ExternalLoginConfirmation", AccountHandler.ExternalLoginConfirmationHandler).RequirePermission("AUTH.EXTERNAL_LOGIN_CONFIRMATION");
 
             endpoints.MapGet(API_SCHEMA + "/ConfirmEmail", AccountHandler.ConfirmEmailHandler).RequirePermission("AUTH.CONFIRM_EMAIL");
-            endpoints.MapPost(API_SCHEMA + "/ChangePassword", AccountHandler.ChangePasswordHandler);
+            endpoints.MapPost(API_SCHEMA + "/ChangePassword", AccountHandler.ChangePasswordHandler).RequirePermission("AUTH.CHANGE_PASSWORD");
             endpoints.MapPost(API_SCHEMA + "/ForgotPassword", AccountHandler.ForgotPasswordHandler).RequirePermission("AUTH.FORGOT_PASSWORD");
             endpoints.MapPost(API_SCHEMA + "/ResetPassword", AccountHandler.ResetPasswordHandler).RequirePermission("AUTH.RESET_PASSWORD");
             endpoints.MapGet(API_SCHEMA + "/GetTwoFactorProvidersAsync", AccountHandler.GetTwoFactorProvidersAsyncHandler).RequirePermission("AUTH.GET_TWO_FACTOR_PROVIDERS_ASYNC");
@@ -88,14 +85,6 @@ namespace Hydra.Auth.Api.Endpoints
             endpoints.MapPost(API_SCHEMA + "/AddPermission", PermissionHandler.AddPermission).RequirePermission("AUTH.ADD_PERMISSION");
             endpoints.MapPost(API_SCHEMA + "/UpdatePermission", PermissionHandler.UpdatePermission).RequirePermission("AUTH.UPDATE_PERMISSION");
             endpoints.MapGet(API_SCHEMA + "/DeletePermission", PermissionHandler.DeletePermission).RequirePermission("AUTH.DELETE_PERMISSION");
-
-
-            endpoints.MapGet(API_SCHEMA + "/username", async (ClaimsPrincipal user, HttpContext context) =>
-            {
-                // user.FindFirst("identity").Value;
-                return user.Identity.Name;
-
-            }).AllowAnonymous();
 
 
             return endpoints;

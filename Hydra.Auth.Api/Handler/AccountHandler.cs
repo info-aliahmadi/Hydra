@@ -45,11 +45,11 @@ namespace Hydra.Auth.Api.Handler
                 var result = new AccountResult();
 
                 var user = new User
-                { RegisterDate = DateTime.UtcNow, Name = "admin", UserName = "admin", Email = "admin@admin.com", EmailConfirmed = true };
+                { RegisterDate = DateTime.UtcNow, Name = "admin", UserName = "admin", Email = "admin@admin.com", EmailConfirmed = true , DefaultTheme = "dark" , DefaultLanguage = "en" };
 
 
                 if (!await _roleManager.RoleExistsAsync("SuperAdmin"))
-                    await _roleManager.CreateAsync(new Role() { Name = "SuperAdmin" });
+                    await _roleManager.CreateAsync(new Role() { Name = "SuperAdmin" , NormalizedName = "SUPERADMIN" });
 
 
                 var isExist = _repository.Table<User>().Any(x => x.UserName == "admin");

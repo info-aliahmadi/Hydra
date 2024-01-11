@@ -20,13 +20,10 @@ namespace Hydra.Infrastructure.Security
             #region Auth Builder
 
             modelBuilder.ApplyConfiguration(new UserConfiguration());
-            modelBuilder.ApplyConfiguration(new RoleConfiguration());
             modelBuilder.ApplyConfiguration(new UserClaimConfiguration());
-            modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
             modelBuilder.ApplyConfiguration(new UserLoginConfiguration());
             modelBuilder.ApplyConfiguration(new RoleClaimConfiguration());
             modelBuilder.ApplyConfiguration(new UserTokenConfiguration());
-            modelBuilder.ApplyConfiguration(new PermissionConfiguration());
 
             #endregion
 
