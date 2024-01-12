@@ -60,7 +60,7 @@ namespace Hydra.Sale.Core.Models
         /// </summary>
         /// <returns></returns>
         public byte ShippingStatusId { get; set; }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -72,7 +72,7 @@ namespace Hydra.Sale.Core.Models
         /// </summary>
         /// <returns></returns>
         public byte PaymentStatusId { get; set; }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -91,6 +91,11 @@ namespace Hydra.Sale.Core.Models
         /// <returns></returns>
         public int? UserCurrencyId { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public string? UserCurrencyTitle { get; set; }
 
         /// <summary>
         /// 
@@ -200,5 +205,11 @@ namespace Hydra.Sale.Core.Models
         /// </summary>
         /// <returns></returns>
         public int Shipments { get; set; }
+
+
+        //userName
+        //    orderStatusId
+        //paymentStatusTitle
+        //    createdOnUtcString
     }
 }

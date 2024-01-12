@@ -31,6 +31,7 @@ namespace Hydra.Sale.Api.Services
             var list = await (from order in _queryRepository.Table<Order>()
                     .Include(x => x.User)
                     .Include(x => x.ShippingMethod)
+                    .Include(x => x.UserCurrency)
                               select new OrderModel()
                               {
                                   Id = order.Id,
@@ -45,6 +46,7 @@ namespace Hydra.Sale.Api.Services
                                   PaymentStatusId = order.PaymentStatusId,
                                   PaymentMethodId = order.PaymentMethodId,
                                   UserCurrencyId = order.UserCurrencyId,
+                                  UserCurrencyTitle = order.UserCurrency.CurrencyCode,
                                   OrderShippingTax = order.OrderShippingTax,
                                   OrderTax = order.OrderTax,
                                   OrderDiscount = order.OrderDiscount,
@@ -54,12 +56,7 @@ namespace Hydra.Sale.Api.Services
                                   AllowStoringCreditCardNumber = order.AllowStoringCreditCardNumber,
                                   PaidDateUtc = order.PaidDateUtc,
                                   Deleted = order.Deleted,
-                                  CreatedOnUtc = order.CreatedOnUtc,
-                                  //OrderDiscounts = order.OrderDiscounts,
-                                  //OrderItems = order.OrderItems,
-                                  //OrderNotes = order.OrderNotes,
-                                  //Payments = order.Payments,
-                                  //Shipments = order.Shipments,
+                                  CreatedOnUtc = order.CreatedOnUtc
 
                               }).OrderByDescending(x => x.Id).ToPaginatedListAsync(dataGrid);
 
