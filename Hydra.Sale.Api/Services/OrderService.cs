@@ -183,7 +183,7 @@ namespace Hydra.Sale.Api.Services
             var result = new Result<OrderModel>();
             try
             {
-                var order = await _queryRepository.Table<Order>().FirstAsync(x => x.Id == orderModel.Id);
+                var order = await _queryRepository.Table<Order>().FirstOrDefaultAsync(x => x.Id == orderModel.Id);
                 if (order is null)
                 {
                     result.Status = ResultStatusEnum.NotFound;
