@@ -31,6 +31,7 @@ namespace Hydra.Sale.Api.Services
             var list = await (from order in _queryRepository.Table<Order>()
                     .Include(x => x.User)
                     .Include(x => x.ShippingMethod)
+                    .Include(x => x.OrderNotes)
                     .Include(x => x.UserCurrency)
                               select new OrderModel()
                               {
@@ -56,7 +57,8 @@ namespace Hydra.Sale.Api.Services
                                   AllowStoringCreditCardNumber = order.AllowStoringCreditCardNumber,
                                   PaidDateUtc = order.PaidDateUtc,
                                   Deleted = order.Deleted,
-                                  CreatedOnUtc = order.CreatedOnUtc
+                                  CreatedOnUtc = order.CreatedOnUtc,
+                                  OrderNotes = order.OrderNotes.Select(x => x.Note).ToList()
 
                               }).OrderByDescending(x => x.Id).ToPaginatedListAsync(dataGrid);
 

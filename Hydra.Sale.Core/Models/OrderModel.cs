@@ -190,7 +190,7 @@ namespace Hydra.Sale.Core.Models
         /// 
         /// </summary>
         /// <returns></returns>
-        public int OrderNotes { get; set; }
+        public List<string> OrderNotes { get; set; }
 
 
         /// <summary>
