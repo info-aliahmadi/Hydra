@@ -104,6 +104,8 @@ namespace Hydra.Sale.Api.Services
                     result.Errors.Add(new Error(nameof(manufacturerModel.Id), "The Id already exist"));
                     return result;
                 }
+
+                var date = DateTime.UtcNow;
                 var manufacturer = new Manufacturer()
                 {
                     Name = manufacturerModel.Name,
@@ -113,10 +115,10 @@ namespace Hydra.Sale.Api.Services
                     MetaDescription = manufacturerModel.MetaDescription,
                     PictureId = manufacturerModel.PictureId,
                     Published = manufacturerModel.Published,
-                    Deleted = manufacturerModel.Deleted,
+                    Deleted = false,
                     DisplayOrder = manufacturerModel.DisplayOrder,
-                    CreatedOnUtc = manufacturerModel.CreatedOnUtc,
-                    UpdatedOnUtc = manufacturerModel.UpdatedOnUtc,
+                    CreatedOnUtc = date,
+                    UpdatedOnUtc = date
                     //ProductManufacturers = manufacturerModel.ProductManufacturers,
                     //Discounts = manufacturerModel.Discounts,
 
@@ -149,14 +151,14 @@ namespace Hydra.Sale.Api.Services
             var result = new Result<ManufacturerModel>();
             try
             {
-                var manufacturer = await _queryRepository.Table<Manufacturer>().FirstAsync(x => x.Id == manufacturerModel.Id);
+                var manufacturer = await _queryRepository.Table<Manufacturer>().FirstOrDefaultAsync(x => x.Id == manufacturerModel.Id);
                 if (manufacturer is null)
                 {
                     result.Status = ResultStatusEnum.NotFound;
                     result.Message = "The Manufacturer not found";
                     return result;
                 }
-                bool isExist = await _queryRepository.Table<Manufacturer>().AnyAsync(x => x.Id != manufacturerModel.Id);
+                var isExist = await _queryRepository.Table<Manufacturer>().AnyAsync(x => x.Id != manufacturerModel.Id && x.Name == manufacturer.Name);
                 if (isExist)
                 {
                     result.Status = ResultStatusEnum.ItsDuplicate;
@@ -164,6 +166,7 @@ namespace Hydra.Sale.Api.Services
                     result.Errors.Add(new Error(nameof(manufacturerModel.Id), "The Id already exist"));
                     return result;
                 }
+
                 manufacturer.Name = manufacturerModel.Name;
                 manufacturer.MetaKeywords = manufacturerModel.MetaKeywords;
                 manufacturer.MetaTitle = manufacturerModel.MetaTitle;
@@ -171,12 +174,8 @@ namespace Hydra.Sale.Api.Services
                 manufacturer.MetaDescription = manufacturerModel.MetaDescription;
                 manufacturer.PictureId = manufacturerModel.PictureId;
                 manufacturer.Published = manufacturerModel.Published;
-                manufacturer.Deleted = manufacturerModel.Deleted;
                 manufacturer.DisplayOrder = manufacturerModel.DisplayOrder;
-                manufacturer.CreatedOnUtc = manufacturerModel.CreatedOnUtc;
-                manufacturer.UpdatedOnUtc = manufacturerModel.UpdatedOnUtc;
-                //manufacturer.ProductManufacturers = manufacturerModel.ProductManufacturers;
-                //manufacturer.Discounts = manufacturerModel.Discounts;
+                manufacturer.UpdatedOnUtc = DateTime.UtcNow;
 
                 _commandRepository.UpdateAsync(manufacturer);
                 await _commandRepository.SaveChangesAsync();
@@ -201,11 +200,29 @@ namespace Hydra.Sale.Api.Services
         public async Task<Result> Delete(int id)
         {
             var result = new Result();
-            var manufacturer = await _queryRepository.Table<Manufacturer>().FirstOrDefaultAsync(x => x.Id == id);
+            var manufacturer = await _queryRepository.Table<Manufacturer>()
+                .Include(x => x.ProductManufacturers)
+                .Include(x => x.Discounts)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
             if (manufacturer is null)
             {
                 result.Status = ResultStatusEnum.NotFound;
                 result.Message = "The Manufacturer not found";
+                return result;
+            }
+
+            if (manufacturer.Discounts.Any())
+            {
+                result.Status = ResultStatusEnum.InvalidValidation;
+                result.Message = "The Manufacturer Has Any Child";
+                return result;
+            }
+
+            if (manufacturer.ProductManufacturers.Any())
+            {
+                result.Status = ResultStatusEnum.InvalidValidation;
+                result.Message = "The Manufacturer Has Any Child";
                 return result;
             }
 
