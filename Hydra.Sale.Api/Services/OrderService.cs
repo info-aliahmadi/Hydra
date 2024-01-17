@@ -52,6 +52,7 @@ namespace Hydra.Sale.Api.Services
                                   OrderTax = order.OrderTax,
                                   OrderDiscount = order.OrderDiscount,
                                   OrderTotal = order.OrderTotal,
+                                  FinalPrice = order.OrderItems.Sum(c => (c.Quantity * c.UnitPrice)),
                                   RefundedAmount = order.RefundedAmount,
                                   CustomerIp = order.CustomerIp,
                                   AllowStoringCreditCardNumber = order.AllowStoringCreditCardNumber,

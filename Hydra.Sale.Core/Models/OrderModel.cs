@@ -123,6 +123,12 @@ namespace Hydra.Sale.Core.Models
         /// </summary>
         /// <returns></returns>
         public decimal OrderTotal { get; set; }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public decimal FinalPrice { get; set; }
 
 
         /// <summary>
