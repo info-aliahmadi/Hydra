@@ -1,6 +1,4 @@
-﻿using Hydra.Infrastructure.Data.Extension;
-using Hydra.Kernel.Extensions;
-using Hydra.Kernel.Interfaces.Data;
+﻿using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;
 using Hydra.Sale.Core.Domain;
 using Hydra.Sale.Core.Interfaces;
@@ -24,9 +22,9 @@ namespace Hydra.Sale.Api.Services
         /// </summary>
         /// <param name="dataGrid"></param>
         /// <returns></returns>
-        public async Task<Result<PaginatedList<DeliveryDateModel>>> GetList(GridDataBound dataGrid)
+        public async Task<Result<List<DeliveryDateModel>>> GetList()
         {
-            var result = new Result<PaginatedList<DeliveryDateModel>>();
+            var result = new Result<List<DeliveryDateModel>>();
 
             var list = await (from deliveryDate in _queryRepository.Table<DeliveryDate>()
                               select new DeliveryDateModel()
@@ -34,9 +32,8 @@ namespace Hydra.Sale.Api.Services
                                   Id = deliveryDate.Id,
                                   Name = deliveryDate.Name,
                                   DisplayOrder = deliveryDate.DisplayOrder,
-                                  //Products = deliveryDate.Products,
 
-                              }).OrderByDescending(x => x.Id).ToPaginatedListAsync(dataGrid);
+                              }).OrderByDescending(x => x.Id).ToListAsync();
 
             result.Data = list;
 

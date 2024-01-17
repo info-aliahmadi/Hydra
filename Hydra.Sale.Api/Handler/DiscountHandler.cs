@@ -9,7 +9,6 @@ namespace Hydra.Sale.Api.Handler
 {
     public static class DiscountHandler
     {
-
         /// <summary>
         ///
         /// </summary>
@@ -21,6 +20,24 @@ namespace Hydra.Sale.Api.Handler
             try
             {
                 var result = await discountService.GetList(dataGrid);
+                return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="discountService"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetListForSelect(IDiscountService discountService)
+        {
+            try
+            {
+                var result = await discountService.GetListForSelect();
                 return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
             }
             catch (Exception e)
@@ -48,7 +65,7 @@ namespace Hydra.Sale.Api.Handler
         /// <param name="discountService"></param>
         /// <param name="discountModel"></param>
         /// <returns></returns>
-        public static async Task<IResult> AddDiscount(ClaimsPrincipal userClaim, IDiscountService discountService, [FromBody] DiscountModel discountModel)
+        public static async Task<IResult> AddDiscount(IDiscountService discountService, [FromBody] DiscountModel discountModel)
         {
             var result = await discountService.Add(discountModel);
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);

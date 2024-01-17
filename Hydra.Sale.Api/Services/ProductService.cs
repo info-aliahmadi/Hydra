@@ -32,7 +32,8 @@ namespace Hydra.Sale.Api.Services
                               select new ProductModel()
                               {
                                   Id = product.Id,
-                                  UserId = product.UserId,
+                                  CreateUserId = product.CreateUserId,
+                                  UpdateUserId = product.UpdateUserId,
                                   Name = product.Name,
                                   MetaKeywords = product.MetaKeywords,
                                   MetaTitle = product.MetaTitle,
@@ -111,7 +112,8 @@ namespace Hydra.Sale.Api.Services
             var productModel = new ProductModel()
             {
                 Id = product.Id,
-                UserId = product.UserId,
+                CreateUserId = product.CreateUserId,
+                UpdateUserId = product.UpdateUserId,
                 Name = product.Name,
                 MetaKeywords = product.MetaKeywords,
                 MetaTitle = product.MetaTitle,
@@ -196,7 +198,8 @@ namespace Hydra.Sale.Api.Services
                 }
                 var product = new Product()
                 {
-                    UserId = productModel.UserId,
+                    CreateUserId = productModel.CreateUserId,
+                    UpdateUserId = productModel.UpdateUserId,
                     Name = productModel.Name,
                     MetaKeywords = productModel.MetaKeywords,
                     MetaTitle = productModel.MetaTitle,
@@ -299,7 +302,8 @@ namespace Hydra.Sale.Api.Services
                     result.Errors.Add(new Error(nameof(productModel.Id), "The Id already exist"));
                     return result;
                 }
-                product.UserId = productModel.UserId;
+                product.CreateUserId = productModel.CreateUserId;
+                product.UpdateUserId = productModel.UpdateUserId;
                 product.Name = productModel.Name;
                 product.MetaKeywords = productModel.MetaKeywords;
                 product.MetaTitle = productModel.MetaTitle;

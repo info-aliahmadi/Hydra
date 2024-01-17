@@ -6,13 +6,18 @@ namespace Hydra.Sale.Core.Interfaces
 {
     public interface IManufacturerService
     {
-
         /// <summary>
         ///
         /// </summary>
         /// <param name="dataGrid"></param>
         /// <returns></returns>
         Task<Result<PaginatedList<ManufacturerModel>>> GetList(GridDataBound dataGrid);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        Task<Result<List<ManufacturerModel>>> GetListForSelect();
 
         /// <summary>
         /// 

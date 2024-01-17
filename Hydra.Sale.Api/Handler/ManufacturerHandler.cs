@@ -33,6 +33,24 @@ namespace Hydra.Sale.Api.Handler
         ///
         /// </summary>
         /// <param name="manufacturerService"></param>
+        /// <param name="dataGrid"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetListForSelect(IManufacturerService manufacturerService)
+        {
+            try
+            {
+                var result = await manufacturerService.GetListForSelect();
+                return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
+        }
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="manufacturerService"></param>
         /// <param name="manufacturerId"></param>
         /// <returns></returns>
         public static async Task<IResult> GetManufacturerById(IManufacturerService manufacturerService, int manufacturerId)

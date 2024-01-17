@@ -56,6 +56,28 @@ namespace Hydra.Sale.Api.Services
         /// <summary>
         ///
         /// </summary>
+        /// <returns></returns>
+        public async Task<Result<List<ManufacturerModel>>> GetListForSelect()
+        {
+            var result = new Result<List<ManufacturerModel>>();
+
+            var list = await (from manufacturer in _queryRepository.Table<Manufacturer>()
+                              select new ManufacturerModel()
+                              {
+                                  Id = manufacturer.Id,
+                                  Name = manufacturer.Name,
+                                  //ProductManufacturers = manufacturer.ProductManufacturers,
+                                  //Discounts = manufacturer.Discounts,
+
+                              }).OrderByDescending(x => x.Id).ToListAsync();
+
+            result.Data = list;
+
+            return result;
+        }
+        /// <summary>
+        ///
+        /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         public async Task<Result<ManufacturerModel>> GetById(int id)

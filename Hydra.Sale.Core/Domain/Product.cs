@@ -5,8 +5,6 @@ namespace Hydra.Sale.Core.Domain;
 
 public class Product : BaseEntity<int>
 {
-    public int? UserId { get; set; }
-
     public string Name { get; set; }
 
     public string MetaKeywords { get; set; }
@@ -95,9 +93,12 @@ public class Product : BaseEntity<int>
 
     public bool Deleted { get; set; }
 
+    public int CreateUserId { get; set; }
     public DateTime CreatedOnUtc { get; set; }
 
-    public DateTime UpdatedOnUtc { get; set; }
+    public int? UpdateUserId { get; set; }
+    public DateTime? UpdatedOnUtc { get; set; }
+
 
     public virtual DeliveryDate DeliveryDate { get; set; }
 
@@ -121,7 +122,8 @@ public class Product : BaseEntity<int>
 
     public virtual TaxCategory TaxCategory { get; set; }
 
-    public virtual User User { get; set; }
+    public virtual User CreateUser { get; set; }
+    public virtual User? UpdateUser { get; set; }
 
     public virtual ICollection<Discount> Discounts { get; set; } = new List<Discount>();
 

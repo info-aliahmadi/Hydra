@@ -62,6 +62,27 @@ namespace Hydra.Sale.Api.Services
         /// <summary>
         ///
         /// </summary>
+        /// <param name="dataGrid"></param>
+        /// <returns></returns>
+        public async Task<Result<List<DiscountModel>>> GetListForSelect()
+        {
+            var result = new Result<List<DiscountModel>>();
+
+            var list = await (from discount in _queryRepository.Table<Discount>()
+                              select new DiscountModel()
+                              {
+                                  Id = discount.Id,
+                                  Name = discount.Name + " | " + discount.CouponCode
+                              }).OrderByDescending(x => x.Id).ToListAsync();
+
+            result.Data = list;
+
+            return result;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         public async Task<Result<DiscountModel>> GetById(int id)

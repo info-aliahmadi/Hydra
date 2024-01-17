@@ -115,5 +115,7 @@
         public int Discounts { get; set; }
 
 
+        public List<CategoryModel>? Childs { get; set; } = new List<CategoryModel>();
+
     }
 }

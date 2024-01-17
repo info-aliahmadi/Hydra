@@ -16,6 +16,7 @@ namespace Hydra.Sale.Core.EntityConfiguration
             entity.Property(e => e.AvailableEndDateTimeUtc).HasPrecision(6);
             entity.Property(e => e.AvailableStartDateTimeUtc).HasPrecision(6);
             entity.Property(e => e.CreatedOnUtc).HasPrecision(6);
+            entity.Property(e => e.UpdatedOnUtc).HasPrecision(6);
             entity.Property(e => e.Height).HasColumnType("decimal(18, 4)");
             entity.Property(e => e.Length).HasColumnType("decimal(18, 4)");
             entity.Property(e => e.MarkAsNewEndDateTimeUtc).HasPrecision(6);
@@ -29,7 +30,6 @@ namespace Hydra.Sale.Core.EntityConfiguration
             entity.Property(e => e.OldPrice).HasColumnType("decimal(18, 4)");
             entity.Property(e => e.Price).HasColumnType("decimal(18, 4)");
             entity.Property(e => e.ShortDescription).HasMaxLength(300);
-            entity.Property(e => e.UpdatedOnUtc).HasPrecision(6);
             entity.Property(e => e.Weight).HasColumnType("decimal(18, 4)");
             entity.Property(e => e.Width).HasColumnType("decimal(18, 4)");
 
@@ -43,9 +43,13 @@ namespace Hydra.Sale.Core.EntityConfiguration
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("FK_Product_TaxCategory");
 
-            entity.HasOne(d => d.User).WithMany()
-            .HasForeignKey(d => d.UserId)
-            .HasConstraintName("FK_Product_User");
+            entity.HasOne(d => d.CreateUser).WithMany()
+            .HasForeignKey(d => d.CreateUserId)
+            .HasConstraintName("FK_Product_CreateUser");
+
+            entity.HasOne(d => d.UpdateUser).WithMany()
+            .HasForeignKey(d => d.UpdateUserId)
+            .HasConstraintName("FK_Product_UpdateUser");
 
             entity.HasMany(d => d.ProductTags).WithMany(p => p.Products)
             .UsingEntity<Dictionary<string, object>>(

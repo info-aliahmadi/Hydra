@@ -1,4 +1,7 @@
-﻿namespace Hydra.Sale.Core.Models
+﻿using Hydra.FileStorage.Core.Models;
+using Hydra.Kernel.Models;
+
+namespace Hydra.Sale.Core.Models
 {
     public class ProductModel
     {
@@ -9,13 +12,29 @@
         /// <returns></returns>
         public int Id { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public int CreateUserId { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public int? UserId { get; set; }
+        public AuthorModel CreateUser { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public int? UpdateUserId { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public AuthorModel UpdateUser { get; set; }
 
         /// <summary>
         /// 
@@ -23,6 +42,11 @@
         /// <returns></returns>
         public string Name { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public FileUploadModel PreviewImage { get; set; }
 
         /// <summary>
         /// 
@@ -30,12 +54,17 @@
         /// <returns></returns>
         public string MetaKeywords { get; set; }
 
-
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
         public string MetaTitle { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public string MetaDescription { get; set; }
 
 
         /// <summary>
@@ -57,13 +86,6 @@
         /// </summary>
         /// <returns></returns>
         public string AdminComment { get; set; }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public string MetaDescription { get; set; }
 
 
         /// <summary>
@@ -317,13 +339,11 @@
         /// <returns></returns>
         public bool Published { get; set; }
 
-
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
         public bool Deleted { get; set; }
-
 
         /// <summary>
         /// 
@@ -336,84 +356,54 @@
         /// 
         /// </summary>
         /// <returns></returns>
-        public DateTime UpdatedOnUtc { get; set; }
+        public DateTime? UpdatedOnUtc { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public List<int> CategoryIds { get; set; } = new List<int>();
 
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public int OrderItems { get; set; }
+        public List<int> ManufacturerIds { get; set; } = new List<int>();
 
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public int ProductCategories { get; set; }
+        public List<int> PictureIds { get; set; } = new List<int>();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public List<int> DiscountIds { get; set; } = new List<int>();
 
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public int ProductInventories { get; set; }
+        public List<int> ReviewIds { get; set; } = new List<int>();
 
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public int ProductManufacturers { get; set; }
+        public List<int> RelatedProductIds { get; set; } = new List<int>();
 
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public int ProductPictures { get; set; }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public int ProductReviews { get; set; }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public int RelatedProductProductId1Navigations { get; set; }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public int RelatedProductProductId2Navigations { get; set; }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public int ShoppingCartItems { get; set; }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public int Discounts { get; set; }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public int ProductTags { get; set; }
+        public List<int> ProductTagIds { get; set; } = new List<int>();
 
 
     }

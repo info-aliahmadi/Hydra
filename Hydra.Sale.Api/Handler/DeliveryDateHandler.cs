@@ -16,11 +16,11 @@ namespace Hydra.Sale.Api.Handler
         /// <param name="deliveryDateService"></param>
         /// <param name="dataGrid"></param>
         /// <returns></returns>
-        public static async Task<IResult> GetList(IDeliveryDateService deliveryDateService, GridDataBound dataGrid)
+        public static async Task<IResult> GetList(IDeliveryDateService deliveryDateService)
         {
             try
             {
-                var result = await deliveryDateService.GetList(dataGrid);
+                var result = await deliveryDateService.GetList();
                 return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
             }
             catch (Exception e)

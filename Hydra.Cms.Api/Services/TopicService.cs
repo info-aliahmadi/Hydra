@@ -21,6 +21,28 @@ namespace Hydra.Cms.Api.Services
             _commandRepository = commandRepository;
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Result<List<TopicModel>>> GetList()
+        {
+            var result = new Result<List<TopicModel>>();
+
+            var list = await _queryRepository.Table<Topic>().Select(x => new TopicModel()
+            {
+                Id = x.Id,
+                Title = x.Title,
+                ParentId = x.ParentId
+            }).OrderByDescending(x => x.Id).ToListAsync();
+
+
+            result.Data = list;
+
+            return result;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -93,27 +115,6 @@ namespace Hydra.Cms.Api.Services
         }
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public async Task<Result<List<TopicModel>>> GetList()
-        {
-            var result = new Result<List<TopicModel>>();
-
-            var list = await _queryRepository.Table<Topic>().Select(x => new TopicModel()
-            {
-                Id = x.Id,
-                Title = x.Title,
-                ParentId = x.ParentId
-            }).OrderByDescending(x => x.Id).ToListAsync();
-
-
-            result.Data = list;
-
-            return result;
-        }
-
         List<TopicModel> resultList = new List<TopicModel>();
         private List<TopicModel> GetChildOfSelect(TopicModel topic, string space, List<TopicModel> topics)
         {
@@ -131,6 +132,7 @@ namespace Hydra.Cms.Api.Services
             }
             return childs;
         }
+
         /// <summary>
         /// 
         /// </summary>

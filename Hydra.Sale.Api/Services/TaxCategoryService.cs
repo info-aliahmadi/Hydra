@@ -24,9 +24,9 @@ namespace Hydra.Sale.Api.Services
         /// </summary>
         /// <param name="dataGrid"></param>
         /// <returns></returns>
-        public async Task<Result<PaginatedList<TaxCategoryModel>>> GetList(GridDataBound dataGrid)
+        public async Task<Result<List<TaxCategoryModel>>> GetList()
         {
-            var result = new Result<PaginatedList<TaxCategoryModel>>();
+            var result = new Result<List<TaxCategoryModel>>();
 
             var list = await (from taxCategory in _queryRepository.Table<TaxCategory>()
                               select new TaxCategoryModel()
@@ -37,7 +37,7 @@ namespace Hydra.Sale.Api.Services
                                   //Products = taxCategory.Products,
                                   //TaxRates = taxCategory.TaxRates,
 
-                              }).OrderByDescending(x => x.Id).ToPaginatedListAsync(dataGrid);
+                              }).OrderByDescending(x => x.Id).ToListAsync();
 
             result.Data = list;
 

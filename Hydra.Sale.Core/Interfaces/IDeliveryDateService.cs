@@ -12,7 +12,7 @@ namespace Hydra.Sale.Core.Interfaces
         /// </summary>
         /// <param name="dataGrid"></param>
         /// <returns></returns>
-        Task<Result<PaginatedList<DeliveryDateModel>>> GetList(GridDataBound dataGrid);
+        Task<Result<List<DeliveryDateModel>>> GetList();
 
         /// <summary>
         /// 

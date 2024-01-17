@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using Hydra.Kernel.Extensions;
 using Hydra.Sale.Core.Interfaces;
 using Hydra.Sale.Core.Models;
 using Microsoft.AspNetCore.Http;
@@ -9,6 +8,46 @@ namespace Hydra.Sale.Api.Handler
 {
     public static class CategoryHandler
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_categoryService"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetCategoryHierarchy(ICategoryService _categoryService)
+        {
+            try
+            {
+                var result = await _categoryService.GetHierarchy();
+
+                return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
+
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_categoryService"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetListForSelect(ICategoryService _categoryService)
+        {
+            try
+            {
+                var result = await _categoryService.GetListForSelect();
+
+                return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
+
+        }
 
         /// <summary>
         ///
@@ -16,11 +55,11 @@ namespace Hydra.Sale.Api.Handler
         /// <param name="categoryService"></param>
         /// <param name="dataGrid"></param>
         /// <returns></returns>
-        public static async Task<IResult> GetList(ICategoryService categoryService, GridDataBound dataGrid)
+        public static async Task<IResult> GetList(ICategoryService categoryService)
         {
             try
             {
-                var result = await categoryService.GetList(dataGrid);
+                var result = await categoryService.GetList();
                 return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
             }
             catch (Exception e)

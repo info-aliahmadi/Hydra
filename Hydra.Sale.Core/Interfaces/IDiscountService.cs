@@ -6,13 +6,18 @@ namespace Hydra.Sale.Core.Interfaces
 {
     public interface IDiscountService
     {
-
         /// <summary>
         ///
         /// </summary>
         /// <param name="dataGrid"></param>
         /// <returns></returns>
         Task<Result<PaginatedList<DiscountModel>>> GetList(GridDataBound dataGrid);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        Task<Result<List<DiscountModel>>> GetListForSelect();
 
         /// <summary>
         /// 

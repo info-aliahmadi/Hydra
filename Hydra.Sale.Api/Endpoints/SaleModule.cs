@@ -55,11 +55,13 @@ namespace Hydra.Sale.Api.Endpoints
             endpoints.MapPost(API_SCHEMA + "/UpdateAddress", AddressHandler.UpdateAddress).RequirePermission("");
             endpoints.MapPost(API_SCHEMA + "/DeleteAddress", AddressHandler.DeleteAddress).RequirePermission("");
 
-            endpoints.MapPost(API_SCHEMA + "/GetCategoryList", CategoryHandler.GetList).RequirePermission("");
-            endpoints.MapGet(API_SCHEMA + "/GetCategoryById", CategoryHandler.GetCategoryById).RequirePermission("");
-            endpoints.MapPost(API_SCHEMA + "/AddCategory", CategoryHandler.AddCategory).RequirePermission("");
-            endpoints.MapPost(API_SCHEMA + "/UpdateCategory", CategoryHandler.UpdateCategory).RequirePermission("");
-            endpoints.MapPost(API_SCHEMA + "/DeleteCategory", CategoryHandler.DeleteCategory).RequirePermission("");
+            endpoints.MapPost(API_SCHEMA + "/GetCategoryList", CategoryHandler.GetList).RequirePermission("SALE.GET_CATEGORY_LIST");
+            endpoints.MapPost(API_SCHEMA + "/GetCategoryListForSelect", CategoryHandler.GetListForSelect).RequirePermission("SALE.GET_CATEGORY_LIST_FOR_SELECT");
+            endpoints.MapGet(API_SCHEMA + "/GetCategoryHierarchy", CategoryHandler.GetCategoryHierarchy).RequirePermission("SALE.GET_CATEGORY_HIERARCHY");
+            endpoints.MapGet(API_SCHEMA + "/GetCategoryById", CategoryHandler.GetCategoryById).RequirePermission("SALE.GET_CATEGORY_BY_ID");
+            endpoints.MapPost(API_SCHEMA + "/AddCategory", CategoryHandler.AddCategory).RequirePermission("SALE.ADD_CATEGORY");
+            endpoints.MapPost(API_SCHEMA + "/UpdateCategory", CategoryHandler.UpdateCategory).RequirePermission("SALE.UPDATE_CATEGORY");
+            endpoints.MapPost(API_SCHEMA + "/DeleteCategory", CategoryHandler.DeleteCategory).RequirePermission("SALE.DELETE_CATEGORY");
 
             endpoints.MapPost(API_SCHEMA + "/GetCountryList", CountryHandler.GetList).RequirePermission("");
             endpoints.MapGet(API_SCHEMA + "/GetCountrySeed", CountryHandler.GetCountrySeed).AllowAnonymous();
@@ -80,17 +82,19 @@ namespace Hydra.Sale.Api.Endpoints
             endpoints.MapPost(API_SCHEMA + "/UpdateDeliveryDate", DeliveryDateHandler.UpdateDeliveryDate).RequirePermission("");
             endpoints.MapPost(API_SCHEMA + "/DeleteDeliveryDate", DeliveryDateHandler.DeleteDeliveryDate).RequirePermission("");
 
-            endpoints.MapPost(API_SCHEMA + "/GetDiscountList", DiscountHandler.GetList).RequirePermission("");
-            endpoints.MapGet(API_SCHEMA + "/GetDiscountById", DiscountHandler.GetDiscountById).RequirePermission("");
-            endpoints.MapPost(API_SCHEMA + "/AddDiscount", DiscountHandler.AddDiscount).RequirePermission("");
-            endpoints.MapPost(API_SCHEMA + "/UpdateDiscount", DiscountHandler.UpdateDiscount).RequirePermission("");
-            endpoints.MapPost(API_SCHEMA + "/DeleteDiscount", DiscountHandler.DeleteDiscount).RequirePermission("");
+            endpoints.MapPost(API_SCHEMA + "/GetDiscountList", DiscountHandler.GetList).RequirePermission("SALE.GET_DISCOUNT_LIST");
+            endpoints.MapPost(API_SCHEMA + "/GetDiscountListForSelect", DiscountHandler.GetListForSelect).RequirePermission("SALE.GET_LIST_FOR_SELECT");
+            endpoints.MapGet(API_SCHEMA + "/GetDiscountById", DiscountHandler.GetDiscountById).RequirePermission("SALE.GET_DISCOUNT_BY_ID");
+            endpoints.MapPost(API_SCHEMA + "/AddDiscount", DiscountHandler.AddDiscount).RequirePermission("SALE.ADD_DISCOUNT");
+            endpoints.MapPost(API_SCHEMA + "/UpdateDiscount", DiscountHandler.UpdateDiscount).RequirePermission("SALE.UPDATE_DISCOUNT");
+            endpoints.MapPost(API_SCHEMA + "/DeleteDiscount", DiscountHandler.DeleteDiscount).RequirePermission("SALE.DELETE_DISCOUNT");
 
-            endpoints.MapPost(API_SCHEMA + "/GetManufacturerList", ManufacturerHandler.GetList).RequirePermission("");
-            endpoints.MapGet(API_SCHEMA + "/GetManufacturerById", ManufacturerHandler.GetManufacturerById).RequirePermission("");
-            endpoints.MapPost(API_SCHEMA + "/AddManufacturer", ManufacturerHandler.AddManufacturer).RequirePermission("");
-            endpoints.MapPost(API_SCHEMA + "/UpdateManufacturer", ManufacturerHandler.UpdateManufacturer).RequirePermission("");
-            endpoints.MapPost(API_SCHEMA + "/DeleteManufacturer", ManufacturerHandler.DeleteManufacturer).RequirePermission("");
+            endpoints.MapPost(API_SCHEMA + "/GetManufacturerList", ManufacturerHandler.GetList).RequirePermission("SALE.GET_MANUFACTURER_LIST");
+            endpoints.MapPost(API_SCHEMA + "/GetManufacturersForSelect", ManufacturerHandler.GetListForSelect).RequirePermission("SALE.GET_MANUFACTURERS_FOR_SELECT");
+            endpoints.MapGet(API_SCHEMA + "/GetManufacturerById", ManufacturerHandler.GetManufacturerById).RequirePermission("SALE.GET_MANUFACTURER_BY_ID");
+            endpoints.MapPost(API_SCHEMA + "/AddManufacturer", ManufacturerHandler.AddManufacturer).RequirePermission("SALE.ADD_MANUFACTURER");
+            endpoints.MapPost(API_SCHEMA + "/UpdateManufacturer", ManufacturerHandler.UpdateManufacturer).RequirePermission("SALE.UPDATE_MANUFACTURER");
+            endpoints.MapPost(API_SCHEMA + "/DeleteManufacturer", ManufacturerHandler.DeleteManufacturer).RequirePermission("SALE.DELETE_MANUFACTURER");
 
             endpoints.MapPost(API_SCHEMA + "/GetOrderList", OrderHandler.GetList).RequirePermission("");
             endpoints.MapGet(API_SCHEMA + "/GetOrderById", OrderHandler.GetOrderById).RequirePermission("");
@@ -122,11 +126,11 @@ namespace Hydra.Sale.Api.Endpoints
             endpoints.MapPost(API_SCHEMA + "/UpdatePayment", PaymentHandler.UpdatePayment).RequirePermission("");
             endpoints.MapPost(API_SCHEMA + "/DeletePayment", PaymentHandler.DeletePayment).RequirePermission("");
 
-            endpoints.MapPost(API_SCHEMA + "/GetProductList", ProductHandler.GetList).RequirePermission("");
-            endpoints.MapGet(API_SCHEMA + "/GetProductById", ProductHandler.GetProductById).RequirePermission("");
-            endpoints.MapPost(API_SCHEMA + "/AddProduct", ProductHandler.AddProduct).RequirePermission("");
-            endpoints.MapPost(API_SCHEMA + "/UpdateProduct", ProductHandler.UpdateProduct).RequirePermission("");
-            endpoints.MapPost(API_SCHEMA + "/DeleteProduct", ProductHandler.DeleteProduct).RequirePermission("");
+            endpoints.MapPost(API_SCHEMA + "/GetProductList", ProductHandler.GetList).RequirePermission("SALE.GET_PRODUCT_LIST");
+            endpoints.MapGet(API_SCHEMA + "/GetProductById", ProductHandler.GetProductById).RequirePermission("SALE.GET_PRODUCT_BY_ID");
+            endpoints.MapPost(API_SCHEMA + "/AddProduct", ProductHandler.AddProduct).RequirePermission("SALE.ADD_PRODUCT");
+            endpoints.MapPost(API_SCHEMA + "/UpdateProduct", ProductHandler.UpdateProduct).RequirePermission("SALE.UPDATE_PRODUCT");
+            endpoints.MapPost(API_SCHEMA + "/DeleteProduct", ProductHandler.DeleteProduct).RequirePermission("SALE.DELETE_PRODUCT");
 
             endpoints.MapPost(API_SCHEMA + "/GetProductCategoryList", ProductCategoryHandler.GetList).RequirePermission("");
             endpoints.MapGet(API_SCHEMA + "/GetProductCategoryById", ProductCategoryHandler.GetProductCategoryById).RequirePermission("");

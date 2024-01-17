@@ -16,11 +16,11 @@ namespace Hydra.Sale.Api.Handler
         /// <param name="taxCategoryService"></param>
         /// <param name="dataGrid"></param>
         /// <returns></returns>
-        public static async Task<IResult> GetList(ITaxCategoryService taxCategoryService, GridDataBound dataGrid)
+        public static async Task<IResult> GetList(ITaxCategoryService taxCategoryService)
         {
             try
             {
-                var result = await taxCategoryService.GetList(dataGrid);
+                var result = await taxCategoryService.GetList();
                 return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
             }
             catch (Exception e)

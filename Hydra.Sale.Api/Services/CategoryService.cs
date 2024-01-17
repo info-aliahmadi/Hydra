@@ -1,6 +1,4 @@
-﻿using Hydra.Infrastructure.Data.Extension;
-using Hydra.Kernel.Extensions;
-using Hydra.Kernel.Interfaces.Data;
+﻿using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;
 using Hydra.Sale.Core.Domain;
 using Hydra.Sale.Core.Interfaces;
@@ -24,9 +22,9 @@ namespace Hydra.Sale.Api.Services
         /// </summary>
         /// <param name="dataGrid"></param>
         /// <returns></returns>
-        public async Task<Result<PaginatedList<CategoryModel>>> GetList(GridDataBound dataGrid)
+        public async Task<Result<List<CategoryModel>>> GetList()
         {
-            var result = new Result<PaginatedList<CategoryModel>>();
+            var result = new Result<List<CategoryModel>>();
 
             var list = await (from category in _queryRepository.Table<Category>()
                               select new CategoryModel()
@@ -48,11 +46,98 @@ namespace Hydra.Sale.Api.Services
                                   //ProductCategories = category.ProductCategories,
                                   //Discounts = category.Discounts,
 
-                              }).OrderByDescending(x => x.Id).ToPaginatedListAsync(dataGrid);
+                              }).OrderByDescending(x => x.Id).ToListAsync();
 
             result.Data = list;
 
             return result;
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Result<List<CategoryModel>>> GetHierarchy()
+        {
+            var result = new Result<List<CategoryModel>>();
+
+            var list = await _queryRepository.Table<Category>().Select(x => new CategoryModel()
+            {
+                Id = x.Id,
+                Name = x.Name,
+                ParentCategoryId = x.ParentCategoryId
+            }).ToListAsync();
+
+            var parents = list.Where(x => x.ParentCategoryId == null).ToList();
+            foreach (var topic in parents)
+            {
+                var childs = GetChild(topic, list);
+                if (childs != null)
+                {
+                    topic.Childs.AddRange(childs);
+                }
+            }
+
+            result.Data = parents;
+
+            return result;
+        }
+        private List<CategoryModel> GetChild(CategoryModel topic, List<CategoryModel> topics)
+        {
+
+            var result = topics.Where(x => x.ParentCategoryId == topic.Id).ToList();
+            if (result.Count == 0) return null;
+            foreach (var item in result)
+            {
+                var childs = GetChild(item, topics);
+                if (childs != null)
+                    item.Childs.AddRange(childs);
+            }
+            return result;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Result<List<CategoryModel>>> GetListForSelect()
+        {
+            var result = new Result<List<CategoryModel>>();
+
+            var list = await _queryRepository.Table<Category>().Where(x => !x.Deleted).Select(category => new CategoryModel()
+            {
+                Id = category.Id,
+                Name = category.Name
+            }).ToListAsync();
+
+            var parents = list.Where(x => x.ParentCategoryId == null).ToList();
+
+            foreach (var topic in parents)
+            {
+                GetChildOfSelect(topic, "", list);
+            }
+
+            result.Data = resultList;
+
+            return result;
+        }
+
+        List<CategoryModel> resultList = new List<CategoryModel>();
+        private List<CategoryModel> GetChildOfSelect(CategoryModel topic, string space, List<CategoryModel> topics)
+        {
+            topic.Name = space + topic.Name;
+            resultList.Add(topic);
+
+            var childs = topics.Where(x => x.ParentCategoryId == topic.Id).ToList();
+            if (childs.Count == 0)
+            {
+                return null;
+            }
+            foreach (var item in childs)
+            {
+                GetChildOfSelect(item, space + "    ", topics);
+            }
+            return childs;
         }
 
         /// <summary>
