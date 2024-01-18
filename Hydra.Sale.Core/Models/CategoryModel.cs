@@ -56,7 +56,7 @@
         /// 
         /// </summary>
         /// <returns></returns>
-        public int PictureId { get; set; }
+        public int? PictureId { get; set; }
 
 
         /// <summary>

@@ -16,7 +16,7 @@ public class Category : BaseEntity<int>
 
     public int? ParentCategoryId { get; set; }
 
-    public int PictureId { get; set; }
+    public int? PictureId { get; set; }
 
     public bool ShowOnHomepage { get; set; }
 

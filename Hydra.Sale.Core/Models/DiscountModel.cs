@@ -1,4 +1,6 @@
-﻿namespace Hydra.Sale.Core.Models
+﻿using Hydra.Sale.Core.Domain;
+
+namespace Hydra.Sale.Core.Models
 {
     public class DiscountModel
     {
@@ -35,7 +37,7 @@
         /// 
         /// </summary>
         /// <returns></returns>
-        public int DiscountTypeId { get; set; }
+        public DiscountType DiscountTypeId { get; set; }
 
 
         /// <summary>
@@ -91,7 +93,7 @@
         /// 
         /// </summary>
         /// <returns></returns>
-        public int DiscountLimitationId { get; set; }
+        public DiscountLimitationType DiscountLimitationId { get; set; }
 
 
         /// <summary>

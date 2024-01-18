@@ -76,6 +76,38 @@ namespace Hydra.Sale.Core.EntityConfiguration
                     j.HasIndex(new[] { "DiscountId" }, "IX_Discount_AppliedToProducts_Discount_Id");
                     j.HasIndex(new[] { "ProductId" }, "IX_Discount_AppliedToProducts_Product_Id");
                 });
+
+
+            entity.HasData(new Discount()
+            {
+                Id = 1,
+                Name = "Discount 1",
+                CouponCode = "CoponCode1",
+                DiscountTypeId = DiscountType.AssignedToCategories,
+                UsePercentage = true,
+                DiscountPercentage = 4,
+                DiscountAmount = 0,
+                RequiresCouponCode = true,
+                DiscountLimitationId = DiscountLimitationType.Unlimited,
+                LimitationTimes = 1,
+                IsActive = true
+
+
+            }, new Discount()
+            {
+                Id = 2,
+                Name = "Discount 2",
+                CouponCode = "CoponCode2",
+                DiscountTypeId = DiscountType.AssignedToCategories,
+                UsePercentage = true,
+                DiscountPercentage = 6,
+                DiscountAmount = 0,
+                RequiresCouponCode = true,
+                DiscountLimitationId = DiscountLimitationType.NTimesOnly,
+                LimitationTimes = 1,
+                IsActive = true
+            });
+
         }
     }
 }

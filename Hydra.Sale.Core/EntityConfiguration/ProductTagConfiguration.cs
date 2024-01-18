@@ -15,6 +15,20 @@ namespace Hydra.Sale.Core.EntityConfiguration
             entity.Property(e => e.Name)
             .IsRequired()
             .HasMaxLength(70);
+
+            entity.HasData(new ProductTag()
+            {
+                Id = 1,
+                Name = "Tag 1"
+            }, new ProductTag()
+            {
+                Id = 2,
+                Name = "Tag 2"
+            }, new ProductTag()
+            {
+                Id = 3,
+                Name = "Tag 3"
+            });
         }
     }
 }

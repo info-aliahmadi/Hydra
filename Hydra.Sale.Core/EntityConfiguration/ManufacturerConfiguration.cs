@@ -21,6 +21,28 @@ namespace Hydra.Sale.Core.EntityConfiguration
             .IsRequired()
             .HasMaxLength(70);
             entity.Property(e => e.UpdatedOnUtc).HasPrecision(6);
+
+
+            entity.HasData(new Manufacturer()
+            {
+                Id = 1,
+                DisplayOrder = 1,
+                Name = "Manufacturer 1",
+                CreatedOnUtc = DateTime.Parse("2024-01-10 10:58:14.7398970"),
+                Deleted = false,
+                Description = "Description of Category 1",
+                Published = true
+            }, new Manufacturer()
+            {
+                Id = 2,
+                DisplayOrder = 2,
+                Name = "Manufacturer 2",
+                CreatedOnUtc = DateTime.Parse("2024-01-10 10:58:14.7398970"),
+                Deleted = false,
+                Description = "Description of Category 2",
+                Published = true
+            });
+
         }
     }
 }

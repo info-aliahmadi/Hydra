@@ -14,7 +14,7 @@ public class Manufacturer : BaseEntity<int>
 
     public string MetaDescription { get; set; }
 
-    public int PictureId { get; set; }
+    public int? PictureId { get; set; }
 
     public bool Published { get; set; }
 

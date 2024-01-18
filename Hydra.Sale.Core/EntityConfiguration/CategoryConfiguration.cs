@@ -27,6 +27,28 @@ namespace Hydra.Sale.Core.EntityConfiguration
             entity.HasOne(d => d.ParentCategory).WithMany()
             .HasForeignKey(d => d.ParentCategoryId)
             .HasConstraintName("FK_Category_Category");
+
+            entity.HasData(new Category()
+            {
+                Id = 1,
+                DisplayOrder = 1,
+                Name = "Category 1",
+                CreatedOnUtc = DateTime.Parse("2024-01-10 10:58:14.7398970"),
+                Deleted = false,
+                ShowOnHomepage = true,
+                Description = "Description of Category 1",
+                Published = true
+            }, new Category()
+            {
+                Id = 2,
+                DisplayOrder = 2,
+                Name = "Category 2",
+                CreatedOnUtc = DateTime.Parse("2024-01-10 10:58:14.7398970"),
+                Deleted = false,
+                ShowOnHomepage = true,
+                Description = "Description of Category 2",
+                Published = true
+            });
         }
     }
 }
