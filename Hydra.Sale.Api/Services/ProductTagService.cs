@@ -45,6 +45,29 @@ namespace Hydra.Sale.Api.Services
         /// <summary>
         ///
         /// </summary>
+        /// <param name="dataGrid"></param>
+        /// <returns></returns>
+        public async Task<Result<List<ProductTagModel>>> GetListForSelect()
+        {
+            var result = new Result<List<ProductTagModel>>();
+
+            var list = await (from productTag in _queryRepository.Table<ProductTag>()
+                              select new ProductTagModel()
+                              {
+                                  Id = productTag.Id,
+                                  Name = productTag.Name,
+                                  //Products = productTag.Products,
+
+                              }).OrderByDescending(x => x.Id).ToListAsync();
+
+            result.Data = list;
+
+            return result;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         public async Task<Result<ProductTagModel>> GetById(int id)

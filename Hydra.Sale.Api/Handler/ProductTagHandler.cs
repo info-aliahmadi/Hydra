@@ -28,6 +28,24 @@ namespace Hydra.Sale.Api.Handler
                 return Results.BadRequest(e.Message);
             }
         }
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="productTagService"></param>
+        /// <param name="dataGrid"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetListForSelect(IProductTagService productTagService)
+        {
+            try
+            {
+                var result = await productTagService.GetListForSelect();
+                return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
+        }
 
         /// <summary>
         ///

@@ -168,11 +168,12 @@ namespace Hydra.Sale.Api.Endpoints
             endpoints.MapPost(API_SCHEMA + "/UpdateProductReviewHelpfulness", ProductReviewHelpfulnessHandler.UpdateProductReviewHelpfulness).RequirePermission("");
             endpoints.MapPost(API_SCHEMA + "/DeleteProductReviewHelpfulness", ProductReviewHelpfulnessHandler.DeleteProductReviewHelpfulness).RequirePermission("");
 
-            endpoints.MapPost(API_SCHEMA + "/GetProductTagList", ProductTagHandler.GetList).RequirePermission("");
-            endpoints.MapGet(API_SCHEMA + "/GetProductTagById", ProductTagHandler.GetProductTagById).RequirePermission("");
-            endpoints.MapPost(API_SCHEMA + "/AddProductTag", ProductTagHandler.AddProductTag).RequirePermission("");
-            endpoints.MapPost(API_SCHEMA + "/UpdateProductTag", ProductTagHandler.UpdateProductTag).RequirePermission("");
-            endpoints.MapPost(API_SCHEMA + "/DeleteProductTag", ProductTagHandler.DeleteProductTag).RequirePermission("");
+            endpoints.MapPost(API_SCHEMA + "/GetProductTagList", ProductTagHandler.GetList).RequirePermission("SALE.GET_PRODUCT_TAG_LIST");
+            endpoints.MapPost(API_SCHEMA + "/GetProductTagListForSelect", ProductTagHandler.GetListForSelect).RequirePermission("SALE.GET_PRODUCT_TAG_LIST_FOR_SELECT");
+            endpoints.MapGet(API_SCHEMA + "/GetProductTagById", ProductTagHandler.GetProductTagById).RequirePermission("SALE.GET_PRODUCT_TAG_BY_ID");
+            endpoints.MapPost(API_SCHEMA + "/AddProductTag", ProductTagHandler.AddProductTag).RequirePermission("SALE.ADD_PRODUCT_TAG");
+            endpoints.MapPost(API_SCHEMA + "/UpdateProductTag", ProductTagHandler.UpdateProductTag).RequirePermission("SALE.UPDATE_PRODUCT_TAG");
+            endpoints.MapPost(API_SCHEMA + "/DeleteProductTag", ProductTagHandler.DeleteProductTag).RequirePermission("SALE.DELETE_PRODUCT_TAG");
 
             endpoints.MapPost(API_SCHEMA + "/GetRelatedProductList", RelatedProductHandler.GetList).RequirePermission("");
             endpoints.MapGet(API_SCHEMA + "/GetRelatedProductById", RelatedProductHandler.GetRelatedProductById).RequirePermission("");

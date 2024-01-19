@@ -17,6 +17,12 @@ namespace Hydra.Sale.Core.Interfaces
         /// <summary>
         /// 
         /// </summary>
+        /// <returns></returns>
+        Task<Result<List<ProductTagModel>>> GetListForSelect();
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         Task<Result<ProductTagModel>> GetById(int id);
