@@ -12,15 +12,18 @@ namespace Hydra.Sale.Core.EntityConfiguration
 
             entity.HasIndex(e => e.OrderId, "IX_OrderItem_OrderId");
 
-            entity.Property(e => e.DiscountAmountTax).HasColumnType("decimal(18, 4)");
-            entity.Property(e => e.PriceTax).HasColumnType("decimal(18, 4)");
+            entity.Property(e => e.DiscountAmount).HasColumnType("decimal(18, 4)");
+            entity.Property(e => e.TotalPrice).HasColumnType("decimal(18, 4)");
             entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 4)");
-            entity.Property(e => e.UnitPriceTax).HasColumnType("decimal(18, 4)");
+            entity.Property(e => e.TotalPriceTax).HasColumnType("decimal(18, 4)");
 
             entity.HasOne(d => d.Order).WithMany(p => p.OrderItems)
             .HasForeignKey(d => d.OrderId)
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("FK_OrderItem_Order");
+
+            entity.HasOne(d => d.Discount).WithMany(p => p.OrderItems)
+                .HasForeignKey(d => d.DiscountId);
 
             entity.HasOne(d => d.Product).WithMany(p => p.OrderItems)
             .HasForeignKey(d => d.ProductId)

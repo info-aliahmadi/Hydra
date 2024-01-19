@@ -47,12 +47,14 @@ namespace Hydra.Sale.Api.Services
                                   PaymentStatusId = order.PaymentStatusId,
                                   PaymentMethodId = order.PaymentMethodId,
                                   UserCurrencyId = order.UserCurrencyId,
-                                  UserCurrencyTitle = order.UserCurrency.CurrencyCode,
-                                  OrderShippingTax = order.OrderShippingTax,
-                                  OrderTax = order.OrderTax,
-                                  OrderDiscount = order.OrderDiscount,
-                                  OrderTotal = order.OrderTotal,
-                                  FinalPrice = order.OrderItems.Sum(c => (c.Quantity * c.UnitPrice)),
+                                  UserCurrency = order.UserCurrency.CurrencyCode,
+                                  ShippingTax = order.ShippingTax,
+                                  ShippingAmount = order.ShippingAmount,
+                                  ShippingAmountTax = order.ShippingAmountTax,
+                                  TaxAmount = order.TaxAmount,
+                                  DiscountAmount = order.DiscountAmount,
+                                  TotalAmount = order.TotalAmount,
+                                  FinalPrice = order.FinalPrice,
                                   RefundedAmount = order.RefundedAmount,
                                   CustomerIp = order.CustomerIp,
                                   AllowStoringCreditCardNumber = order.AllowStoringCreditCardNumber,
@@ -90,22 +92,19 @@ namespace Hydra.Sale.Api.Services
                 PaymentStatusId = order.PaymentStatusId,
                 PaymentMethodId = order.PaymentMethodId,
                 UserCurrencyId = order.UserCurrencyId,
-                OrderShippingTax = order.OrderShippingTax,
-                OrderTax = order.OrderTax,
-                OrderDiscount = order.OrderDiscount,
-                OrderTotal = order.OrderTotal,
+                ShippingTax = order.ShippingTax,
+                ShippingAmount = order.ShippingAmount,
+                ShippingAmountTax = order.ShippingAmountTax,
+                TaxAmount = order.TaxAmount,
+                DiscountAmount = order.DiscountAmount,
+                TotalAmount = order.TotalAmount,
+                FinalPrice = order.FinalPrice,
                 RefundedAmount = order.RefundedAmount,
                 CustomerIp = order.CustomerIp,
                 AllowStoringCreditCardNumber = order.AllowStoringCreditCardNumber,
                 PaidDateUtc = order.PaidDateUtc,
                 Deleted = order.Deleted,
-                CreatedOnUtc = order.CreatedOnUtc,
-                //OrderDiscounts = order.OrderDiscounts,
-                //OrderItems = order.OrderItems,
-                //OrderNotes = order.OrderNotes,
-                //Payments = order.Payments,
-                //Shipments = order.Shipments,
-
+                CreatedOnUtc = order.CreatedOnUtc
             };
             result.Data = orderModel;
 
@@ -141,22 +140,19 @@ namespace Hydra.Sale.Api.Services
                     PaymentStatusId = orderModel.PaymentStatusId,
                     PaymentMethodId = orderModel.PaymentMethodId,
                     UserCurrencyId = orderModel.UserCurrencyId,
-                    OrderShippingTax = orderModel.OrderShippingTax,
-                    OrderTax = orderModel.OrderTax,
-                    OrderDiscount = orderModel.OrderDiscount,
-                    OrderTotal = orderModel.OrderTotal,
+                    ShippingTax = orderModel.ShippingTax,
+                    ShippingAmount = orderModel.ShippingAmount,
+                    ShippingAmountTax = orderModel.ShippingAmountTax,
+                    TaxAmount = orderModel.TaxAmount,
+                    DiscountAmount = orderModel.DiscountAmount,
+                    TotalAmount = orderModel.TotalAmount,
+                    FinalPrice = orderModel.FinalPrice,
                     RefundedAmount = orderModel.RefundedAmount,
                     CustomerIp = orderModel.CustomerIp,
                     AllowStoringCreditCardNumber = orderModel.AllowStoringCreditCardNumber,
                     PaidDateUtc = orderModel.PaidDateUtc,
                     Deleted = orderModel.Deleted,
                     CreatedOnUtc = orderModel.CreatedOnUtc,
-                    //OrderDiscounts = orderModel.OrderDiscounts,
-                    //OrderItems = orderModel.OrderItems,
-                    //OrderNotes = orderModel.OrderNotes,
-                    //Payments = orderModel.Payments,
-                    //Shipments = orderModel.Shipments,
-
                 };
 
                 await _commandRepository.InsertAsync(order);
@@ -210,21 +206,19 @@ namespace Hydra.Sale.Api.Services
                 order.PaymentStatusId = orderModel.PaymentStatusId;
                 order.PaymentMethodId = orderModel.PaymentMethodId;
                 order.UserCurrencyId = orderModel.UserCurrencyId;
-                order.OrderShippingTax = orderModel.OrderShippingTax;
-                order.OrderTax = orderModel.OrderTax;
-                order.OrderDiscount = orderModel.OrderDiscount;
-                order.OrderTotal = orderModel.OrderTotal;
+                order.ShippingTax = order.ShippingTax;
+                order.ShippingAmount = order.ShippingAmount;
+                order.ShippingAmountTax = order.ShippingAmountTax;
+                order.TaxAmount = order.TaxAmount;
+                order.DiscountAmount = order.DiscountAmount;
+                order.TotalAmount = order.TotalAmount;
+                order.FinalPrice = order.FinalPrice;
                 order.RefundedAmount = orderModel.RefundedAmount;
                 order.CustomerIp = orderModel.CustomerIp;
                 order.AllowStoringCreditCardNumber = orderModel.AllowStoringCreditCardNumber;
                 order.PaidDateUtc = orderModel.PaidDateUtc;
                 order.Deleted = orderModel.Deleted;
                 order.CreatedOnUtc = orderModel.CreatedOnUtc;
-                //order.OrderDiscounts = orderModel.OrderDiscounts;
-                //order.OrderItems = orderModel.OrderItems;
-                //order.OrderNotes = orderModel.OrderNotes;
-                //order.Payments = orderModel.Payments;
-                //order.Shipments = orderModel.Shipments;
 
                 _commandRepository.UpdateAsync(order);
                 await _commandRepository.SaveChangesAsync();

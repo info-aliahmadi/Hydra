@@ -22,19 +22,27 @@ public class Order : BaseEntity<int>
     public byte? PaymentMethodId { get; set; }
 
     public int? UserCurrencyId { get; set; }
-
-    public decimal OrderShippingTax { get; set; }
-
-    public decimal OrderTax { get; set; }
-
-    public decimal OrderDiscount { get; set; }
-
-    public decimal OrderTotal { get; set; }
-
+    
+    public decimal ShippingTax { get; set; }
+    
+    public decimal ShippingAmount { get; set; }
+    
+    public decimal ShippingAmountTax { get; set; }
+    
+    public decimal TaxAmount { get; set; }
+    
+    public decimal DiscountAmount { get; set; }
+    
+    public decimal TotalAmount { get; set; }
+    
+    public decimal FinalPrice { get; set; }
+    
     public decimal RefundedAmount { get; set; }
-
+    
     public string CustomerIp { get; set; }
-
+    
+    public int? PaymentId { get; set; }
+    
     public bool AllowStoringCreditCardNumber { get; set; }
 
     public DateTime? PaidDateUtc { get; set; }
@@ -44,6 +52,8 @@ public class Order : BaseEntity<int>
     public DateTime CreatedOnUtc { get; set; }
 
     public virtual Address Address { get; set; }
+
+    public virtual Payment? Payment { get; set; }
 
     public virtual ICollection<OrderDiscount> OrderDiscounts { get; set; } = new List<OrderDiscount>();
 

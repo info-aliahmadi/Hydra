@@ -35,30 +35,21 @@
         /// 
         /// </summary>
         /// <returns></returns>
-        public decimal UnitPriceTax { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public decimal PriceTax { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public decimal DiscountAmountTax { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
         public decimal UnitPrice { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <returns></returns>
-        public decimal TotalPrice => UnitPrice * Quantity;
+        public decimal DiscountAmount { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal TotalPrice { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal TotalPriceTax { get; set; }
     }
 }
