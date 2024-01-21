@@ -35,4 +35,5 @@ public class Payment : BaseEntity<int>
     public string CardExpirationYear { get; set; }
 
     public virtual Order Order { get; set; }
+    public virtual ICollection<Order> Orders { get; set; }
 }
