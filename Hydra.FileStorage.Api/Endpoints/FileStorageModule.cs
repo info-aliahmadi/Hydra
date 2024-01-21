@@ -50,7 +50,7 @@ namespace Hydra.FileStorage.Api.Endpoints
             endpoints.MapGet(API_SCHEMA + "/DownloadFileByName", FileStorageHandler.DownloadFileByName).AllowAnonymous();
             endpoints.MapGet(API_SCHEMA + "/DownloadFileStreamByName", FileStorageHandler.DownloadFileStreamByName).AllowAnonymous();
 
-            return endpoints;
+            return endpoints; 
         }
 
     }
