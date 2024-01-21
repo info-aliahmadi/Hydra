@@ -1,4 +1,4 @@
-﻿namespace Hydra.Sale.Core.Domain
+﻿namespace Hydra.Sale.Core.Models.Enums
 {
     /// <summary>
     /// Represents an order status enumeration
@@ -8,21 +8,21 @@
         /// <summary>
         /// Pending
         /// </summary>
-        Pending = 0,
+        Pending = 1,
 
         /// <summary>
         /// Processing
         /// </summary>
-        Processing = 1,
+        Processing = 2,
 
         /// <summary>
         /// Complete
         /// </summary>
-        Complete = 2,
+        Complete = 3,
 
         /// <summary>
         /// Cancelled
         /// </summary>
-        Cancelled = 3
+        Cancelled = 4
     }
 }

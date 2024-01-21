@@ -35,10 +35,10 @@ namespace Hydra.Sale.Api.Services
                                   ProductId = orderItem.ProductId,
                                   ProductName = orderItem.Product.Name,
                                   Quantity = orderItem.Quantity,
-                                  UnitPriceTax = orderItem.UnitPriceTax,
-                                  PriceTax = orderItem.PriceTax,
-                                  DiscountAmountTax = orderItem.DiscountAmountTax,
+                                  DiscountAmount = orderItem.DiscountAmount,
                                   UnitPrice = orderItem.UnitPrice,
+                                  TotalPrice = orderItem.TotalPrice,
+                                  TotalPriceTax = orderItem.TotalPriceTax
                               }).OrderByDescending(x => x.Id).ToListAsync();
 
             result.Data = list;
@@ -53,7 +53,7 @@ namespace Hydra.Sale.Api.Services
         public async Task<Result<OrderItemModel>> GetById(int id)
         {
             var result = new Result<OrderItemModel>();
-            var orderItem = await _queryRepository.Table<OrderItem>().FirstOrDefaultAsync(x => x.Id == id);
+            var orderItem = await _queryRepository.Table<OrderItem>().FirstAsync(x => x.Id == id);
 
             var orderItemModel = new OrderItemModel()
             {
@@ -61,12 +61,10 @@ namespace Hydra.Sale.Api.Services
                 OrderId = orderItem.OrderId,
                 ProductId = orderItem.ProductId,
                 Quantity = orderItem.Quantity,
-                UnitPriceTax = orderItem.UnitPriceTax,
-                PriceTax = orderItem.PriceTax,
-                DiscountAmountTax = orderItem.DiscountAmountTax,
+                DiscountAmount = orderItem.DiscountAmount,
                 UnitPrice = orderItem.UnitPrice,
-                //ShipmentItems = orderItem.ShipmentItems,
-
+                TotalPrice = orderItem.TotalPrice,
+                TotalPriceTax = orderItem.TotalPriceTax
             };
             result.Data = orderItemModel;
 
@@ -96,12 +94,10 @@ namespace Hydra.Sale.Api.Services
                     OrderId = orderItemModel.OrderId,
                     ProductId = orderItemModel.ProductId,
                     Quantity = orderItemModel.Quantity,
-                    UnitPriceTax = orderItemModel.UnitPriceTax,
-                    PriceTax = orderItemModel.PriceTax,
-                    DiscountAmountTax = orderItemModel.DiscountAmountTax,
+                    DiscountAmount = orderItemModel.DiscountAmount,
                     UnitPrice = orderItemModel.UnitPrice,
-                    //ShipmentItems = orderItemModel.ShipmentItems,
-
+                    TotalPrice = orderItemModel.TotalPrice,
+                    TotalPriceTax = orderItemModel.TotalPriceTax
                 };
 
                 await _commandRepository.InsertAsync(orderItem);
@@ -131,7 +127,7 @@ namespace Hydra.Sale.Api.Services
             var result = new Result<OrderItemModel>();
             try
             {
-                var orderItem = await _queryRepository.Table<OrderItem>().FirstAsync(x => x.Id == orderItemModel.Id);
+                var orderItem = await _queryRepository.Table<OrderItem>().FirstOrDefaultAsync(x => x.Id == orderItemModel.Id);
                 if (orderItem is null)
                 {
                     result.Status = ResultStatusEnum.NotFound;
@@ -149,11 +145,10 @@ namespace Hydra.Sale.Api.Services
                 orderItem.OrderId = orderItemModel.OrderId;
                 orderItem.ProductId = orderItemModel.ProductId;
                 orderItem.Quantity = orderItemModel.Quantity;
-                orderItem.UnitPriceTax = orderItemModel.UnitPriceTax;
-                orderItem.PriceTax = orderItemModel.PriceTax;
-                orderItem.DiscountAmountTax = orderItemModel.DiscountAmountTax;
+                orderItem.DiscountAmount = orderItemModel.DiscountAmount;
                 orderItem.UnitPrice = orderItemModel.UnitPrice;
-                //orderItem.ShipmentItems = orderItemModel.ShipmentItems;
+                orderItem.TotalPrice = orderItemModel.TotalPrice;
+                orderItem.TotalPriceTax = orderItemModel.TotalPriceTax;
 
                 _commandRepository.UpdateAsync(orderItem);
                 await _commandRepository.SaveChangesAsync();

@@ -86,5 +86,23 @@ namespace Hydra.Sale.Api.Handler
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="shippingMethodService"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetAllShippingMethods(IShippingMethodService shippingMethodService)
+        {
+            try
+            {
+                var result = await shippingMethodService.GetAllShippingMethods();
+                return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
+        }
+
     }
 }

@@ -16,12 +16,18 @@ namespace Hydra.Sale.Core.EntityConfiguration
 
             entity.Property(e => e.CreatedOnUtc).HasPrecision(6);
             entity.Property(e => e.CustomerIp).HasMaxLength(50);
-            entity.Property(e => e.OrderDiscount).HasColumnType("decimal(18, 4)");
-            entity.Property(e => e.OrderShippingTax).HasColumnType("decimal(18, 4)");
-            entity.Property(e => e.OrderTax).HasColumnType("decimal(18, 4)");
-            entity.Property(e => e.OrderTotal).HasColumnType("decimal(18, 4)");
+            entity.Property(e => e.ShippingTax).HasColumnType("decimal(18, 4)");
+            entity.Property(e => e.ShippingAmount).HasColumnType("decimal(18, 4)");
+            entity.Property(e => e.ShippingAmountTax).HasColumnType("decimal(18, 4)");
+            entity.Property(e => e.TaxAmount).HasColumnType("decimal(18, 4)");
+            entity.Property(e => e.DiscountAmount).HasColumnType("decimal(18, 4)");
+            entity.Property(e => e.TotalAmount).HasColumnType("decimal(18, 4)");
+            entity.Property(e => e.FinalPrice).HasColumnType("decimal(18, 4)");
             entity.Property(e => e.PaidDateUtc).HasPrecision(6);
             entity.Property(e => e.RefundedAmount).HasColumnType("decimal(18, 4)");
+
+            entity.HasOne(d => d.Payment).WithMany(p => p.Orders)
+                .HasForeignKey(d => d.PaymentId);
 
             entity.HasOne(d => d.Address).WithMany(p => p.Orders)
             .HasForeignKey(d => d.AddressId)

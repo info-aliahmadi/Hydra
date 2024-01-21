@@ -1,4 +1,4 @@
-﻿using Hydra.Sale.Core.Domain;
+﻿using Hydra.Sale.Core.Models.Enums;
 using Microsoft.OpenApi.Extensions;
 
 namespace Hydra.Sale.Core.Models
@@ -95,41 +95,13 @@ namespace Hydra.Sale.Core.Models
         /// 
         /// </summary>
         /// <returns></returns>
-        public string? UserCurrencyTitle { get; set; }
+        public string? UserCurrency { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public decimal OrderShippingTax { get; set; }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public decimal OrderTax { get; set; }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public decimal OrderDiscount { get; set; }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public decimal OrderTotal { get; set; }
-        
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
         public decimal FinalPrice { get; set; }
-
 
         /// <summary>
         /// 
@@ -137,13 +109,11 @@ namespace Hydra.Sale.Core.Models
         /// <returns></returns>
         public decimal RefundedAmount { get; set; }
 
-
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
         public string CustomerIp { get; set; }
-
 
         /// <summary>
         /// 
@@ -151,20 +121,17 @@ namespace Hydra.Sale.Core.Models
         /// <returns></returns>
         public bool AllowStoringCreditCardNumber { get; set; }
 
-
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
         public DateTime? PaidDateUtc { get; set; }
 
-
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
         public bool Deleted { get; set; }
-
 
         /// <summary>
         /// 
@@ -176,46 +143,41 @@ namespace Hydra.Sale.Core.Models
         /// 
         /// </summary>
         public string CreatedOnUtcString => CreatedOnUtc.ToString("g");
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public int OrderDiscounts { get; set; }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public int OrderItems { get; set; }
-
-
+        
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
         public List<string> OrderNotes { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal ShippingTax { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <returns></returns>
-        public int Payments { get; set; }
-
+        public decimal ShippingAmount { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <returns></returns>
-        public int Shipments { get; set; }
+        public decimal ShippingAmountTax { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal TaxAmount { get; set; }
 
-        //userName
-        //    orderStatusId
-        //paymentStatusTitle
-        //    createdOnUtcString
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal DiscountAmount { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal TotalAmount { get; set; }
     }
 }

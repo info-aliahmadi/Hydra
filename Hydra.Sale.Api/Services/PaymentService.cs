@@ -1,11 +1,15 @@
-﻿using Hydra.Infrastructure.Data.Extension;
+﻿using System.Linq.Dynamic.Core;
+using Hydra.Infrastructure.Data.Extension;
 using Hydra.Kernel.Extensions;
 using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;
 using Hydra.Sale.Core.Domain;
 using Hydra.Sale.Core.Interfaces;
 using Hydra.Sale.Core.Models;
+using Hydra.Sale.Core.Models.Enums;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Math.EC.Rfc7748;
+using static Twilio.Rest.Proxy.V1.Service.SessionResource;
 
 namespace Hydra.Sale.Api.Services
 {
@@ -223,5 +227,23 @@ namespace Hydra.Sale.Api.Services
             return result;
         }
 
+        public async Task<Result<List<PaymentStatusModel>>> GetAllPaymentStatus()
+        {
+            return await Task.Run(() =>
+            {
+                var result = new Result<List<PaymentStatusModel>>();
+
+                var paymentStatus = Enum.GetValues(typeof(PaymentStatus)).Cast<Enum>()
+                    .Select(x => new PaymentStatusModel
+                    {
+                        Id = Convert.ToInt32(x),
+                        Title = x.ToString()
+                    }).ToList();
+
+                result.Data = paymentStatus;
+
+                return result;
+            });
+        }
     }
 }

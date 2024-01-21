@@ -30,6 +30,28 @@ namespace Hydra.Sale.Api.Handler
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orderService"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetAllOrderStatus(IOrderService orderService)
+        {
+            var result = await orderService.GetAllOrderStatus();
+            return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+        }       
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orderService"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetAllShippingStatus(IOrderService orderService)
+        {
+            var result = await orderService.GetAllShippingStatus();
+            return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+        }
+
+        /// <summary>
         ///
         /// </summary>
         /// <param name="orderService"></param>

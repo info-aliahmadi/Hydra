@@ -6,7 +6,12 @@ namespace Hydra.Sale.Core.Interfaces
 {
     public interface IPaymentService
     {
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        Task<Result<List<PaymentStatusModel>>> GetAllPaymentStatus();
+        
         /// <summary>
         ///
         /// </summary>

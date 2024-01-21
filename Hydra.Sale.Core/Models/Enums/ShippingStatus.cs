@@ -1,4 +1,4 @@
-﻿namespace Hydra.Sale.Core.Domain
+﻿namespace Hydra.Sale.Core.Models.Enums
 {
     /// <summary>
     /// Represents the shipping status enumeration
@@ -8,26 +8,26 @@
         /// <summary>
         /// Shipping not required
         /// </summary>
-        ShippingNotRequired = 0,
+        ShippingNotRequired = 1,
 
         /// <summary>
         /// Not yet shipped
         /// </summary>
-        NotYetShipped = 1,
+        NotYetShipped = 2,
 
         /// <summary>
         /// Partially shipped
         /// </summary>
-        PartiallyShipped = 2,
+        PartiallyShipped = 3,
 
         /// <summary>
         /// Shipped
         /// </summary>
-        Shipped = 3,
+        Shipped = 4,
 
         /// <summary>
         /// Delivered
         /// </summary>
-        Delivered = 4
+        Delivered = 5
     }
 }

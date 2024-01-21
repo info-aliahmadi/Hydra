@@ -5,6 +5,7 @@ using Hydra.Kernel.Models;
 using Hydra.Sale.Core.Domain;
 using Hydra.Sale.Core.Interfaces;
 using Hydra.Sale.Core.Models;
+using Hydra.Sale.Core.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hydra.Sale.Api.Services
@@ -179,5 +180,27 @@ namespace Hydra.Sale.Api.Services
             return result;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Result<List<ShippingMethodPairModel>>> GetAllShippingMethods()
+        {
+            return await Task.Run(() =>
+            {
+                var result = new Result<List<ShippingMethodPairModel>>();
+
+                var paymentStatus = _queryRepository.Table<ShippingMethod>()
+                    .Select(x => new ShippingMethodPairModel
+                    {
+                        Id = x.Id,
+                        Title = x.Description
+                    }).ToList();
+
+                result.Data = paymentStatus;
+
+                return result;
+            });
+        }
     }
 }

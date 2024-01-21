@@ -1,6 +1,7 @@
 ﻿using Hydra.Kernel.Extensions;
 using Hydra.Kernel.Models;
 using Hydra.Sale.Core.Models;
+using Hydra.Sale.Core.Models.Enums;
 
 namespace Hydra.Sale.Core.Interfaces
 {
@@ -42,5 +43,10 @@ namespace Hydra.Sale.Core.Interfaces
         /// <returns></returns>
         Task<Result> Delete(int id);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        Task<Result<List<ShippingMethodPairModel>>> GetAllShippingMethods();
     }
 }

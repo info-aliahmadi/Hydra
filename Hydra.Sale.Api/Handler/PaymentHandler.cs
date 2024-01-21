@@ -42,6 +42,17 @@ namespace Hydra.Sale.Api.Handler
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="paymentService"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetAllPaymentStatus(IPaymentService paymentService)
+        {
+            var result = await paymentService.GetAllPaymentStatus();
+            return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+        }
+
+        /// <summary>
         ///
         /// </summary>
         /// <param name="userClaim"></param>

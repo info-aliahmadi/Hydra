@@ -42,5 +42,16 @@ namespace Hydra.Sale.Core.Interfaces
         /// <returns></returns>
         Task<Result> Delete(int id);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        Task<Result<List<OrderStatusModel>>> GetAllOrderStatus();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        Task<Result<List<ShippingStatusModel>>> GetAllShippingStatus();
     }
 }

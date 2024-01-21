@@ -34,6 +34,7 @@ public class Discount : BaseEntity<int>
 
     public bool IsActive { get; set; }
 
+    public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     public virtual ICollection<OrderDiscount> OrderDiscounts { get; set; } = new List<OrderDiscount>();
 
     public virtual ICollection<Category> Categories { get; set; } = new List<Category>();

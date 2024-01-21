@@ -1,4 +1,4 @@
-﻿namespace Hydra.Sale.Core.Domain
+﻿namespace Hydra.Sale.Core.Models.Enums
 {
     /// <summary>
     /// Represents a payment status enumeration
@@ -8,31 +8,31 @@
         /// <summary>
         /// Pending
         /// </summary>
-        Pending = 0,
+        Pending = 1,
 
         /// <summary>
         /// Authorized
         /// </summary>
-        Authorized = 1,
+        Authorized = 2,
 
         /// <summary>
         /// Paid
         /// </summary>
-        Paid = 2,
+        Paid = 3,
 
         /// <summary>
         /// Partially Refunded
         /// </summary>
-        PartiallyRefunded = 3,
+        PartiallyRefunded = 4,
 
         /// <summary>
         /// Refunded
         /// </summary>
-        Refunded = 4,
+        Refunded = 5,
 
         /// <summary>
         /// Voided
         /// </summary>
-        Voided = 5
+        Voided = 6
     }
 }
