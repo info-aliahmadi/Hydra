@@ -131,9 +131,11 @@ namespace Hydra.Sale.Api.Endpoints
 
             endpoints.MapPost(API_SCHEMA + "/GetProductList", ProductHandler.GetList).RequirePermission("SALE.GET_PRODUCT_LIST");
             endpoints.MapGet(API_SCHEMA + "/GetProductById", ProductHandler.GetProductById).RequirePermission("SALE.GET_PRODUCT_BY_ID");
+            endpoints.MapGet(API_SCHEMA + "/GetProductsByInput", ProductHandler.GetProductsByInput).RequirePermission("SALE.GET_PRODUCTS_BY_INPUT");
             endpoints.MapPost(API_SCHEMA + "/AddProduct", ProductHandler.AddProduct).RequirePermission("SALE.ADD_PRODUCT");
             endpoints.MapPost(API_SCHEMA + "/UpdateProduct", ProductHandler.UpdateProduct).RequirePermission("SALE.UPDATE_PRODUCT");
             endpoints.MapPost(API_SCHEMA + "/DeleteProduct", ProductHandler.DeleteProduct).RequirePermission("SALE.DELETE_PRODUCT");
+            endpoints.MapPost(API_SCHEMA + "/RemoveProduct", ProductHandler.RemoveProduct).RequirePermission("SALE.REMOVE_PRODUCT");
 
             endpoints.MapPost(API_SCHEMA + "/GetProductCategoryList", ProductCategoryHandler.GetList).RequirePermission("");
             endpoints.MapGet(API_SCHEMA + "/GetProductCategoryById", ProductCategoryHandler.GetProductCategoryById).RequirePermission("");

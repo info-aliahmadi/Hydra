@@ -44,12 +44,26 @@ namespace Hydra.Sale.Api.Handler
         /// <summary>
         ///
         /// </summary>
+        /// <param name="productService"></param>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetProductsByInput(IProductService productService, string input)
+        {
+            var result = await productService.GetProductsByInput(input);
+            return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
         /// <param name="userClaim"></param>
         /// <param name="productService"></param>
         /// <param name="productModel"></param>
         /// <returns></returns>
         public static async Task<IResult> AddProduct(ClaimsPrincipal userClaim, IProductService productService, [FromBody] ProductModel productModel)
         {
+            var userId = int.Parse(userClaim?.FindFirst("identity")?.Value);
+            productModel.CreateUserId = userId;
             var result = await productService.Add(productModel);
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
@@ -63,6 +77,9 @@ namespace Hydra.Sale.Api.Handler
         /// <returns></returns>
         public static async Task<IResult> UpdateProduct(ClaimsPrincipal userClaim, IProductService productService, [FromBody] ProductModel productModel)
         {
+            var userId = int.Parse(userClaim?.FindFirst("identity")?.Value);
+            productModel.UpdateUserId = userId;
+
             var result = await productService.Update(productModel);
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
@@ -78,6 +95,24 @@ namespace Hydra.Sale.Api.Handler
             try
             {
                 var result = await productService.Delete(productId);
+                return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
+        }
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="productService"></param>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        public static async Task<IResult> RemoveProduct(IProductService productService, int productId)
+        {
+            try
+            {
+                var result = await productService.Remove(productId);
                 return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
             }
             catch (Exception e)

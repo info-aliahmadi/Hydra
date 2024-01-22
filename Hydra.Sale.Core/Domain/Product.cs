@@ -7,17 +7,17 @@ public class Product : BaseEntity<int>
 {
     public string Name { get; set; }
 
-    public string MetaKeywords { get; set; }
+    public string? MetaKeywords { get; set; }
 
-    public string MetaTitle { get; set; }
+    public string? MetaTitle { get; set; }
 
-    public string ShortDescription { get; set; }
+    public string? ShortDescription { get; set; }
 
     public string FullDescription { get; set; }
 
-    public string AdminComment { get; set; }
+    public string? AdminComment { get; set; }
 
-    public string MetaDescription { get; set; }
+    public string? MetaDescription { get; set; }
 
     public int DeliveryDateId { get; set; }
 
@@ -27,7 +27,7 @@ public class Product : BaseEntity<int>
 
     public int MinStockQuantity { get; set; }
 
-    public int NotifyAdminForQuantityBelow { get; set; }
+    public bool NotifyAdminForQuantityBelow { get; set; }
 
     public int OrderMinimumQuantity { get; set; }
 
@@ -127,5 +127,5 @@ public class Product : BaseEntity<int>
 
     public virtual ICollection<Discount> Discounts { get; set; } = new List<Discount>();
 
-    public virtual ICollection<ProductTag> ProductTags { get; set; } = new List<ProductTag>();
+    public virtual List<ProductTag> ProductTags { get; set; } = new();
 }

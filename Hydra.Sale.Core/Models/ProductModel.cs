@@ -46,7 +46,12 @@ namespace Hydra.Sale.Core.Models
         /// 
         /// </summary>
         /// <returns></returns>
-        public FileUploadModel PreviewImage { get; set; }
+        public int? PreviewImageId { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public FileUploadModel? PreviewImage { get; set; }
 
         /// <summary>
         /// 
@@ -120,7 +125,7 @@ namespace Hydra.Sale.Core.Models
         /// 
         /// </summary>
         /// <returns></returns>
-        public int NotifyAdminForQuantityBelow { get; set; }
+        public bool NotifyAdminForQuantityBelow { get; set; }
 
 
         /// <summary>
@@ -389,12 +394,6 @@ namespace Hydra.Sale.Core.Models
         /// <returns></returns>
         public List<int> PictureIds { get; set; } = new List<int>();
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public List<int> DiscountIds { get; set; } = new List<int>();
-
 
         /// <summary>
         /// 
@@ -414,7 +413,7 @@ namespace Hydra.Sale.Core.Models
         /// 
         /// </summary>
         /// <returns></returns>
-        public List<int> ProductTagIds { get; set; } = new List<int>();
+        public List<string> ProductTags { get; set; } = new List<string>();
 
 
     }

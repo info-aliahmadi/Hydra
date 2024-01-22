@@ -22,6 +22,13 @@ namespace Hydra.Sale.Core.Interfaces
         Task<Result<ProductModel>> GetById(int id);
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        Task<Result<List<ProductModel>>> GetProductsByInput(string input);
+
+        /// <summary>
         ///
         /// </summary>
         /// <param name="productModel"></param>
@@ -41,6 +48,13 @@ namespace Hydra.Sale.Core.Interfaces
         /// <param name="id"></param>
         /// <returns></returns>
         Task<Result> Delete(int id);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<Result> Remove(int id);
 
     }
 }

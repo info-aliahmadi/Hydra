@@ -130,6 +130,31 @@ namespace Hydra.Sale.Api.Services
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tagModel"></param>
+        /// <returns></returns>
+        public async Task<Result> Add(string[] tags)
+        {
+            var result = new Result();
+
+            var existedTags = _queryRepository.Table<ProductTag>().AsNoTracking().Where(x => tags.Contains(x.Name)).ToList();
+
+            var newTags = tags.Where(x => !existedTags.Select(s => s.Name).ToArray().Contains(x)).Select(tagName => new ProductTag()
+            {
+                Name = tagName
+            });
+
+            foreach (var tag in newTags)
+            {
+                await _commandRepository.InsertAsync(tag);
+            }
+
+            await _commandRepository.SaveChangesAsync();
+            _commandRepository.ResetContextState();
+            return result;
+        }
+        /// <summary>
         ///
         /// </summary>
         /// <param name="productTagModel"></param>

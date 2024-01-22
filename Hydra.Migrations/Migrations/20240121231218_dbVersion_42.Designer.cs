@@ -4,6 +4,7 @@ using Hydra.Migrations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Hydra.Migrations.Migrations
 {
     [DbContext(typeof(MigrationContext))]
-    partial class MigrationContextModelSnapshot : ModelSnapshot
+    [Migration("20240121231218_dbVersion_42")]
+    partial class dbVersion_42
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5776,8 +5779,8 @@ namespace Hydra.Migrations.Migrations
                     b.Property<bool>("NotReturnable")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("NotifyAdminForQuantityBelow")
-                        .HasColumnType("bit");
+                    b.Property<int>("NotifyAdminForQuantityBelow")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("OldPrice")
                         .HasColumnType("decimal(18, 4)");

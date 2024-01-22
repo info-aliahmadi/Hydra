@@ -1,4 +1,5 @@
 ﻿using Hydra.Infrastructure.Data.Extension;
+using Hydra.Infrastructure.Security.Domain;
 using Hydra.Kernel.Extensions;
 using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;
@@ -13,10 +14,12 @@ namespace Hydra.Sale.Api.Services
     {
         private readonly IQueryRepository _queryRepository;
         private readonly ICommandRepository _commandRepository;
-        public ProductService(IQueryRepository queryRepository, ICommandRepository commandRepository)
+        private readonly IProductTagService _productTagService;
+        public ProductService(IQueryRepository queryRepository, ICommandRepository commandRepository, IProductTagService productTagService)
         {
             _queryRepository = queryRepository;
             _commandRepository = commandRepository;
+            _productTagService = productTagService;
         }
 
         /// <summary>
@@ -179,6 +182,25 @@ namespace Hydra.Sale.Api.Services
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Result<List<ProductModel>>> GetProductsByInput(string input)
+        {
+            var result = new Result<List<ProductModel>>();
+
+            var list = await _queryRepository.Table<Product>().Include(x => x.ProductPictures).ThenInclude(x => x.Picture).Where(x => x.Name.Contains(input) || x.Id.ToString() == input).Take(10).Select(x => new ProductModel()
+            {
+                Id = x.Id,
+                Name = x.Name,
+                PreviewImageId = x.ProductPictures.OrderBy(v => v.DisplayOrder).FirstOrDefault().PictureId,
+            }).ToListAsync();
+
+            result.Data = list;
+
+            return result;
+        }
+        /// <summary>
         ///
         /// </summary>
         /// <param name="productModel"></param>
@@ -188,18 +210,11 @@ namespace Hydra.Sale.Api.Services
             var result = new Result<ProductModel>();
             try
             {
-                bool isExist = await _queryRepository.Table<Product>().AnyAsync(x => x.Id == productModel.Id);
-                if (isExist)
-                {
-                    result.Status = ResultStatusEnum.ItsDuplicate;
-                    result.Message = "The Id already exist";
-                    result.Errors.Add(new Error(nameof(productModel.Id), "The Id already exist"));
-                    return result;
-                }
+                var currentDateTime = DateTime.UtcNow;
                 var product = new Product()
                 {
                     CreateUserId = productModel.CreateUserId,
-                    UpdateUserId = productModel.UpdateUserId,
+                    UpdateUserId = null,
                     Name = productModel.Name,
                     MetaKeywords = productModel.MetaKeywords,
                     MetaTitle = productModel.MetaTitle,
@@ -243,10 +258,9 @@ namespace Hydra.Sale.Api.Services
                     AvailableForPreOrder = productModel.AvailableForPreOrder,
                     CallForPrice = productModel.CallForPrice,
                     Published = productModel.Published,
-                    Deleted = productModel.Deleted,
-                    CreatedOnUtc = productModel.CreatedOnUtc,
-                    UpdatedOnUtc = productModel.UpdatedOnUtc,
-                    //OrderItems = productModel.OrderItems,
+                    Deleted = false,
+                    CreatedOnUtc = currentDateTime,
+                    UpdatedOnUtc = null
                     //ProductCategories = productModel.ProductCategories,
                     //ProductInventories = productModel.ProductInventories,
                     //ProductManufacturers = productModel.ProductManufacturers,
@@ -263,7 +277,60 @@ namespace Hydra.Sale.Api.Services
                 await _commandRepository.InsertAsync(product);
                 await _commandRepository.SaveChangesAsync();
 
-                productModel.Id = product.Id;
+                for (int i = 0; i < productModel.CategoryIds.Count; i++)
+                {
+                    await _commandRepository.InsertAsync(new ProductCategory()
+                    {
+                        ProductId = product.Id,
+                        CategoryId = productModel.CategoryIds[i],
+                        DisplayOrder = i
+                    });
+                }
+
+                for (int i = 0; i < productModel.ManufacturerIds.Count; i++)
+                {
+                    await _commandRepository.InsertAsync(new ProductManufacturer()
+                    {
+                        ProductId = product.Id,
+                        ManufacturerId = productModel.ManufacturerIds[i],
+                        DisplayOrder = i
+                    });
+                }
+
+                for (int i = 0; i < productModel.PictureIds.Count; i++)
+                {
+                    await _commandRepository.InsertAsync(new ProductPicture()
+                    {
+                        ProductId = product.Id,
+                        PictureId = productModel.PictureIds[i],
+                        DisplayOrder = i
+                    });
+                }
+
+                for (int i = 0; i < productModel.RelatedProductIds.Count; i++)
+                {
+                    await _commandRepository.InsertAsync(new RelatedProduct()
+                    {
+                        ProductId1 = product.Id,
+                        ProductId2 = productModel.RelatedProductIds[i],
+                        DisplayOrder = i
+                    });
+                }
+
+                await _commandRepository.InsertAsync(new ProductInventory()
+                {
+                    ProductId = product.Id,
+                    StockQuantity = productModel.StockQuantity,
+                    ReservedQuantity = 0
+                });
+
+                await _commandRepository.SaveChangesAsync();
+
+                await _productTagService.Add(productModel.ProductTags.ToArray());
+
+                product.ProductTags = _queryRepository.Table<ProductTag>().Where(x => productModel.ProductTags.Contains(x.Name)).ToList();
+
+                await _commandRepository.SaveChangesAsync();
 
                 result.Data = productModel;
 
@@ -287,22 +354,31 @@ namespace Hydra.Sale.Api.Services
             var result = new Result<ProductModel>();
             try
             {
-                var product = await _queryRepository.Table<Product>().FirstAsync(x => x.Id == productModel.Id);
+                var product = await _queryRepository.Table<Product>().Include(x => x.ProductTags).FirstAsync(x => x.Id == productModel.Id);
                 if (product is null)
                 {
                     result.Status = ResultStatusEnum.NotFound;
                     result.Message = "The Product not found";
                     return result;
                 }
-                bool isExist = await _queryRepository.Table<Product>().AnyAsync(x => x.Id != productModel.Id);
-                if (isExist)
+                //bool isExist = await _queryRepository.Table<Product>().AnyAsync(x => x.Id != productModel.Id);
+                //if (isExist)
+                //{
+                //    result.Status = ResultStatusEnum.ItsDuplicate;
+                //    result.Message = "The Id already exist";
+                //    result.Errors.Add(new Error(nameof(productModel.Id), "The Id already exist"));
+                //    return result;
+                //}
+
+                var currentDateTime = DateTime.UtcNow;
+
+                if (productModel.StockQuantity != product.StockQuantity)
                 {
-                    result.Status = ResultStatusEnum.ItsDuplicate;
-                    result.Message = "The Id already exist";
-                    result.Errors.Add(new Error(nameof(productModel.Id), "The Id already exist"));
-                    return result;
+                    var productInventory = await _queryRepository.Table<ProductInventory>().FirstAsync(x => x.Id == productModel.Id);
+                    productInventory.StockQuantity = productModel.StockQuantity;
+                    _commandRepository.UpdateAsync(productInventory);
                 }
-                product.CreateUserId = productModel.CreateUserId;
+
                 product.UpdateUserId = productModel.UpdateUserId;
                 product.Name = productModel.Name;
                 product.MetaKeywords = productModel.MetaKeywords;
@@ -347,23 +423,36 @@ namespace Hydra.Sale.Api.Services
                 product.AvailableForPreOrder = productModel.AvailableForPreOrder;
                 product.CallForPrice = productModel.CallForPrice;
                 product.Published = productModel.Published;
-                product.Deleted = productModel.Deleted;
-                product.CreatedOnUtc = productModel.CreatedOnUtc;
-                product.UpdatedOnUtc = productModel.UpdatedOnUtc;
-                //product.OrderItems = productModel.OrderItems;
-                //product.ProductCategories = productModel.ProductCategories;
-                //product.ProductInventories = productModel.ProductInventories;
-                //product.ProductManufacturers = productModel.ProductManufacturers;
-                //product.ProductPictures = productModel.ProductPictures;
-                //product.ProductReviews = productModel.ProductReviews;
-                //product.RelatedProductProductId1Navigations = productModel.RelatedProductProductId1Navigations;
-                //product.RelatedProductProductId2Navigations = productModel.RelatedProductProductId2Navigations;
-                //product.ShoppingCartItems = productModel.ShoppingCartItems;
-                //product.Discounts = productModel.Discounts;
-                //product.ProductTags = productModel.ProductTags;
+                product.UpdatedOnUtc = currentDateTime;
+
 
                 _commandRepository.UpdateAsync(product);
+
+                await UpdateProductCategory(product.Id, productModel.CategoryIds.ToArray());
+
+                await UpdateProductManufacturer(product.Id, productModel.ManufacturerIds.ToArray());
+
+                await UpdateProductPicture(product.Id, productModel.PictureIds.ToArray());
+
+                await UpdateRelatedProducts(product.Id, productModel.RelatedProductIds.ToArray());
+
                 await _commandRepository.SaveChangesAsync();
+
+                var currentTags = product.ProductTags.Select(x => x.Name).ToArray();
+
+                var newTags = productModel.ProductTags.ToArray();
+
+                if (currentTags != newTags)
+                {
+                    await _productTagService.Add(newTags);
+
+                    product.ProductTags.Clear();
+
+                    await _commandRepository.SaveChangesAsync();
+
+                    product.ProductTags = _queryRepository.Table<ProductTag>().Where(x => productModel.ProductTags.Contains(x.Name)).ToList();
+                    await _commandRepository.SaveChangesAsync();
+                }
 
                 result.Data = productModel;
 
@@ -378,11 +467,192 @@ namespace Hydra.Sale.Api.Services
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="roleIds"></param>
+        /// <returns></returns>
+        private async Task<Result> UpdateProductCategory(int productId, int[] newCategories)
+        {
+            var result = new Result();
+            try
+            {
+                var productCategories = _queryRepository.Table<ProductCategory>().Where(x => x.ProductId == productId).ToList();
+
+                var currentCategories = productCategories.Select(x => x.CategoryId).ToArray();
+
+                if (newCategories != currentCategories)
+                {
+                    foreach (var cat in productCategories)
+                    {
+                        _commandRepository.DeleteAsync(cat);
+                    }
+                    foreach (var id in newCategories)
+                    {
+                        await _commandRepository.InsertAsync(new ProductCategory()
+                        {
+                            ProductId = productId,
+                            CategoryId = id
+                        });
+                    }
+                }
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                result.Message = e.Message;
+                return result;
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="roleIds"></param>
+        /// <returns></returns>
+        private async Task<Result> UpdateProductManufacturer(int productId, int[] newManufacturers)
+        {
+            var result = new Result();
+            try
+            {
+                var productManufacturers = _queryRepository.Table<ProductManufacturer>().Where(x => x.ProductId == productId).ToList();
+
+                var currentManufacturers = productManufacturers.Select(x => x.ManufacturerId).ToArray();
+
+                if (newManufacturers != currentManufacturers)
+                {
+                    foreach (var cat in productManufacturers)
+                    {
+                        _commandRepository.DeleteAsync(cat);
+                    }
+                    foreach (var id in newManufacturers)
+                    {
+                        await _commandRepository.InsertAsync(new ProductManufacturer()
+                        {
+                            ProductId = productId,
+                            ManufacturerId = id
+                        });
+                    }
+                }
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                result.Message = e.Message;
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="roleIds"></param>
+        /// <returns></returns>
+        private async Task<Result> UpdateProductPicture(int productId, int[] newPictures)
+        {
+            var result = new Result();
+            try
+            {
+                var productPictures = _queryRepository.Table<ProductPicture>().Where(x => x.ProductId == productId).ToList();
+
+                var currentPictures = productPictures.Select(x => x.PictureId).ToArray();
+
+                if (newPictures != currentPictures)
+                {
+                    foreach (var cat in productPictures)
+                    {
+                        _commandRepository.DeleteAsync(cat);
+                    }
+                    foreach (var id in newPictures)
+                    {
+                        await _commandRepository.InsertAsync(new ProductPicture()
+                        {
+                            ProductId = productId,
+                            PictureId = id
+                        });
+                    }
+                }
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                result.Message = e.Message;
+                return result;
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="roleIds"></param>
+        /// <returns></returns>
+        private async Task<Result> UpdateRelatedProducts(int productId, int[] newRelateds)
+        {
+            var result = new Result();
+            try
+            {
+                var productRelateds = _queryRepository.Table<RelatedProduct>().Where(x => x.ProductId1 == productId).ToList();
+
+                var currentRelateds = productRelateds.Select(x => x.ProductId2).ToArray();
+
+                if (newRelateds != currentRelateds)
+                {
+                    foreach (var cat in productRelateds)
+                    {
+                        _commandRepository.DeleteAsync(cat);
+                    }
+                    foreach (var id in newRelateds)
+                    {
+                        await _commandRepository.InsertAsync(new RelatedProduct()
+                        {
+                            ProductId1 = productId,
+                            ProductId2 = id
+                        });
+                    }
+                }
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                result.Message = e.Message;
+                return result;
+            }
+        }
+
+
+        /// <summary>
         ///
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         public async Task<Result> Delete(int id)
+        {
+            var result = new Result();
+            var product = await _queryRepository.Table<Product>().FirstOrDefaultAsync(x => x.Id == id);
+            if (product is null)
+            {
+                result.Status = ResultStatusEnum.NotFound;
+                result.Message = "The Product not found";
+                return result;
+            }
+            product.Deleted = true;
+            _commandRepository.UpdateAsync(product);
+            await _commandRepository.SaveChangesAsync();
+
+            return result;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Result> Remove(int id)
         {
             var result = new Result();
             var product = await _queryRepository.Table<Product>().FirstOrDefaultAsync(x => x.Id == id);
