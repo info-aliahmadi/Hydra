@@ -22,9 +22,9 @@ namespace Hydra.Sale.Api.Services
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns></returns>
-        public async Task<Result<List<OrderItemModel>>> GetListByOrderId(int orderId)
+        public async Task<Result<Tuple<List<OrderItemModel>, SumOrderItemsModel>>> GetListByOrderId(int orderId)
         {
-            var result = new Result<List<OrderItemModel>>();
+            var result = new Result<Tuple<List<OrderItemModel>, SumOrderItemsModel>>();
             var list = await (from orderItem in _queryRepository.Table<OrderItem>()
                               .Include(x => x.Product)
                               where orderItem.OrderId == orderId
@@ -41,8 +41,32 @@ namespace Hydra.Sale.Api.Services
                                   TotalPriceTax = orderItem.TotalPriceTax
                               }).OrderByDescending(x => x.Id).ToListAsync();
 
-            result.Data = list;
+            var sumAmountItems = await SumAmountOrderItemsByOrderId(orderId);
+            
+            result.Data = new Tuple<List<OrderItemModel>, SumOrderItemsModel>(list, sumAmountItems);
+
             return result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public async Task<SumOrderItemsModel> SumAmountOrderItemsByOrderId(int orderId)
+        {
+            var model = await (from order in _queryRepository.Table<Order>()
+                    .Include(x => x.OrderItems)
+                               select new SumOrderItemsModel()
+                               {
+                                   OrderId = order.Id,
+                                   UnitPrice = order.OrderItems.Sum(c => c.UnitPrice),
+                                   DiscountAmount = order.OrderItems.Sum(c => c.DiscountAmount),
+                                   TotalPrice = order.OrderItems.Sum(c => c.TotalPrice),
+                                   TotalPriceTax = order.OrderItems.Sum(c => c.TotalPriceTax),
+                               }).FirstAsync(x => x.OrderId == orderId);
+
+            return model;
         }
 
         /// <summary>
