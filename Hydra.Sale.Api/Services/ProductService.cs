@@ -31,7 +31,7 @@ namespace Hydra.Sale.Api.Services
         {
             var result = new Result<PaginatedList<ProductModel>>();
 
-            var list = await (from product in _queryRepository.Table<Product>()
+            var list = await (from product in _queryRepository.Table<Product>().Where(x=>!x.Deleted)
                               select new ProductModel()
                               {
                                   Id = product.Id,
@@ -40,7 +40,6 @@ namespace Hydra.Sale.Api.Services
                                   Name = product.Name,
                                   MetaKeywords = product.MetaKeywords,
                                   MetaTitle = product.MetaTitle,
-                                  ShortDescription = product.ShortDescription,
                                   FullDescription = product.FullDescription,
                                   AdminComment = product.AdminComment,
                                   MetaDescription = product.MetaDescription,
@@ -114,7 +113,7 @@ namespace Hydra.Sale.Api.Services
                 .Include(x => x.ProductCategories)
                 .Include(x => x.ProductManufacturers)
                 .Include(x => x.ProductPictures)
-                //.Include(x => x.ProductTags)
+                .Include(x => x.ProductProductTags).ThenInclude(x => x.ProductTag)
                 .Include(x => x.RelatedProductProductId1Navigations).FirstOrDefaultAsync(x => x.Id == id);
 
             var productModel = new ProductModel()
@@ -171,13 +170,8 @@ namespace Hydra.Sale.Api.Services
                 CategoryIds = product.ProductCategories.Select(cat => cat.CategoryId).ToList(),
                 ManufacturerIds = product.ProductManufacturers.Select(cat => cat.ManufacturerId).ToList(),
                 PictureIds = product.ProductPictures.Select(cat => cat.PictureId).ToList(),
-                RelatedProductIds = product.RelatedProductProductId1Navigations.Select(cat => cat.ProductId1).ToList(),
-                //ProductTags = product.ProductTags.Select(cat => cat.Name).ToList()
-                //ProductReviews = product.ProductReviews,
-                //RelatedProductProductId2Navigations = product.RelatedProductProductId2Navigations,
-                //ShoppingCartItems = product.ShoppingCartItems,
-                //Discounts = product.Discounts,
-                //OrderItems = product.OrderItems,
+                RelatedProductIds = product.RelatedProductProductId1Navigations.Select(cat => cat.ProductId2).ToList(),
+                ProductTags = product.ProductProductTags.Select(x => x.ProductTag).Select(cat => cat.Name).ToList()
 
             };
             result.Data = productModel;
@@ -359,9 +353,16 @@ namespace Hydra.Sale.Api.Services
 
                 await _commandRepository.SaveChangesAsync();
 
-                //await _productTagService.Add(productModel.ProductTags.ToArray());
+                var tagsList = await _productTagService.Add(productModel.ProductTags.ToArray());
 
-                //product.ProductTags = _queryRepository.Table<ProductTag>().Where(x => productModel.ProductTags.Contains(x.Name)).ToList();
+                foreach (var tag in tagsList.Data)
+                {
+                    await _commandRepository.InsertAsync(new ProductProductTag()
+                    {
+                        ProductId = product.Id,
+                        ProductTagId = tag.Id
+                    });
+                }
 
                 await _commandRepository.SaveChangesAsync();
 
@@ -471,24 +472,13 @@ namespace Hydra.Sale.Api.Services
 
                 await _commandRepository.SaveChangesAsync();
 
-                //var currentTags = product.ProductTags.Select(x => x.Name).ToArray();
+                var newTags = productModel.ProductTags.ToArray();
 
-                //var newTags = productModel.ProductTags.ToArray();
+                var tagsList = await _productTagService.Add(newTags);
 
-                //if (!currentTags.SequenceEqual(newTags))
-                //{
-                //    await _productTagService.Add(newTags);
+                await UpdateProductTags(product.Id, tagsList.Data.Select(x=>x.Id).ToArray());
 
-                //    //change item state to modified
-
-                //    var tagItems = _queryRepository.Table<ProductTag>().Where(x => productModel.ProductTags.Contains(x.Name)).ToList();
-
-                //    foreach (var tag in tagItems)
-                //    {
-                //        product.ProductTags.(tag);
-                //    }
-                //    await _commandRepository.SaveChangesAsync();
-                //}
+                await _commandRepository.SaveChangesAsync();
 
                 result.Data = productModel;
 
@@ -663,6 +653,45 @@ namespace Hydra.Sale.Api.Services
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="roleIds"></param>
+        /// <returns></returns>
+        private async Task<Result> UpdateProductTags(int productId, int[] newTags)
+        {
+            var result = new Result();
+            try
+            {
+                var productTags = _queryRepository.Table<ProductProductTag>().Where(x => x.ProductId == productId).ToList();
+
+                var currentTags = productTags.Select(x => x.ProductTagId).ToArray();
+
+                if (!newTags.SequenceEqual(currentTags))
+                {
+                    foreach (var cat in productTags)
+                    {
+                        _commandRepository.DeleteAsync(cat);
+                    }
+                    foreach (var id in newTags)
+                    {
+                        await _commandRepository.InsertAsync(new ProductProductTag()
+                        {
+                            ProductId = productId,
+                            ProductTagId = id
+                        });
+                    }
+                }
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                result.Message = e.Message;
+                return result;
+            }
+        }
 
         /// <summary>
         ///

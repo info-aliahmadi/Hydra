@@ -39,7 +39,7 @@ namespace Hydra.Sale.Core.Interfaces
         /// </summary>
         /// <param name="tags"></param>
         /// <returns></returns>
-        Task<Result> Add(string[] tags);
+        Task<Result<List<ProductTagModel>>> Add(string[] tags);
 
         /// <summary>
         ///

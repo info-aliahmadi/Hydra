@@ -27,4 +27,6 @@ public class Currency : BaseEntity<int>
     public int RoundingTypeId { get; set; }
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+
+    public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 }

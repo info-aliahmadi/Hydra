@@ -38,6 +38,11 @@ namespace Hydra.Sale.Core.EntityConfiguration
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("FK_Product_DeliveryDate");
 
+            entity.HasOne(d => d.Currency).WithMany(p => p.Products)
+            .HasForeignKey(d => d.CurrencyId)
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Product_Currency");
+
             entity.HasOne(d => d.TaxCategory).WithMany(p => p.Products)
             .HasForeignKey(d => d.TaxCategoryId)
             .OnDelete(DeleteBehavior.Restrict)

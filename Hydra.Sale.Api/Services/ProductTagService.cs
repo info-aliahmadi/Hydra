@@ -5,6 +5,7 @@ using Hydra.Kernel.Models;
 using Hydra.Sale.Core.Domain;
 using Hydra.Sale.Core.Interfaces;
 using Hydra.Sale.Core.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hydra.Sale.Api.Services
@@ -134,9 +135,9 @@ namespace Hydra.Sale.Api.Services
         /// </summary>
         /// <param name="tagModel"></param>
         /// <returns></returns>
-        public async Task<Result> Add(string[] tags)
+        public async Task<Result<List<ProductTagModel>>> Add(string[] tags)
         {
-            var result = new Result();
+            var result = new Result<List<ProductTagModel>>();
 
             var existedTags = _queryRepository.Table<ProductTag>().AsNoTracking().Where(x => tags.Contains(x.Name)).ToList();
 
@@ -149,9 +150,18 @@ namespace Hydra.Sale.Api.Services
             {
                 await _commandRepository.InsertAsync(tag);
             }
-
             await _commandRepository.SaveChangesAsync();
+
             _commandRepository.ResetContextState();
+
+            var allTags = _queryRepository.Table<ProductTag>().AsNoTracking().Where(x => tags.Contains(x.Name)).Select(x=>new ProductTagModel()
+            {
+                Id = x.Id,
+                Name = x.Name,
+            }).ToList();
+
+            result.Data = allTags;
+
             return result;
         }
         /// <summary>
