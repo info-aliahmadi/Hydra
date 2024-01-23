@@ -37,9 +37,9 @@ public class Product : BaseEntity<int>
     
     public decimal OldPrice { get; set; }
 
-    public int? CurrencyId { get; set; }
+    public int CurrencyId { get; set; }
 
-    public virtual Currency? Currency { get; set; }
+    public virtual Currency Currency { get; set; }
 
     public decimal Weight { get; set; }
 
