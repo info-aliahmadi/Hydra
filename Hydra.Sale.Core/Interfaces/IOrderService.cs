@@ -36,6 +36,13 @@ namespace Hydra.Sale.Core.Interfaces
         Task<Result<OrderModel>> Update(OrderModel orderModel);
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orderModel"></param>
+        /// <returns></returns>
+        Task<Result<OrderModel>> UpdateState(OrderModel orderModel);
+
+        /// <summary>
         ///
         /// </summary>
         /// <param name="id"></param>

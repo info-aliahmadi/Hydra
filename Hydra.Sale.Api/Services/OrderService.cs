@@ -34,6 +34,14 @@ namespace Hydra.Sale.Api.Services
                     .Include(x => x.ShippingMethod)
                     .Include(x => x.OrderNotes)
                     .Include(x => x.UserCurrency)
+                              join payment in _queryRepository.Table<Payment>() on order.Id equals payment.OrderId
+                              into pays
+                              from pay in pays.DefaultIfEmpty()
+
+                              join shipment in _queryRepository.Table<Shipment>() on order.Id equals shipment.OrderId
+                              into ships
+                              from ship in ships.DefaultIfEmpty()
+
                               select new OrderModel()
                               {
                                   Id = order.Id,
@@ -62,6 +70,9 @@ namespace Hydra.Sale.Api.Services
                                   PaidDateUtc = order.PaidDateUtc,
                                   Deleted = order.Deleted,
                                   CreatedOnUtc = order.CreatedOnUtc,
+                                  TransactionTrackingCode = pay.TransactionTrackingCode,
+                                  PaymentTrackingCode = pay.PaymentTrackingCode,
+                                  TrackingNumber = ship.TrackingNumber,
                                   OrderNotes = order.OrderNotes.Select(x => x.Note).ToList()
 
                               }).OrderByDescending(x => x.Id).ToPaginatedListAsync(dataGrid);
@@ -237,6 +248,45 @@ namespace Hydra.Sale.Api.Services
         }
 
         /// <summary>
+        /// 
+        /// 
+        /// </summary>
+        /// <param name="orderModel"></param>
+        /// <returns></returns>
+        public async Task<Result<OrderModel>> UpdateState(OrderModel orderModel)
+        {
+            var result = new Result<OrderModel>();
+            try
+            {
+                var order = await _queryRepository.Table<Order>().FirstOrDefaultAsync(x => x.Id == orderModel.Id);
+                if (order is null)
+                {
+                    result.Status = ResultStatusEnum.NotFound;
+                    result.Message = "The Order not found";
+                    return result;
+                }
+
+                order.ShippingMethodId = orderModel.ShippingMethodId;
+                order.OrderStatusId = orderModel.OrderStatusId;
+                order.ShippingStatusId = orderModel.ShippingStatusId;
+                order.PaymentStatusId = orderModel.PaymentStatusId;
+
+                _commandRepository.UpdateAsync(order);
+                await _commandRepository.SaveChangesAsync();
+
+                result.Data = orderModel;
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.Message = e.Message;
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                return result;
+            }
+        }
+
+        /// <summary>
         ///
         /// </summary>
         /// <param name="id"></param>
@@ -275,8 +325,8 @@ namespace Hydra.Sale.Api.Services
 
                 return result;
             });
-        }        
-        
+        }
+
         public async Task<Result<List<ShippingStatusModel>>> GetAllShippingStatus()
         {
             return await Task.Run(() =>

@@ -65,7 +65,7 @@ namespace Hydra.Sale.Core.Models
         /// 
         /// </summary>
         /// <returns></returns>
-        public string ShippingStatusTitle => ((ShippingStatus)ShippingStatusId).GetDisplayName();
+        public string ShippingStatusTitle => ShippingStatusId != 0 ? ((ShippingStatus)ShippingStatusId).GetDisplayName() : string.Empty;
 
         /// <summary>
         /// 
@@ -77,7 +77,7 @@ namespace Hydra.Sale.Core.Models
         /// 
         /// </summary>
         /// <returns></returns>
-        public string PaymentStatusTitle => ((PaymentStatus)PaymentStatusId).GetDisplayName();
+        public string PaymentStatusTitle => PaymentStatusId != 0 ? ((PaymentStatus)PaymentStatusId).GetDisplayName() : string.Empty;
 
         /// <summary>
         /// 
@@ -143,7 +143,7 @@ namespace Hydra.Sale.Core.Models
         /// 
         /// </summary>
         public string CreatedOnUtcString => CreatedOnUtc.ToString("g");
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -179,5 +179,20 @@ namespace Hydra.Sale.Core.Models
         /// 
         /// </summary>
         public decimal TotalAmount { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string TransactionTrackingCode { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string PaymentTrackingCode { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string TrackingNumber { get; set; }
     }
 }

@@ -38,8 +38,8 @@ namespace Hydra.Sale.Api.Handler
         {
             var result = await orderService.GetAllOrderStatus();
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
-        }       
-        
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -86,6 +86,19 @@ namespace Hydra.Sale.Api.Handler
         public static async Task<IResult> UpdateOrder(ClaimsPrincipal userClaim, IOrderService orderService, [FromBody] OrderModel orderModel)
         {
             var result = await orderService.Update(orderModel);
+            return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userClaim"></param>
+        /// <param name="orderService"></param>
+        /// <param name="orderModel"></param>
+        /// <returns></returns>
+        public static async Task<IResult> UpdateOrderState(ClaimsPrincipal userClaim, IOrderService orderService, [FromBody] OrderModel orderModel)
+        {
+            var result = await orderService.UpdateState(orderModel);
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
 
