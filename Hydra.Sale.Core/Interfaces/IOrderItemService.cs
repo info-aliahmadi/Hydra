@@ -12,7 +12,7 @@ namespace Hydra.Sale.Core.Interfaces
         /// </summary>
         /// <param name="orderId"></param>
         /// <returns></returns>
-        Task<Result<List<OrderItemModel>>> GetListByOrderId(int orderId);
+        Task<Result<Tuple<List<OrderItemModel>, SumOrderItemsModel>>> GetListByOrderId(int orderId);
 
         /// <summary>
         /// 
@@ -42,5 +42,11 @@ namespace Hydra.Sale.Core.Interfaces
         /// <returns></returns>
         Task<Result> Delete(int id);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        Task<SumOrderItemsModel> SumAmountOrderItemsByOrderId(int orderId);
     }
 }
