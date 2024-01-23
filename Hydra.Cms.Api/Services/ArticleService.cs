@@ -619,7 +619,7 @@ namespace Hydra.Cms.Api.Services
 
                 var currentTags = articleTags.Select(x => x.TagId).ToArray();
 
-                if (newTags != currentTags)
+                if (!newTags.SequenceEqual(currentTags))
                 {
                     foreach (var articleTag in articleTags)
                     {
@@ -660,7 +660,7 @@ namespace Hydra.Cms.Api.Services
 
                 var currentTopics = articleTopics.Select(x => x.TopicId).ToArray();
 
-                if (!(newTopics == currentTopics))
+                if (!newTopics.SequenceEqual(currentTopics))
                 {
                     foreach (var articleTopic in articleTopics)
                     {

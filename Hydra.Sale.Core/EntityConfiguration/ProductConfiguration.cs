@@ -51,24 +51,24 @@ namespace Hydra.Sale.Core.EntityConfiguration
             .HasForeignKey(d => d.UpdateUserId)
             .HasConstraintName("FK_Product_UpdateUser");
 
-            entity.HasMany(d => d.ProductTags).WithMany(p => p.Products)
-            .UsingEntity<Dictionary<string, object>>(
-                "ProductProductTag",
-                r => r.HasOne<ProductTag>().WithMany()
-                    .HasForeignKey("ProductTagId")
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .HasConstraintName("FK_ProductProductTag_ProductTag"),
-                l => l.HasOne<Product>().WithMany()
-                    .HasForeignKey("ProductId")
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .HasConstraintName("FK_ProductProductTag_Product"),
-                j =>
-                {
-                    j.HasKey("ProductId", "ProductTagId").HasName("PK_Product_ProductTag_Mapping");
-                    j.ToTable("ProductProductTag", "Sale");
-                    j.HasIndex(new[] { "ProductTagId" }, "IX_Product_ProductTag_Mapping_ProductTag_Id");
-                    j.HasIndex(new[] { "ProductId" }, "IX_Product_ProductTag_Mapping_Product_Id");
-                });
+            //entity.HasMany(d => d.ProductTags).WithMany(p => p.Products)
+            //.UsingEntity<Dictionary<string, object>>(
+            //    "ProductProductTag",
+            //    r => r.HasOne<ProductTag>().WithMany()
+            //        .HasForeignKey("ProductTagId")
+            //        .OnDelete(DeleteBehavior.Restrict)
+            //        .HasConstraintName("FK_ProductProductTag_ProductTag"),
+            //    l => l.HasOne<Product>().WithMany()
+            //        .HasForeignKey("ProductId")
+            //        .OnDelete(DeleteBehavior.Restrict)
+            //        .HasConstraintName("FK_ProductProductTag_Product"),
+            //    j =>
+            //    {
+            //        j.HasKey("ProductId", "ProductTagId").HasName("PK_Product_ProductTag_Mapping");
+            //        j.ToTable("ProductProductTag", "Sale");
+            //        j.HasIndex(new[] { "ProductTagId" }, "IX_Product_ProductTag_Mapping_ProductTag_Id");
+            //        j.HasIndex(new[] { "ProductId" }, "IX_Product_ProductTag_Mapping_Product_Id");
+            //    });
         }
     }
 }

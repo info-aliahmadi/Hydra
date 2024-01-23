@@ -12,26 +12,26 @@ namespace Hydra.Sale.Core.Interfaces
         /// </summary>
         /// <param name="dataGrid"></param>
         /// <returns></returns>
-        Task<Result<List<CategoryModel>>> GetList();
+        Result<List<CategoryModel>> GetList();
         
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        Task<Result<List<CategoryModel>>> GetHierarchy();
+        Result<List<CategoryModel>> GetHierarchy();
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        Task<Result<List<CategoryModel>>> GetListForSelect();
+        Result<List<CategoryModel>> GetListForSelect();
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<Result<CategoryModel>> GetById(int id);
+        Result<CategoryModel> GetById(int id);
 
         /// <summary>
         ///
@@ -53,6 +53,12 @@ namespace Hydra.Sale.Core.Interfaces
         /// <param name="id"></param>
         /// <returns></returns>
         Task<Result> Delete(int id);
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<Result> Remove(int id);
 
     }
 }

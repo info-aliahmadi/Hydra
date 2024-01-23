@@ -41,6 +41,21 @@ namespace Hydra.Sale.Api.Handler
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
 
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="productService"></param>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetProductsByIds(IProductService productService, string productIds)
+        {
+            var Ids = productIds.Split(',').Select(x => int.Parse(x)).ToArray();
+
+            var result = await productService.GetByIds(Ids);
+            return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+        }
+
         /// <summary>
         ///
         /// </summary>

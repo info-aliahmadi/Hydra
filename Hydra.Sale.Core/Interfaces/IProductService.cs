@@ -24,6 +24,13 @@ namespace Hydra.Sale.Core.Interfaces
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        Task<Result<List<ProductModel>>> GetByIds(int[] ids);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
         Task<Result<List<ProductModel>>> GetProductsByInput(string input);

@@ -35,11 +35,11 @@ namespace Hydra.Sale.Api.Handler
         /// <param name="manufacturerService"></param>
         /// <param name="dataGrid"></param>
         /// <returns></returns>
-        public static async Task<IResult> GetListForSelect(IManufacturerService manufacturerService)
+        public static IResult GetListForSelect(IManufacturerService manufacturerService)
         {
             try
             {
-                var result = await manufacturerService.GetListForSelect();
+                var result = manufacturerService.GetListForSelect();
                 return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
             }
             catch (Exception e)
@@ -53,9 +53,9 @@ namespace Hydra.Sale.Api.Handler
         /// <param name="manufacturerService"></param>
         /// <param name="manufacturerId"></param>
         /// <returns></returns>
-        public static async Task<IResult> GetManufacturerById(IManufacturerService manufacturerService, int manufacturerId)
+        public static IResult GetManufacturerById(IManufacturerService manufacturerService, int manufacturerId)
         {
-            var result = await manufacturerService.GetById(manufacturerId);
+            var result = manufacturerService.GetById(manufacturerId);
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
 

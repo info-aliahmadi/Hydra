@@ -6,5 +6,5 @@ public class ProductTag : BaseEntity<int>
 {
     public string Name { get; set; }
 
-    public virtual List<Product> Products { get; set; } = new();
+    public virtual List<ProductProductTag> ProductProductTags { get; set; } = new();
 }

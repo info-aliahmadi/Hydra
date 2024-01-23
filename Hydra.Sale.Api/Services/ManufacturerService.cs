@@ -1,4 +1,5 @@
-﻿using Hydra.Infrastructure.Data.Extension;
+﻿using EFCoreSecondLevelCacheInterceptor;
+using Hydra.Infrastructure.Data.Extension;
 using Hydra.Kernel.Extensions;
 using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;
@@ -6,6 +7,7 @@ using Hydra.Sale.Core.Domain;
 using Hydra.Sale.Core.Interfaces;
 using Hydra.Sale.Core.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Dynamic.Core;
 
 namespace Hydra.Sale.Api.Services
 {
@@ -24,11 +26,10 @@ namespace Hydra.Sale.Api.Services
         /// </summary>
         /// <param name="dataGrid"></param>
         /// <returns></returns>
-        public async Task<Result<PaginatedList<ManufacturerModel>>> GetList(GridDataBound dataGrid)
+        private List<ManufacturerModel> GetManufacturersList()
         {
-            var result = new Result<PaginatedList<ManufacturerModel>>();
 
-            var list = await (from manufacturer in _queryRepository.Table<Manufacturer>()
+            var list = (from manufacturer in _queryRepository.Table<Manufacturer>()
                               select new ManufacturerModel()
                               {
                                   Id = manufacturer.Id,
@@ -42,11 +43,23 @@ namespace Hydra.Sale.Api.Services
                                   Deleted = manufacturer.Deleted,
                                   DisplayOrder = manufacturer.DisplayOrder,
                                   CreatedOnUtc = manufacturer.CreatedOnUtc,
-                                  UpdatedOnUtc = manufacturer.UpdatedOnUtc,
-                                  //ProductManufacturers = manufacturer.ProductManufacturers,
-                                  //Discounts = manufacturer.Discounts,
+                                  UpdatedOnUtc = manufacturer.UpdatedOnUtc
 
-                              }).OrderByDescending(x => x.Id).ToPaginatedListAsync(dataGrid);
+                              }).OrderByDescending(x => x.Id).Cacheable().ToList();
+
+            return list;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="dataGrid"></param>
+        /// <returns></returns>
+        public async Task<Result<PaginatedList<ManufacturerModel>>> GetList(GridDataBound dataGrid)
+        {
+            var result = new Result<PaginatedList<ManufacturerModel>>();
+
+            var list = await GetManufacturersList().AsQueryable().ToPaginatedListAsync(dataGrid);
 
             result.Data = list;
 
@@ -57,21 +70,11 @@ namespace Hydra.Sale.Api.Services
         ///
         /// </summary>
         /// <returns></returns>
-        public async Task<Result<List<ManufacturerModel>>> GetListForSelect()
+        public Result<List<ManufacturerModel>> GetListForSelect()
         {
             var result = new Result<List<ManufacturerModel>>();
 
-            var list = await (from manufacturer in _queryRepository.Table<Manufacturer>()
-                              select new ManufacturerModel()
-                              {
-                                  Id = manufacturer.Id,
-                                  Name = manufacturer.Name,
-                                  //ProductManufacturers = manufacturer.ProductManufacturers,
-                                  //Discounts = manufacturer.Discounts,
-
-                              }).OrderByDescending(x => x.Id).ToListAsync();
-
-            result.Data = list;
+            result.Data = GetManufacturersList();
 
             return result;
         }
@@ -80,30 +83,11 @@ namespace Hydra.Sale.Api.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<Result<ManufacturerModel>> GetById(int id)
+        public Result<ManufacturerModel> GetById(int id)
         {
             var result = new Result<ManufacturerModel>();
-            var manufacturer = await _queryRepository.Table<Manufacturer>().FirstOrDefaultAsync(x => x.Id == id);
 
-            var manufacturerModel = new ManufacturerModel()
-            {
-                Id = manufacturer.Id,
-                Name = manufacturer.Name,
-                MetaKeywords = manufacturer.MetaKeywords,
-                MetaTitle = manufacturer.MetaTitle,
-                Description = manufacturer.Description,
-                MetaDescription = manufacturer.MetaDescription,
-                PictureId = manufacturer.PictureId,
-                Published = manufacturer.Published,
-                Deleted = manufacturer.Deleted,
-                DisplayOrder = manufacturer.DisplayOrder,
-                CreatedOnUtc = manufacturer.CreatedOnUtc,
-                UpdatedOnUtc = manufacturer.UpdatedOnUtc,
-                //ProductManufacturers = manufacturer.ProductManufacturers,
-                //Discounts = manufacturer.Discounts,
-
-            };
-            result.Data = manufacturerModel;
+            result.Data = GetManufacturersList().FirstOrDefault(x => x.Id == id) ?? new ManufacturerModel();
 
             return result;
         }

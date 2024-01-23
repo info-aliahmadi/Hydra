@@ -4,6 +4,7 @@ using Hydra.Migrations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Hydra.Migrations.Migrations
 {
     [DbContext(typeof(MigrationContext))]
-    partial class MigrationContextModelSnapshot : ModelSnapshot
+    [Migration("20240123075807_dbVersion_44")]
+    partial class dbVersion_44
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5943,21 +5946,6 @@ namespace Hydra.Migrations.Migrations
                     b.HasIndex(new[] { "ProductId" }, "IX_Product_Picture_Mapping_ProductId");
 
                     b.ToTable("ProductPicture", "Sale");
-                });
-
-            modelBuilder.Entity("Hydra.Sale.Core.Domain.ProductProductTag", b =>
-                {
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductTagId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProductId", "ProductTagId");
-
-                    b.HasIndex("ProductTagId");
-
-                    b.ToTable("ProductProductTag", "Sale");
                 });
 
             modelBuilder.Entity("Hydra.Sale.Core.Domain.ProductReview", b =>
@@ -23600,25 +23588,6 @@ namespace Hydra.Migrations.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Hydra.Sale.Core.Domain.ProductProductTag", b =>
-                {
-                    b.HasOne("Hydra.Sale.Core.Domain.Product", "Product")
-                        .WithMany("ProductProductTags")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Hydra.Sale.Core.Domain.ProductTag", "ProductTag")
-                        .WithMany("ProductProductTags")
-                        .HasForeignKey("ProductTagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("ProductTag");
-                });
-
             modelBuilder.Entity("Hydra.Sale.Core.Domain.ProductReview", b =>
                 {
                     b.HasOne("Hydra.Sale.Core.Domain.Product", "Product")
@@ -23940,8 +23909,6 @@ namespace Hydra.Migrations.Migrations
 
                     b.Navigation("ProductPictures");
 
-                    b.Navigation("ProductProductTags");
-
                     b.Navigation("ProductReviews");
 
                     b.Navigation("RelatedProductProductId1Navigations");
@@ -23954,11 +23921,6 @@ namespace Hydra.Migrations.Migrations
             modelBuilder.Entity("Hydra.Sale.Core.Domain.ProductReview", b =>
                 {
                     b.Navigation("ProductReviewHelpfulnesses");
-                });
-
-            modelBuilder.Entity("Hydra.Sale.Core.Domain.ProductTag", b =>
-                {
-                    b.Navigation("ProductProductTags");
                 });
 
             modelBuilder.Entity("Hydra.Sale.Core.Domain.Shipment", b =>

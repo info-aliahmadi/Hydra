@@ -94,9 +94,11 @@ public class Product : BaseEntity<int>
     public bool Deleted { get; set; }
 
     public int CreateUserId { get; set; }
+
     public DateTime CreatedOnUtc { get; set; }
 
     public int? UpdateUserId { get; set; }
+
     public DateTime? UpdatedOnUtc { get; set; }
 
 
@@ -123,9 +125,11 @@ public class Product : BaseEntity<int>
     public virtual TaxCategory TaxCategory { get; set; }
 
     public virtual User CreateUser { get; set; }
+
     public virtual User? UpdateUser { get; set; }
 
     public virtual ICollection<Discount> Discounts { get; set; } = new List<Discount>();
 
-    public virtual List<ProductTag> ProductTags { get; set; } = new();
+    public virtual List<ProductProductTag> ProductProductTags { get; set; } = new();
+
 }

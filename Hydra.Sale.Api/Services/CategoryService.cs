@@ -1,4 +1,5 @@
-﻿using Hydra.Kernel.Interfaces.Data;
+﻿using EFCoreSecondLevelCacheInterceptor;
+using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;
 using Hydra.Sale.Core.Domain;
 using Hydra.Sale.Core.Interfaces;
@@ -22,33 +23,42 @@ namespace Hydra.Sale.Api.Services
         /// </summary>
         /// <param name="dataGrid"></param>
         /// <returns></returns>
-        public async Task<Result<List<CategoryModel>>> GetList()
+        private List<CategoryModel> GetCategoriesList()
+        {
+
+            var list = (from category in _queryRepository.Table<Category>()
+                             select new CategoryModel()
+                             {
+                                 Id = category.Id,
+                                 Name = category.Name,
+                                 MetaKeywords = category.MetaKeywords,
+                                 MetaTitle = category.MetaTitle,
+                                 Description = category.Description,
+                                 MetaDescription = category.MetaDescription,
+                                 ParentCategoryId = category.ParentCategoryId,
+                                 PictureId = category.PictureId,
+                                 ShowOnHomepage = category.ShowOnHomepage,
+                                 Published = category.Published,
+                                 Deleted = category.Deleted,
+                                 DisplayOrder = category.DisplayOrder,
+                                 CreatedOnUtc = category.CreatedOnUtc,
+                                 UpdatedOnUtc = category.UpdatedOnUtc
+
+                             }).OrderByDescending(x => x.Id).Cacheable().ToList();
+
+            return list;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="dataGrid"></param>
+        /// <returns></returns>
+        public Result<List<CategoryModel>> GetList()
         {
             var result = new Result<List<CategoryModel>>();
 
-            var list = await (from category in _queryRepository.Table<Category>()
-                              select new CategoryModel()
-                              {
-                                  Id = category.Id,
-                                  Name = category.Name,
-                                  MetaKeywords = category.MetaKeywords,
-                                  MetaTitle = category.MetaTitle,
-                                  Description = category.Description,
-                                  MetaDescription = category.MetaDescription,
-                                  ParentCategoryId = category.ParentCategoryId,
-                                  PictureId = category.PictureId,
-                                  ShowOnHomepage = category.ShowOnHomepage,
-                                  Published = category.Published,
-                                  Deleted = category.Deleted,
-                                  DisplayOrder = category.DisplayOrder,
-                                  CreatedOnUtc = category.CreatedOnUtc,
-                                  UpdatedOnUtc = category.UpdatedOnUtc,
-                                  //ProductCategories = category.ProductCategories,
-                                  //Discounts = category.Discounts,
-
-                              }).OrderByDescending(x => x.Id).ToListAsync();
-
-            result.Data = list;
+            result.Data = GetCategoriesList();
 
             return result;
         }
@@ -58,16 +68,11 @@ namespace Hydra.Sale.Api.Services
         /// 
         /// </summary>
         /// <returns></returns>
-        public async Task<Result<List<CategoryModel>>> GetHierarchy()
+        public Result<List<CategoryModel>> GetHierarchy()
         {
             var result = new Result<List<CategoryModel>>();
 
-            var list = await _queryRepository.Table<Category>().Select(x => new CategoryModel()
-            {
-                Id = x.Id,
-                Name = x.Name,
-                ParentCategoryId = x.ParentCategoryId
-            }).ToListAsync();
+            var list = GetCategoriesList();
 
             var parents = list.Where(x => x.ParentCategoryId == null).ToList();
             foreach (var topic in parents)
@@ -96,25 +101,29 @@ namespace Hydra.Sale.Api.Services
             }
             return result;
         }
+
+
+        List<CategoryModel> resultList = new List<CategoryModel>();
+
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public async Task<Result<List<CategoryModel>>> GetListForSelect()
+        public Result<List<CategoryModel>> GetListForSelect()
         {
             var result = new Result<List<CategoryModel>>();
 
-            var list = await _queryRepository.Table<Category>().Where(x => !x.Deleted).Select(category => new CategoryModel()
+            var list = GetCategoriesList().Where(x => !x.Deleted).Select(category => new CategoryModel()
             {
                 Id = category.Id,
                 Name = category.Name
-            }).ToListAsync();
+            }).ToList();
 
             var parents = list.Where(x => x.ParentCategoryId == null).ToList();
 
-            foreach (var topic in parents)
+            foreach (var category in parents)
             {
-                GetChildOfSelect(topic, "", list);
+                GetChildOfSelect(category, "", list);
             }
 
             result.Data = resultList;
@@ -122,7 +131,6 @@ namespace Hydra.Sale.Api.Services
             return result;
         }
 
-        List<CategoryModel> resultList = new List<CategoryModel>();
         private List<CategoryModel> GetChildOfSelect(CategoryModel topic, string space, List<CategoryModel> topics)
         {
             topic.Name = space + topic.Name;
@@ -145,32 +153,11 @@ namespace Hydra.Sale.Api.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<Result<CategoryModel>> GetById(int id)
+        public Result<CategoryModel> GetById(int id)
         {
             var result = new Result<CategoryModel>();
-            var category = await _queryRepository.Table<Category>().FirstOrDefaultAsync(x => x.Id == id);
 
-            var categoryModel = new CategoryModel()
-            {
-                Id = category.Id,
-                Name = category.Name,
-                MetaKeywords = category.MetaKeywords,
-                MetaTitle = category.MetaTitle,
-                Description = category.Description,
-                MetaDescription = category.MetaDescription,
-                ParentCategoryId = category.ParentCategoryId,
-                PictureId = category.PictureId,
-                ShowOnHomepage = category.ShowOnHomepage,
-                Published = category.Published,
-                Deleted = category.Deleted,
-                DisplayOrder = category.DisplayOrder,
-                CreatedOnUtc = category.CreatedOnUtc,
-                UpdatedOnUtc = category.UpdatedOnUtc,
-                //ProductCategories = category.ProductCategories,
-                //Discounts = category.Discounts,
-
-            };
-            result.Data = categoryModel;
+            result.Data = GetCategoriesList().FirstOrDefault(x => x.Id == id) ?? new CategoryModel();
 
             return result;
         }
@@ -292,6 +279,31 @@ namespace Hydra.Sale.Api.Services
         /// <param name="id"></param>
         /// <returns></returns>
         public async Task<Result> Delete(int id)
+        {
+            var result = new Result();
+            var category = await _queryRepository.Table<Category>().FirstOrDefaultAsync(x => x.Id == id);
+            if (category is null)
+            {
+                result.Status = ResultStatusEnum.NotFound;
+                result.Message = "The Category not found";
+                return result;
+            }
+
+            category.Deleted = true;
+
+            _commandRepository.UpdateAsync(category);
+
+            await _commandRepository.SaveChangesAsync();
+
+            return result;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Result> Remove(int id)
         {
             var result = new Result();
             var category = await _queryRepository.Table<Category>().FirstOrDefaultAsync(x => x.Id == id);

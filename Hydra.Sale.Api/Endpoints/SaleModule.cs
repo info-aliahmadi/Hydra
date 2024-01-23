@@ -27,14 +27,10 @@ namespace Hydra.Sale.Api.Endpoints
             services.AddScoped<IOrderNoteService, OrderNoteService>();
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IProductService, ProductService>();
-            services.AddScoped<IProductCategoryService, ProductCategoryService>();
             services.AddScoped<IProductInventoryService, ProductInventoryService>();
-            services.AddScoped<IProductManufacturerService, ProductManufacturerService>();
-            services.AddScoped<IProductPictureService, ProductPictureService>();
             services.AddScoped<IProductReviewService, ProductReviewService>();
             services.AddScoped<IProductReviewHelpfulnessService, ProductReviewHelpfulnessService>();
             services.AddScoped<IProductTagService, ProductTagService>();
-            services.AddScoped<IRelatedProductService, RelatedProductService>();
             services.AddScoped<ISearchTermService, SearchTermService>();
             services.AddScoped<IShipmentService, ShipmentService>();
             services.AddScoped<IShipmentItemService, ShipmentItemService>();
@@ -131,17 +127,13 @@ namespace Hydra.Sale.Api.Endpoints
 
             endpoints.MapPost(API_SCHEMA + "/GetProductList", ProductHandler.GetList).RequirePermission("SALE.GET_PRODUCT_LIST");
             endpoints.MapGet(API_SCHEMA + "/GetProductById", ProductHandler.GetProductById).RequirePermission("SALE.GET_PRODUCT_BY_ID");
+            endpoints.MapGet(API_SCHEMA + "/GetProductsByIds", ProductHandler.GetProductsByIds).RequirePermission("SALE.GET_PRODUCTS_BY_IDS");
             endpoints.MapGet(API_SCHEMA + "/GetProductsByInput", ProductHandler.GetProductsByInput).RequirePermission("SALE.GET_PRODUCTS_BY_INPUT");
             endpoints.MapPost(API_SCHEMA + "/AddProduct", ProductHandler.AddProduct).RequirePermission("SALE.ADD_PRODUCT");
             endpoints.MapPost(API_SCHEMA + "/UpdateProduct", ProductHandler.UpdateProduct).RequirePermission("SALE.UPDATE_PRODUCT");
             endpoints.MapPost(API_SCHEMA + "/DeleteProduct", ProductHandler.DeleteProduct).RequirePermission("SALE.DELETE_PRODUCT");
             endpoints.MapPost(API_SCHEMA + "/RemoveProduct", ProductHandler.RemoveProduct).RequirePermission("SALE.REMOVE_PRODUCT");
 
-            endpoints.MapPost(API_SCHEMA + "/GetProductCategoryList", ProductCategoryHandler.GetList).RequirePermission("");
-            endpoints.MapGet(API_SCHEMA + "/GetProductCategoryById", ProductCategoryHandler.GetProductCategoryById).RequirePermission("");
-            endpoints.MapPost(API_SCHEMA + "/AddProductCategory", ProductCategoryHandler.AddProductCategory).RequirePermission("");
-            endpoints.MapPost(API_SCHEMA + "/UpdateProductCategory", ProductCategoryHandler.UpdateProductCategory).RequirePermission("");
-            endpoints.MapPost(API_SCHEMA + "/DeleteProductCategory", ProductCategoryHandler.DeleteProductCategory).RequirePermission("");
 
             endpoints.MapPost(API_SCHEMA + "/GetProductInventoryList", ProductInventoryHandler.GetList).RequirePermission("");
             endpoints.MapGet(API_SCHEMA + "/GetProductInventoryById", ProductInventoryHandler.GetProductInventoryById).RequirePermission("");
@@ -149,17 +141,6 @@ namespace Hydra.Sale.Api.Endpoints
             endpoints.MapPost(API_SCHEMA + "/UpdateProductInventory", ProductInventoryHandler.UpdateProductInventory).RequirePermission("");
             endpoints.MapPost(API_SCHEMA + "/DeleteProductInventory", ProductInventoryHandler.DeleteProductInventory).RequirePermission("");
 
-            endpoints.MapPost(API_SCHEMA + "/GetProductManufacturerList", ProductManufacturerHandler.GetList).RequirePermission("");
-            endpoints.MapGet(API_SCHEMA + "/GetProductManufacturerById", ProductManufacturerHandler.GetProductManufacturerById).RequirePermission("");
-            endpoints.MapPost(API_SCHEMA + "/AddProductManufacturer", ProductManufacturerHandler.AddProductManufacturer).RequirePermission("");
-            endpoints.MapPost(API_SCHEMA + "/UpdateProductManufacturer", ProductManufacturerHandler.UpdateProductManufacturer).RequirePermission("");
-            endpoints.MapPost(API_SCHEMA + "/DeleteProductManufacturer", ProductManufacturerHandler.DeleteProductManufacturer).RequirePermission("");
-
-            endpoints.MapPost(API_SCHEMA + "/GetProductPictureList", ProductPictureHandler.GetList).RequirePermission("");
-            endpoints.MapGet(API_SCHEMA + "/GetProductPictureById", ProductPictureHandler.GetProductPictureById).RequirePermission("");
-            endpoints.MapPost(API_SCHEMA + "/AddProductPicture", ProductPictureHandler.AddProductPicture).RequirePermission("");
-            endpoints.MapPost(API_SCHEMA + "/UpdateProductPicture", ProductPictureHandler.UpdateProductPicture).RequirePermission("");
-            endpoints.MapPost(API_SCHEMA + "/DeleteProductPicture", ProductPictureHandler.DeleteProductPicture).RequirePermission("");
 
             endpoints.MapPost(API_SCHEMA + "/GetProductReviewList", ProductReviewHandler.GetList).RequirePermission("");
             endpoints.MapGet(API_SCHEMA + "/GetProductReviewById", ProductReviewHandler.GetProductReviewById).RequirePermission("");
@@ -180,11 +161,6 @@ namespace Hydra.Sale.Api.Endpoints
             endpoints.MapPost(API_SCHEMA + "/UpdateProductTag", ProductTagHandler.UpdateProductTag).RequirePermission("SALE.UPDATE_PRODUCT_TAG");
             endpoints.MapPost(API_SCHEMA + "/DeleteProductTag", ProductTagHandler.DeleteProductTag).RequirePermission("SALE.DELETE_PRODUCT_TAG");
 
-            endpoints.MapPost(API_SCHEMA + "/GetRelatedProductList", RelatedProductHandler.GetList).RequirePermission("");
-            endpoints.MapGet(API_SCHEMA + "/GetRelatedProductById", RelatedProductHandler.GetRelatedProductById).RequirePermission("");
-            endpoints.MapPost(API_SCHEMA + "/AddRelatedProduct", RelatedProductHandler.AddRelatedProduct).RequirePermission("");
-            endpoints.MapPost(API_SCHEMA + "/UpdateRelatedProduct", RelatedProductHandler.UpdateRelatedProduct).RequirePermission("");
-            endpoints.MapPost(API_SCHEMA + "/DeleteRelatedProduct", RelatedProductHandler.DeleteRelatedProduct).RequirePermission("");
 
             endpoints.MapPost(API_SCHEMA + "/GetSearchTermList", SearchTermHandler.GetList).AllowAnonymous();//RequirePermission("");
             endpoints.MapGet(API_SCHEMA + "/GetSearchTermById", SearchTermHandler.GetSearchTermById).AllowAnonymous();//.RequirePermission("");

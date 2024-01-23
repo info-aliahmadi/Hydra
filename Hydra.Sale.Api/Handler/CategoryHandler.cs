@@ -13,11 +13,11 @@ namespace Hydra.Sale.Api.Handler
         /// </summary>
         /// <param name="_categoryService"></param>
         /// <returns></returns>
-        public static async Task<IResult> GetCategoryHierarchy(ICategoryService _categoryService)
+        public static IResult GetCategoryHierarchy(ICategoryService _categoryService)
         {
             try
             {
-                var result = await _categoryService.GetHierarchy();
+                var result =  _categoryService.GetHierarchy();
 
                 return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
 
@@ -33,11 +33,11 @@ namespace Hydra.Sale.Api.Handler
         /// </summary>
         /// <param name="_categoryService"></param>
         /// <returns></returns>
-        public static async Task<IResult> GetListForSelect(ICategoryService _categoryService)
+        public static IResult GetListForSelect(ICategoryService _categoryService)
         {
             try
             {
-                var result = await _categoryService.GetListForSelect();
+                var result = _categoryService.GetListForSelect();
 
                 return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
 
@@ -55,11 +55,11 @@ namespace Hydra.Sale.Api.Handler
         /// <param name="categoryService"></param>
         /// <param name="dataGrid"></param>
         /// <returns></returns>
-        public static async Task<IResult> GetList(ICategoryService categoryService)
+        public static IResult GetList(ICategoryService categoryService)
         {
             try
             {
-                var result = await categoryService.GetList();
+                var result = categoryService.GetList();
                 return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
             }
             catch (Exception e)
@@ -74,9 +74,9 @@ namespace Hydra.Sale.Api.Handler
         /// <param name="categoryService"></param>
         /// <param name="categoryId"></param>
         /// <returns></returns>
-        public static async Task<IResult> GetCategoryById(ICategoryService categoryService, int categoryId)
+        public static IResult GetCategoryById(ICategoryService categoryService, int categoryId)
         {
-            var result = await categoryService.GetById(categoryId);
+            var result = categoryService.GetById(categoryId);
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
 

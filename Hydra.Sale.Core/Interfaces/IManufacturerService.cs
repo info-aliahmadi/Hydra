@@ -17,14 +17,14 @@ namespace Hydra.Sale.Core.Interfaces
         /// 
         /// </summary>
         /// <returns></returns>
-        Task<Result<List<ManufacturerModel>>> GetListForSelect();
+        Result<List<ManufacturerModel>> GetListForSelect();
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<Result<ManufacturerModel>> GetById(int id);
+        Result<ManufacturerModel> GetById(int id);
 
         /// <summary>
         ///
