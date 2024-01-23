@@ -31,7 +31,7 @@ namespace Hydra.Sale.Api.Services
         {
             var result = new Result<PaginatedList<ProductModel>>();
 
-            var list = await (from product in _queryRepository.Table<Product>().Where(x=>!x.Deleted)
+            var list = await (from product in _queryRepository.Table<Product>().Include(x=>x.Currency).Where(x=>!x.Deleted)
                               select new ProductModel()
                               {
                                   Id = product.Id,
@@ -52,6 +52,8 @@ namespace Hydra.Sale.Api.Services
                                   OrderMaximumQuantity = product.OrderMaximumQuantity,
                                   Price = product.Price,
                                   OldPrice = product.OldPrice,
+                                  CurrencyId = product.CurrencyId,
+                                  CurrencyCode = product.Currency.CurrencyCode,
                                   Weight = product.Weight,
                                   Length = product.Length,
                                   Width = product.Width,
@@ -137,6 +139,7 @@ namespace Hydra.Sale.Api.Services
                 OrderMaximumQuantity = product.OrderMaximumQuantity,
                 Price = product.Price,
                 OldPrice = product.OldPrice,
+                CurrencyId = product.CurrencyId,
                 Weight = product.Weight,
                 Length = product.Length,
                 Width = product.Width,
@@ -258,6 +261,7 @@ namespace Hydra.Sale.Api.Services
                     OrderMaximumQuantity = productModel.OrderMaximumQuantity,
                     Price = productModel.Price,
                     OldPrice = productModel.OldPrice,
+                    CurrencyId = productModel.CurrencyId,
                     Weight = productModel.Weight,
                     Length = productModel.Length,
                     Width = productModel.Width,
@@ -430,6 +434,7 @@ namespace Hydra.Sale.Api.Services
                 product.OrderMaximumQuantity = productModel.OrderMaximumQuantity;
                 product.Price = productModel.Price;
                 product.OldPrice = productModel.OldPrice;
+                product.CurrencyId = productModel.CurrencyId;
                 product.Weight = productModel.Weight;
                 product.Length = productModel.Length;
                 product.Width = productModel.Width;

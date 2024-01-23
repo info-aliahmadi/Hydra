@@ -54,6 +54,30 @@ namespace Hydra.Sale.Api.Services
         /// <summary>
         ///
         /// </summary>
+        /// <param name="dataGrid"></param>
+        /// <returns></returns>
+        public async Task<Result<List<CurrencyModel>>> GetAllCurrencies()
+        {
+            var result = new Result<List<CurrencyModel>>();
+
+            var list = await (from currency in _queryRepository.Table<Currency>()
+                              select new CurrencyModel()
+                              {
+                                  Id = currency.Id,
+                                  Name = currency.Name,
+                                  CurrencyCode = currency.CurrencyCode
+                                  //Orders = currency.Orders,
+
+                              }).OrderByDescending(x => x.Id).ToListAsync();
+
+            result.Data = list;
+
+            return result;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         public async Task<Result<CurrencyModel>> GetById(int id)

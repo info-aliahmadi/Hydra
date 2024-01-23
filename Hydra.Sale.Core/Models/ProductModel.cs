@@ -159,13 +159,13 @@ namespace Hydra.Sale.Core.Models
         /// 
         /// </summary>
         /// <returns></returns>
-        public int? UserCurrencyId { get; set; }
+        public int CurrencyId { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public string? UserCurrencyTitle { get; set; }
+        public string CurrencyCode { get; set; }
 
         /// <summary>
         /// 

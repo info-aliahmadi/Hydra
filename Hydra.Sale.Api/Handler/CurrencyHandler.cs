@@ -33,6 +33,25 @@ namespace Hydra.Sale.Api.Handler
         ///
         /// </summary>
         /// <param name="currencyService"></param>
+        /// <param name="dataGrid"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetAllCurrencies(ICurrencyService currencyService)
+        {
+            try
+            {
+                var result = await currencyService.GetAllCurrencies();
+                return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+            }
+            catch (Exception e)
+            {
+                return Results.BadRequest(e.Message);
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="currencyService"></param>
         /// <param name="currencyId"></param>
         /// <returns></returns>
         public static async Task<IResult> GetCurrencyById(ICurrencyService currencyService, int currencyId)

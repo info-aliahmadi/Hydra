@@ -15,6 +15,13 @@ namespace Hydra.Sale.Core.Interfaces
         Task<Result<PaginatedList<CurrencyModel>>> GetList(GridDataBound dataGrid);
 
         /// <summary>
+        ///
+        /// </summary>
+        /// <param name="dataGrid"></param>
+        /// <returns></returns>
+        Task<Result<List<CurrencyModel>>> GetAllCurrencies();
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="id"></param>
