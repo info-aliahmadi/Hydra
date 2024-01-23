@@ -70,6 +70,7 @@ namespace Hydra.Sale.Api.Services
                                   PaidDateUtc = order.PaidDateUtc,
                                   Deleted = order.Deleted,
                                   CreatedOnUtc = order.CreatedOnUtc,
+                                  PaymentDateUtc = pay.PaymentDateUtc,
                                   TransactionTrackingCode = pay.TransactionTrackingCode,
                                   PaymentTrackingCode = pay.PaymentTrackingCode,
                                   TrackingNumber = ship.TrackingNumber,

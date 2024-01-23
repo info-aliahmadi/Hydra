@@ -147,6 +147,16 @@ namespace Hydra.Sale.Core.Models
         /// <summary>
         /// 
         /// </summary>
+        public DateTime? PaymentDateUtc { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string PaymentDateUtcToString => PaymentDateUtc?.ToString("g") ?? string.Empty;
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <returns></returns>
         public List<string> OrderNotes { get; set; }
 
