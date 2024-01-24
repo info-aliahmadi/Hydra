@@ -51,17 +51,17 @@ namespace Hydra.Sale.Api.Services
         public async Task<Result<ProductInventoryModel>> GetById(int id)
         {
             var result = new Result<ProductInventoryModel>();
-            var productInventory = await _queryRepository.Table<ProductInventory>().FirstOrDefaultAsync(x => x.Id == id);
+            //var productInventory = await _queryRepository.Table<ProductInventory>().FirstOrDefaultAsync(x => x.Id == id);
 
-            var productInventoryModel = new ProductInventoryModel()
-            {
-                Id = productInventory.Id,
-                ProductId = productInventory.ProductId,
-                StockQuantity = productInventory.StockQuantity,
-                ReservedQuantity = productInventory.ReservedQuantity,
+            //var productInventoryModel = new ProductInventoryModel()
+            //{
+            //    Id = productInventory.Id,
+            //    ProductId = productInventory.ProductId,
+            //    StockQuantity = productInventory.StockQuantity,
+            //    ReservedQuantity = productInventory.ReservedQuantity,
 
-            };
-            result.Data = productInventoryModel;
+            //};
+            //result.Data = productInventoryModel;
 
             return result;
         }

@@ -113,6 +113,12 @@ namespace Hydra.Sale.Core.Models
         /// <returns></returns>
         public int StockQuantity { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public int InventoryStockQuantity { get; set; }
+
 
         /// <summary>
         /// 
@@ -283,7 +289,7 @@ namespace Hydra.Sale.Core.Models
         /// 
         /// </summary>
         /// <returns></returns>
-        public bool? AllowedQuantities { get; set; }
+        public bool AllowedQuantities { get; set; }
 
 
         /// <summary>

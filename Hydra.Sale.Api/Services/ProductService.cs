@@ -31,7 +31,7 @@ namespace Hydra.Sale.Api.Services
         {
             var result = new Result<PaginatedList<ProductModel>>();
 
-            var list = await (from product in _queryRepository.Table<Product>().Include(x=>x.Currency).Where(x=>!x.Deleted)
+            var list = await (from product in _queryRepository.Table<Product>().Include(x => x.Currency).Where(x=>!x.Deleted)
                               select new ProductModel()
                               {
                                   Id = product.Id,
@@ -54,10 +54,10 @@ namespace Hydra.Sale.Api.Services
                                   OldPrice = product.OldPrice,
                                   CurrencyId = product.CurrencyId,
                                   CurrencyCode = product.Currency.CurrencyCode,
-                                  Weight = product.Weight,
-                                  Length = product.Length,
-                                  Width = product.Width,
-                                  Height = product.Height,
+                                  //Weight = product.Weight,
+                                  //Length = product.Length,
+                                  //Width = product.Width,
+                                  //Height = product.Height,
                                   AvailableStartDateTimeUtc = product.AvailableStartDateTimeUtc,
                                   AvailableEndDateTimeUtc = product.AvailableEndDateTimeUtc,
                                   DisplayOrder = product.DisplayOrder,
@@ -140,10 +140,10 @@ namespace Hydra.Sale.Api.Services
                 Price = product.Price,
                 OldPrice = product.OldPrice,
                 CurrencyId = product.CurrencyId,
-                Weight = product.Weight,
-                Length = product.Length,
-                Width = product.Width,
-                Height = product.Height,
+                //Weight = product.Weight,
+                //Length = product.Length,
+                //Width = product.Width,
+                //Height = product.Height,
                 AvailableStartDateTimeUtc = product.AvailableStartDateTimeUtc,
                 AvailableEndDateTimeUtc = product.AvailableEndDateTimeUtc,
                 DisplayOrder = product.DisplayOrder,
@@ -216,14 +216,14 @@ namespace Hydra.Sale.Api.Services
             var id = 0;
             int.TryParse(input, out id);
 
-            quary = quary.Where(x => x.Name.Contains(input) || (id > 0 && x.Id == id));
+            quary = quary.Where(x => x.Name.Contains(input) || x.MetaKeywords.Contains(input) || x.MetaTitle.Contains(input) || (id > 0 && x.Id == id));
 
 
             var list = await quary.Take(10).Select(x => new ProductModel()
             {
                 Id = x.Id,
                 Name = x.Id + " | " + x.Name,
-                PreviewImageId = x.ProductPictures.OrderBy(v => v.DisplayOrder).FirstOrDefault().PictureId,
+                //PreviewImageId = x.ProductPictures.OrderBy(v => v.DisplayOrder).FirstOrDefault().PictureId,
             }).ToListAsync();
 
             result.Data = list;
@@ -262,10 +262,10 @@ namespace Hydra.Sale.Api.Services
                     Price = productModel.Price,
                     OldPrice = productModel.OldPrice,
                     CurrencyId = productModel.CurrencyId,
-                    Weight = productModel.Weight,
-                    Length = productModel.Length,
-                    Width = productModel.Width,
-                    Height = productModel.Height,
+                    //Weight = productModel.Weight,
+                    //Length = productModel.Length,
+                    //Width = productModel.Width,
+                    //Height = productModel.Height,
                     AvailableStartDateTimeUtc = productModel.AvailableStartDateTimeUtc,
                     AvailableEndDateTimeUtc = productModel.AvailableEndDateTimeUtc,
                     DisplayOrder = productModel.DisplayOrder,
@@ -348,12 +348,12 @@ namespace Hydra.Sale.Api.Services
                     });
                 }
 
-                await _commandRepository.InsertAsync(new ProductInventory()
-                {
-                    ProductId = product.Id,
-                    StockQuantity = productModel.StockQuantity,
-                    ReservedQuantity = 0
-                });
+                //await _commandRepository.InsertAsync(new ProductInventory()
+                //{
+                //    ProductId = product.Id,
+                //    StockQuantity = productModel.StockQuantity,
+                //    ReservedQuantity = 0
+                //});
 
                 await _commandRepository.SaveChangesAsync();
 
@@ -399,23 +399,15 @@ namespace Hydra.Sale.Api.Services
                     result.Message = "The Product not found";
                     return result;
                 }
-                //bool isExist = await _queryRepository.Table<Product>().AnyAsync(x => x.Id != productModel.Id);
-                //if (isExist)
-                //{
-                //    result.Status = ResultStatusEnum.ItsDuplicate;
-                //    result.Message = "The Id already exist";
-                //    result.Errors.Add(new Error(nameof(productModel.Id), "The Id already exist"));
-                //    return result;
-                //}
 
                 var currentDateTime = DateTime.UtcNow;
 
-                if (productModel.StockQuantity != product.StockQuantity)
-                {
-                    var productInventory = await _queryRepository.Table<ProductInventory>().FirstAsync(x => x.ProductId == productModel.Id);
-                    productInventory.StockQuantity = productModel.StockQuantity;
-                    _commandRepository.UpdateAsync(productInventory);
-                }
+                //if (productModel.StockQuantity != product.StockQuantity)
+                //{
+                //    var productInventory = await _queryRepository.Table<ProductInventory>().FirstAsync(x => x.ProductId == productModel.Id);
+                //    productInventory.StockQuantity = productModel.StockQuantity;
+                //    _commandRepository.UpdateAsync(productInventory);
+                //}
 
                 product.UpdateUserId = productModel.UpdateUserId;
                 product.Name = productModel.Name;
@@ -435,10 +427,10 @@ namespace Hydra.Sale.Api.Services
                 product.Price = productModel.Price;
                 product.OldPrice = productModel.OldPrice;
                 product.CurrencyId = productModel.CurrencyId;
-                product.Weight = productModel.Weight;
-                product.Length = productModel.Length;
-                product.Width = productModel.Width;
-                product.Height = productModel.Height;
+                //product.Weight = productModel.Weight;
+                //product.Length = productModel.Length;
+                //product.Width = productModel.Width;
+                //product.Height = productModel.Height;
                 product.AvailableStartDateTimeUtc = productModel.AvailableStartDateTimeUtc;
                 product.AvailableEndDateTimeUtc = productModel.AvailableEndDateTimeUtc;
                 product.DisplayOrder = productModel.DisplayOrder;

@@ -27,7 +27,7 @@ namespace Hydra.Sale.Api.Endpoints
             services.AddScoped<IOrderNoteService, OrderNoteService>();
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IProductService, ProductService>();
-            services.AddScoped<IProductInventoryService, ProductInventoryService>();
+            //services.AddScoped<IProductInventoryService, ProductInventoryService>();
             services.AddScoped<IProductReviewService, ProductReviewService>();
             services.AddScoped<IProductReviewHelpfulnessService, ProductReviewHelpfulnessService>();
             services.AddScoped<IProductTagService, ProductTagService>();

@@ -14,6 +14,11 @@ namespace Hydra.Sale.Core.EntityConfiguration
 
             entity.HasIndex(e => e.ProductId, "IX_ProductWarehouseInventory_ProductId");
 
+            entity.HasOne(d => d.ProductAttribute).WithMany(p => p.ProductInventories)
+            .HasForeignKey(d => d.AttributeId)
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_ProductInventory_Attribute");
+
             entity.HasOne(d => d.Product).WithMany(p => p.ProductInventories)
             .HasForeignKey(d => d.ProductId)
             .OnDelete(DeleteBehavior.Restrict)

@@ -4,6 +4,7 @@ using Hydra.Migrations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Hydra.Migrations.Migrations
 {
     [DbContext(typeof(MigrationContext))]
-    partial class MigrationContextModelSnapshot : ModelSnapshot
+    [Migration("20240124072649_dbVersion_47")]
+    partial class dbVersion_47
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5669,7 +5672,7 @@ namespace Hydra.Migrations.Migrations
                     b.Property<bool>("AllowCustomerReviews")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("AllowedQuantities")
+                    b.Property<bool?>("AllowedQuantities")
                         .HasColumnType("bit");
 
                     b.Property<int>("ApprovedRatingSum")
@@ -5727,11 +5730,17 @@ namespace Hydra.Migrations.Migrations
                     b.Property<bool>("HasDiscountsApplied")
                         .HasColumnType("bit");
 
+                    b.Property<decimal>("Height")
+                        .HasColumnType("decimal(18, 4)");
+
                     b.Property<bool>("IsFreeShipping")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsTaxExempt")
                         .HasColumnType("bit");
+
+                    b.Property<decimal>("Length")
+                        .HasColumnType("decimal(18, 4)");
 
                     b.Property<bool>("MarkAsNew")
                         .HasColumnType("bit");
@@ -5811,6 +5820,12 @@ namespace Hydra.Migrations.Migrations
                         .HasPrecision(6)
                         .HasColumnType("datetime2(6)");
 
+                    b.Property<decimal>("Weight")
+                        .HasColumnType("decimal(18, 4)");
+
+                    b.Property<decimal>("Width")
+                        .HasColumnType("decimal(18, 4)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CreateUserId");
@@ -5826,107 +5841,6 @@ namespace Hydra.Migrations.Migrations
                     b.HasIndex(new[] { "Published", "Deleted", "Id" }, "IX_Product_Deleted_and_Published");
 
                     b.ToTable("Product", "Sale");
-                });
-
-            modelBuilder.Entity("Hydra.Sale.Core.Domain.ProductAttribute", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AttributeType")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
-
-                    b.Property<int>("DisplayOrder")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int?>("PictureId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex(new[] { "AttributeType" }, "IX_Attribute_AttributeType");
-
-                    b.HasIndex(new[] { "DisplayOrder" }, "IX_Attribute_DisplayOrder");
-
-                    b.ToTable("ProductAttribute", "Sale");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AttributeType = 0,
-                            DisplayOrder = 1,
-                            Name = "Blue",
-                            Value = "blue"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AttributeType = 0,
-                            DisplayOrder = 2,
-                            Name = "Blue",
-                            Value = "red"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            AttributeType = 0,
-                            DisplayOrder = 3,
-                            Name = "White",
-                            Value = "#fff"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            AttributeType = 0,
-                            DisplayOrder = 4,
-                            Name = "Black",
-                            Value = "#000"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            AttributeType = 1,
-                            Description = "Small Means S US Size",
-                            DisplayOrder = 5,
-                            Name = "Small size",
-                            Value = "#Small"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            AttributeType = 1,
-                            Description = "Small Means M US Size",
-                            DisplayOrder = 6,
-                            Name = "Medium",
-                            Value = "#Medium"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            AttributeType = 1,
-                            Description = "Small Means XL US Size",
-                            DisplayOrder = 7,
-                            Name = "Large",
-                            Value = "#Large"
-                        });
                 });
 
             modelBuilder.Entity("Hydra.Sale.Core.Domain.ProductCategory", b =>
@@ -5956,39 +5870,6 @@ namespace Hydra.Migrations.Migrations
                     b.HasIndex(new[] { "ProductId" }, "IX_Product_Category_Mapping_ProductId");
 
                     b.ToTable("ProductCategory", "Sale");
-                });
-
-            modelBuilder.Entity("Hydra.Sale.Core.Domain.ProductInventory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("AttributeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ReservedQuantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StockQuantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StockType")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id")
-                        .HasName("PK_ProductWarehouseInventory");
-
-                    b.HasIndex("AttributeId");
-
-                    b.HasIndex(new[] { "ProductId" }, "IX_ProductWarehouseInventory_ProductId");
-
-                    b.ToTable("ProductInventory", "Sale");
                 });
 
             modelBuilder.Entity("Hydra.Sale.Core.Domain.ProductManufacturer", b =>
@@ -6045,32 +5926,6 @@ namespace Hydra.Migrations.Migrations
                     b.HasIndex(new[] { "ProductId" }, "IX_Product_Picture_Mapping_ProductId");
 
                     b.ToTable("ProductPicture", "Sale");
-                });
-
-            modelBuilder.Entity("Hydra.Sale.Core.Domain.ProductProductAttribute", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AttributeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id")
-                        .HasName("PK_Product_Attribute_Mapping");
-
-                    b.HasIndex(new[] { "AttributeId", "ProductId" }, "IX_PCM_Product_and_Attribute");
-
-                    b.HasIndex(new[] { "AttributeId" }, "IX_Product_Attribute_Mapping_AttributeId");
-
-                    b.HasIndex(new[] { "ProductId" }, "IX_Product_Attribute_Mapping_ProductId");
-
-                    b.ToTable("ProductProductAttribute", "Sale");
                 });
 
             modelBuilder.Entity("Hydra.Sale.Core.Domain.ProductProductTag", b =>
@@ -23684,26 +23539,6 @@ namespace Hydra.Migrations.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Hydra.Sale.Core.Domain.ProductInventory", b =>
-                {
-                    b.HasOne("Hydra.Sale.Core.Domain.ProductAttribute", "ProductAttribute")
-                        .WithMany("ProductInventories")
-                        .HasForeignKey("AttributeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("FK_ProductInventory_Attribute");
-
-                    b.HasOne("Hydra.Sale.Core.Domain.Product", "Product")
-                        .WithMany("ProductInventories")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("FK_ProductInventory_Product");
-
-                    b.Navigation("Product");
-
-                    b.Navigation("ProductAttribute");
-                });
-
             modelBuilder.Entity("Hydra.Sale.Core.Domain.ProductManufacturer", b =>
                 {
                     b.HasOne("Hydra.Sale.Core.Domain.Manufacturer", "Manufacturer")
@@ -23741,27 +23576,6 @@ namespace Hydra.Migrations.Migrations
                         .HasConstraintName("FK_ProductPicture_Product");
 
                     b.Navigation("Picture");
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Hydra.Sale.Core.Domain.ProductProductAttribute", b =>
-                {
-                    b.HasOne("Hydra.Sale.Core.Domain.ProductAttribute", "Attribute")
-                        .WithMany("ProductAttributes")
-                        .HasForeignKey("AttributeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("FK_ProductAttribute_Attribute");
-
-                    b.HasOne("Hydra.Sale.Core.Domain.Product", "Product")
-                        .WithMany("ProductAttributes")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("FK_ProductCategory_Product");
-
-                    b.Navigation("Attribute");
 
                     b.Navigation("Product");
                 });
@@ -24100,11 +23914,7 @@ namespace Hydra.Migrations.Migrations
                 {
                     b.Navigation("OrderItems");
 
-                    b.Navigation("ProductAttributes");
-
                     b.Navigation("ProductCategories");
-
-                    b.Navigation("ProductInventories");
 
                     b.Navigation("ProductManufacturers");
 
@@ -24119,13 +23929,6 @@ namespace Hydra.Migrations.Migrations
                     b.Navigation("RelatedProductProductId2Navigations");
 
                     b.Navigation("ShoppingCartItems");
-                });
-
-            modelBuilder.Entity("Hydra.Sale.Core.Domain.ProductAttribute", b =>
-                {
-                    b.Navigation("ProductAttributes");
-
-                    b.Navigation("ProductInventories");
                 });
 
             modelBuilder.Entity("Hydra.Sale.Core.Domain.ProductReview", b =>

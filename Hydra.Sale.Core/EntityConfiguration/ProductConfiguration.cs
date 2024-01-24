@@ -17,8 +17,6 @@ namespace Hydra.Sale.Core.EntityConfiguration
             entity.Property(e => e.AvailableStartDateTimeUtc).HasPrecision(6);
             entity.Property(e => e.CreatedOnUtc).HasPrecision(6);
             entity.Property(e => e.UpdatedOnUtc).HasPrecision(6);
-            entity.Property(e => e.Height).HasColumnType("decimal(18, 4)");
-            entity.Property(e => e.Length).HasColumnType("decimal(18, 4)");
             entity.Property(e => e.MarkAsNewEndDateTimeUtc).HasPrecision(6);
             entity.Property(e => e.MarkAsNewStartDateTimeUtc).HasPrecision(6);
             entity.Property(e => e.MetaDescription).HasMaxLength(300);
@@ -30,8 +28,6 @@ namespace Hydra.Sale.Core.EntityConfiguration
             entity.Property(e => e.OldPrice).HasColumnType("decimal(18, 4)");
             entity.Property(e => e.Price).HasColumnType("decimal(18, 4)");
             entity.Property(e => e.ShortDescription).HasMaxLength(300);
-            entity.Property(e => e.Weight).HasColumnType("decimal(18, 4)");
-            entity.Property(e => e.Width).HasColumnType("decimal(18, 4)");
 
             entity.HasOne(d => d.DeliveryDate).WithMany(p => p.Products)
             .HasForeignKey(d => d.DeliveryDateId)

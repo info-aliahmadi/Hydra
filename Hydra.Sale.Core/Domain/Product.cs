@@ -41,13 +41,6 @@ public class Product : BaseEntity<int>
 
     public virtual Currency Currency { get; set; }
 
-    public decimal Weight { get; set; }
-
-    public decimal Length { get; set; }
-
-    public decimal Width { get; set; }
-
-    public decimal Height { get; set; }
 
     public DateTime? AvailableStartDateTimeUtc { get; set; }
 
@@ -73,7 +66,7 @@ public class Product : BaseEntity<int>
 
     public bool NotReturnable { get; set; }
 
-    public bool? AllowedQuantities { get; set; }
+    public bool AllowedQuantities { get; set; }
 
     public bool IsTaxExempt { get; set; }
 
@@ -105,26 +98,25 @@ public class Product : BaseEntity<int>
 
     public DateTime? UpdatedOnUtc { get; set; }
 
-
     public virtual DeliveryDate DeliveryDate { get; set; }
 
-    public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+    public virtual List<OrderItem> OrderItems { get; set; } = new();
 
-    public virtual ICollection<ProductCategory> ProductCategories { get; set; } = new List<ProductCategory>();
+    public virtual List<ProductCategory> ProductCategories { get; set; } = new();
 
-    public virtual ICollection<ProductInventory> ProductInventories { get; set; } = new List<ProductInventory>();
+    public virtual List<ProductInventory> ProductInventories { get; set; } = new();
 
-    public virtual ICollection<ProductManufacturer> ProductManufacturers { get; set; } = new List<ProductManufacturer>();
+    public virtual List<ProductManufacturer> ProductManufacturers { get; set; } = new();
 
-    public virtual ICollection<ProductPicture> ProductPictures { get; set; } = new List<ProductPicture>();
+    public virtual List<ProductPicture> ProductPictures { get; set; } = new();
 
-    public virtual ICollection<ProductReview> ProductReviews { get; set; } = new List<ProductReview>();
+    public virtual List<ProductReview> ProductReviews { get; set; } = new();
 
-    public virtual ICollection<RelatedProduct> RelatedProductProductId1Navigations { get; set; } = new List<RelatedProduct>();
+    public virtual List<RelatedProduct> RelatedProductProductId1Navigations { get; set; } = new();
 
-    public virtual ICollection<RelatedProduct> RelatedProductProductId2Navigations { get; set; } = new List<RelatedProduct>();
+    public virtual List<RelatedProduct> RelatedProductProductId2Navigations { get; set; } = new();
 
-    public virtual ICollection<ShoppingCartItem> ShoppingCartItems { get; set; } = new List<ShoppingCartItem>();
+    public virtual List<ShoppingCartItem> ShoppingCartItems { get; set; } = new();
 
     public virtual TaxCategory TaxCategory { get; set; }
 
@@ -132,8 +124,10 @@ public class Product : BaseEntity<int>
 
     public virtual User? UpdateUser { get; set; }
 
-    public virtual ICollection<Discount> Discounts { get; set; } = new List<Discount>();
+    public virtual List<Discount> Discounts { get; set; } = new();
 
     public virtual List<ProductProductTag> ProductProductTags { get; set; } = new();
+
+    public virtual List<ProductProductAttribute> ProductAttributes { get; set; } = new();
 
 }
