@@ -130,7 +130,7 @@ namespace Hydra.Migrations.Migrations
                 values: new object[,]
                 {
                     { 1, 0, null, 1, "Blue", null, "blue" },
-                    { 2, 0, null, 2, "Blue", null, "red" },
+                    { 2, 0, null, 2, "Red", null, "red" },
                     { 3, 0, null, 3, "White", null, "#fff" },
                     { 4, 0, null, 4, "Black", null, "#000" },
                     { 5, 1, "Small Means S US Size", 5, "Small size", null, "#Small" },

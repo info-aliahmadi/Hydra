@@ -34,7 +34,7 @@ namespace Hydra.Sale.Core.EntityConfiguration
             {
                 Id = 2,
                 DisplayOrder = 2,
-                Name = "Blue",
+                Name = "Red",
                 Value = "red",
                 AttributeType = AttributeType.Color
             }, new ProductAttribute()

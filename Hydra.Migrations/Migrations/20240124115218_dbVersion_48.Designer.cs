@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Hydra.Migrations.Migrations
 {
     [DbContext(typeof(MigrationContext))]
-    [Migration("20240124114232_dbVersion_48")]
+    [Migration("20240124115218_dbVersion_48")]
     partial class dbVersion_48
     {
         /// <inheritdoc />
@@ -5884,7 +5884,7 @@ namespace Hydra.Migrations.Migrations
                             Id = 2,
                             AttributeType = 0,
                             DisplayOrder = 2,
-                            Name = "Blue",
+                            Name = "Red",
                             Value = "red"
                         },
                         new

@@ -5881,7 +5881,7 @@ namespace Hydra.Migrations.Migrations
                             Id = 2,
                             AttributeType = 0,
                             DisplayOrder = 2,
-                            Name = "Blue",
+                            Name = "Red",
                             Value = "red"
                         },
                         new
