@@ -27,7 +27,8 @@ namespace Hydra.Sale.Api.Endpoints
             services.AddScoped<IOrderNoteService, OrderNoteService>();
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IProductService, ProductService>();
-            //services.AddScoped<IProductInventoryService, ProductInventoryService>();
+            services.AddScoped<IProductInventoryService, ProductInventoryService>();
+            services.AddScoped<IProductAttributeService, ProductAttributeService>();
             services.AddScoped<IProductReviewService, ProductReviewService>();
             services.AddScoped<IProductReviewHelpfulnessService, ProductReviewHelpfulnessService>();
             services.AddScoped<IProductTagService, ProductTagService>();
@@ -92,6 +93,13 @@ namespace Hydra.Sale.Api.Endpoints
             endpoints.MapPost(API_SCHEMA + "/AddManufacturer", ManufacturerHandler.AddManufacturer).RequirePermission("SALE.ADD_MANUFACTURER");
             endpoints.MapPost(API_SCHEMA + "/UpdateManufacturer", ManufacturerHandler.UpdateManufacturer).RequirePermission("SALE.UPDATE_MANUFACTURER");
             endpoints.MapPost(API_SCHEMA + "/DeleteManufacturer", ManufacturerHandler.DeleteManufacturer).RequirePermission("SALE.DELETE_MANUFACTURER");
+
+            endpoints.MapPost(API_SCHEMA + "/GetProductAttributeList", ProductAttributeHandler.GetList).RequirePermission("SALE.GET_MANUFACTURER_LIST");
+            endpoints.MapPost(API_SCHEMA + "/GetProductAttributesForSelect", ProductAttributeHandler.GetListForSelect).RequirePermission("SALE.GET_PRODUCT_ATTRIBUTE_FOR_SELECT");
+            endpoints.MapGet(API_SCHEMA + "/GetProductAttributeById", ProductAttributeHandler.GetProductAttributeById).RequirePermission("SALE.GET_MANUFACTURER_BY_ID");
+            endpoints.MapPost(API_SCHEMA + "/AddProductAttribute", ProductAttributeHandler.AddProductAttribute).RequirePermission("SALE.ADD_MANUFACTURER");
+            endpoints.MapPost(API_SCHEMA + "/UpdateProductAttribute", ProductAttributeHandler.UpdateProductAttribute).RequirePermission("SALE.UPDATE_MANUFACTURER");
+            endpoints.MapPost(API_SCHEMA + "/DeleteProductAttribute", ProductAttributeHandler.DeleteProductAttribute).RequirePermission("SALE.DELETE_MANUFACTURER");
 
             endpoints.MapPost(API_SCHEMA + "/GetOrderList", OrderHandler.GetList).RequirePermission("SALE.");
             endpoints.MapGet(API_SCHEMA + "/GetOrderById", OrderHandler.GetOrderById).RequirePermission("SALE.");

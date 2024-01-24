@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Hydra.Migrations.Migrations
 {
     [DbContext(typeof(MigrationContext))]
-    [Migration("20240124074214_dbVersion_48")]
+    [Migration("20240124114232_dbVersion_48")]
     partial class dbVersion_48
     {
         /// <inheritdoc />
@@ -23762,7 +23762,7 @@ namespace Hydra.Migrations.Migrations
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("FK_ProductCategory_Product");
+                        .HasConstraintName("FK_ProductAttribute_Product");
 
                     b.Navigation("Attribute");
 

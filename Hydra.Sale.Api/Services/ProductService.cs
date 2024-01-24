@@ -31,7 +31,7 @@ namespace Hydra.Sale.Api.Services
         {
             var result = new Result<PaginatedList<ProductModel>>();
 
-            var list = await (from product in _queryRepository.Table<Product>().Include(x => x.Currency).Where(x=>!x.Deleted)
+            var list = await (from product in _queryRepository.Table<Product>().Include(x => x.Currency).Where(x => !x.Deleted)
                               select new ProductModel()
                               {
                                   Id = product.Id,
@@ -115,6 +115,7 @@ namespace Hydra.Sale.Api.Services
                 .Include(x => x.ProductCategories)
                 .Include(x => x.ProductManufacturers)
                 .Include(x => x.ProductPictures)
+                .Include(x => x.ProductAttributes)
                 .Include(x => x.ProductProductTags).ThenInclude(x => x.ProductTag)
                 .Include(x => x.RelatedProductProductId1Navigations).FirstOrDefaultAsync(x => x.Id == id);
 
@@ -173,6 +174,7 @@ namespace Hydra.Sale.Api.Services
                 CategoryIds = product.ProductCategories.Select(cat => cat.CategoryId).ToList(),
                 ManufacturerIds = product.ProductManufacturers.Select(cat => cat.ManufacturerId).ToList(),
                 PictureIds = product.ProductPictures.Select(cat => cat.PictureId).ToList(),
+                AttributeIds = product.ProductAttributes.Select(cat => cat.AttributeId).ToList(),
                 RelatedProductIds = product.RelatedProductProductId1Navigations.Select(cat => cat.ProductId2).ToList(),
                 ProductTags = product.ProductProductTags.Select(x => x.ProductTag).Select(cat => cat.Name).ToList()
 
@@ -338,6 +340,15 @@ namespace Hydra.Sale.Api.Services
                     });
                 }
 
+                for (int i = 0; i < productModel.AttributeIds.Count; i++)
+                {
+                    await _commandRepository.InsertAsync(new ProductProductAttribute()
+                    {
+                        ProductId = product.Id,
+                        AttributeId = productModel.AttributeIds[i]
+                    });
+                }
+
                 for (int i = 0; i < productModel.RelatedProductIds.Count; i++)
                 {
                     await _commandRepository.InsertAsync(new RelatedProduct()
@@ -347,13 +358,17 @@ namespace Hydra.Sale.Api.Services
                         DisplayOrder = i
                     });
                 }
-
-                //await _commandRepository.InsertAsync(new ProductInventory()
-                //{
-                //    ProductId = product.Id,
-                //    StockQuantity = productModel.StockQuantity,
-                //    ReservedQuantity = 0
-                //});
+                for (int i = 0; i < productModel.Inventories.Count; i++)
+                {
+                    await _commandRepository.InsertAsync(new ProductInventory()
+                    {
+                        ProductId = product.Id,
+                        AttributeId = productModel.Inventories[i].AttributeId,
+                        StockQuantity = productModel.Inventories[i].StockQuantity,
+                        ReservedQuantity = productModel.Inventories[i].ReservedQuantity,
+                        StockType = productModel.Inventories[i].StockType
+                    });
+                }
 
                 await _commandRepository.SaveChangesAsync();
 
@@ -461,9 +476,13 @@ namespace Hydra.Sale.Api.Services
 
                 await UpdateProductCategory(product.Id, productModel.CategoryIds.ToArray());
 
+                await UpdateProductAttribute(product.Id, productModel.AttributeIds.ToArray());
+
                 await UpdateProductManufacturer(product.Id, productModel.ManufacturerIds.ToArray());
 
                 await UpdateProductPicture(product.Id, productModel.PictureIds.ToArray());
+
+                await UpdateProductInventories(product.Id, productModel.Inventories);
 
                 await UpdateRelatedProducts(product.Id, productModel.RelatedProductIds.ToArray());
 
@@ -473,7 +492,7 @@ namespace Hydra.Sale.Api.Services
 
                 var tagsList = await _productTagService.Add(newTags);
 
-                await UpdateProductTags(product.Id, tagsList.Data.Select(x=>x.Id).ToArray());
+                await UpdateProductTags(product.Id, tagsList.Data.Select(x => x.Id).ToArray());
 
                 await _commandRepository.SaveChangesAsync();
 
@@ -569,6 +588,45 @@ namespace Hydra.Sale.Api.Services
                 return result;
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="roleIds"></param>
+        /// <returns></returns>
+        private async Task<Result> UpdateProductAttribute(int productId, int[] newAttributes)
+        {
+            var result = new Result();
+            try
+            {
+                var productAttributes = _queryRepository.Table<ProductProductAttribute>().Where(x => x.ProductId == productId).ToList();
+
+                var currentAttributes = productAttributes.Select(x => x.AttributeId).ToArray();
+
+                if (!newAttributes.SequenceEqual(newAttributes))
+                {
+                    foreach (var cat in productAttributes)
+                    {
+                        _commandRepository.DeleteAsync(cat);
+                    }
+                    foreach (var id in newAttributes)
+                    {
+                        await _commandRepository.InsertAsync(new ProductProductAttribute()
+                        {
+                            ProductId = productId,
+                            AttributeId = id
+                        });
+                    }
+                }
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                result.Message = e.Message;
+                return result;
+            }
+        }
 
         /// <summary>
         /// 
@@ -601,6 +659,61 @@ namespace Hydra.Sale.Api.Services
                     }
 
                 }
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.Status = ResultStatusEnum.ExceptionThrowed;
+                result.Message = e.Message;
+                return result;
+            }
+
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="roleIds"></param>
+        /// <returns></returns>
+        private async Task<Result> UpdateProductInventories(int productId, List<ProductInventoryModel> inventoris)
+        {
+            var result = new Result();
+            try
+            {
+                var productInventories = _queryRepository.Table<ProductInventory>().Where(x => x.ProductId == productId).ToList();
+
+                var notExistInventories = productInventories.Where(x => !inventoris.Select(c => c.Id).Contains(x.Id));
+
+                var existedInventories = productInventories.Where(x => inventoris.Select(c => c.Id).Contains(x.Id));
+
+
+                foreach (var product in notExistInventories)
+                {
+                    _commandRepository.DeleteAsync(product);
+                }
+                foreach (var product in existedInventories)
+                {
+                    var newProduct = inventoris.FirstOrDefault(x => x.ProductId == product.Id);
+
+                    product.StockQuantity = newProduct.StockQuantity;
+                    product.ReservedQuantity = newProduct.ReservedQuantity;
+
+                    _commandRepository.UpdateAsync(product);
+                }
+                var newInventories = inventoris.Where(x => x.Id == 0);
+
+                foreach (var newInv in newInventories)
+                {
+                    await _commandRepository.InsertAsync(new ProductInventory()
+                    {
+                        ProductId = productId,
+                        AttributeId = newInv.AttributeId,
+                        StockType = newInv.StockType,
+                        StockQuantity = newInv.StockQuantity,
+                        ReservedQuantity = newInv.ReservedQuantity
+                    });
+                }
+
                 return result;
             }
             catch (Exception e)

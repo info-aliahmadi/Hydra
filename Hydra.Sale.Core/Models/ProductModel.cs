@@ -392,6 +392,16 @@ namespace Hydra.Sale.Core.Models
         /// </summary>
         /// <returns></returns>
         public List<int> ManufacturerIds { get; set; } = new List<int>();
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public List<int> AttributeIds { get; set; } = new List<int>();
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public List<ProductInventoryModel> Inventories { get; set; } = new();
 
 
         /// <summary>

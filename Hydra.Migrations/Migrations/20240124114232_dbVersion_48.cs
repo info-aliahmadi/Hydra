@@ -115,7 +115,7 @@ namespace Hydra.Migrations.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_ProductCategory_Product",
+                        name: "FK_ProductAttribute_Product",
                         column: x => x.ProductId,
                         principalSchema: "Sale",
                         principalTable: "Product",
@@ -184,11 +184,6 @@ namespace Hydra.Migrations.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_ProductCategory_Product",
-                schema: "Sale",
-                table: "ProductCategory");
-
             migrationBuilder.DropTable(
                 name: "ProductInventory",
                 schema: "Sale");

@@ -23759,7 +23759,7 @@ namespace Hydra.Migrations.Migrations
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("FK_ProductCategory_Product");
+                        .HasConstraintName("FK_ProductAttribute_Product");
 
                     b.Navigation("Attribute");
 

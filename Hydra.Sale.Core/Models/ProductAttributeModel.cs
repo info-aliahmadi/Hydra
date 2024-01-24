@@ -1,41 +1,44 @@
-﻿using Hydra.Sale.Core.Domain;
+﻿
+
+using Hydra.Sale.Core.Domain;
 
 namespace Hydra.Sale.Core.Models
 {
-    public class ProductInventoryModel
+    public class ProductAttributeModel
     {
-
         /// <summary>
         /// 
         /// </summary>
-        /// <returns></returns>
         public int Id { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public int ProductId { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public int? AttributeId { get; set; }
+        public string Value { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public StockType StockType { get; set; }
+        public AttributeType AttributeType { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public int StockQuantity { get; set; }
+        public int? PictureId { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public int ReservedQuantity { get; set; }
+        public int DisplayOrder { get; set; }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        public string? Description { get; set; }
     }
 }

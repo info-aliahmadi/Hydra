@@ -26,7 +26,7 @@ namespace Hydra.Sale.Core.EntityConfiguration
             entity.HasOne(d => d.Product).WithMany(p => p.ProductAttributes)
             .HasForeignKey(d => d.ProductId)
             .OnDelete(DeleteBehavior.Restrict)
-            .HasConstraintName("FK_ProductCategory_Product");
+            .HasConstraintName("FK_ProductAttribute_Product");
         }
     }
 }
