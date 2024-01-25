@@ -1,4 +1,5 @@
-﻿using Hydra.Infrastructure.Data.Extension;
+﻿using Hydra.FileStorage.Core.Models;
+using Hydra.Infrastructure.Data.Extension;
 using Hydra.Infrastructure.Security.Domain;
 using Hydra.Kernel.Extensions;
 using Hydra.Kernel.Interfaces.Data;
@@ -54,10 +55,6 @@ namespace Hydra.Sale.Api.Services
                                   OldPrice = product.OldPrice,
                                   CurrencyId = product.CurrencyId,
                                   CurrencyCode = product.Currency.CurrencyCode,
-                                  //Weight = product.Weight,
-                                  //Length = product.Length,
-                                  //Width = product.Width,
-                                  //Height = product.Height,
                                   AvailableStartDateTimeUtc = product.AvailableStartDateTimeUtc,
                                   AvailableEndDateTimeUtc = product.AvailableEndDateTimeUtc,
                                   DisplayOrder = product.DisplayOrder,
@@ -84,6 +81,13 @@ namespace Hydra.Sale.Api.Services
                                   Deleted = product.Deleted,
                                   CreatedOnUtc = product.CreatedOnUtc,
                                   UpdatedOnUtc = product.UpdatedOnUtc,
+                                  PreviewImage = product.ProductPictures.OrderBy(r => r.Id).Select(image => new FileUploadModel()
+                                  {
+                                      Id = image.PictureId,
+                                      FileName = image.Picture.FileName,
+                                      Directory = image.Picture.Directory,
+                                      Thumbnail = image.Picture.Thumbnail,
+                                  }).FirstOrDefault(),
                                   //OrderItems = product.OrderItems,
                                   //ProductCategories = product.ProductCategories,
                                   //ProductInventories = product.ProductInventories,
@@ -112,11 +116,14 @@ namespace Hydra.Sale.Api.Services
         {
             var result = new Result<ProductModel>();
             var product = await _queryRepository.Table<Product>()
+                .Include(x => x.CreateUser)
+                .Include(x => x.UpdateUser)
                 .Include(x => x.ProductCategories)
                 .Include(x => x.ProductManufacturers)
                 .Include(x => x.ProductPictures)
                 .Include(x => x.ProductAttributes)
                 .Include(x => x.ProductProductTags).ThenInclude(x => x.ProductTag)
+                .Include(x => x.ProductInventories).ThenInclude(x => x.ProductAttribute)
                 .Include(x => x.RelatedProductProductId1Navigations).FirstOrDefaultAsync(x => x.Id == id);
 
             var productModel = new ProductModel()
@@ -141,10 +148,6 @@ namespace Hydra.Sale.Api.Services
                 Price = product.Price,
                 OldPrice = product.OldPrice,
                 CurrencyId = product.CurrencyId,
-                //Weight = product.Weight,
-                //Length = product.Length,
-                //Width = product.Width,
-                //Height = product.Height,
                 AvailableStartDateTimeUtc = product.AvailableStartDateTimeUtc,
                 AvailableEndDateTimeUtc = product.AvailableEndDateTimeUtc,
                 DisplayOrder = product.DisplayOrder,
@@ -171,12 +174,36 @@ namespace Hydra.Sale.Api.Services
                 Deleted = product.Deleted,
                 CreatedOnUtc = product.CreatedOnUtc,
                 UpdatedOnUtc = product.UpdatedOnUtc,
+                CreateUser = new AuthorModel()
+                {
+                    Id = product.CreateUser.Id,
+                    Name = product.CreateUser.Name,
+                    UserName = product.CreateUser.UserName,
+                    Avatar = product.CreateUser.Avatar
+                },
+                UpdateUser = new AuthorModel()
+                {
+                    Id = product.UpdateUser?.Id,
+                    Name = product.UpdateUser?.Name,
+                    UserName = product.UpdateUser?.UserName,
+                    Avatar = product.UpdateUser?.Avatar
+                },
                 CategoryIds = product.ProductCategories.Select(cat => cat.CategoryId).ToList(),
                 ManufacturerIds = product.ProductManufacturers.Select(cat => cat.ManufacturerId).ToList(),
                 PictureIds = product.ProductPictures.Select(cat => cat.PictureId).ToList(),
                 AttributeIds = product.ProductAttributes.Select(cat => cat.AttributeId).ToList(),
                 RelatedProductIds = product.RelatedProductProductId1Navigations.Select(cat => cat.ProductId2).ToList(),
-                ProductTags = product.ProductProductTags.Select(x => x.ProductTag).Select(cat => cat.Name).ToList()
+                ProductTags = product.ProductProductTags.Select(x => x.ProductTag).Select(cat => cat.Name).ToList(),
+                Inventories = product.ProductInventories.Where(c => c.StockType == StockType.PerAttribute).Select(x => new ProductInventoryModel()
+                {
+                    Id = x.Id,
+                    ProductId = x.ProductId,
+                    AttributeId = x.AttributeId,
+                    AttributeName = x.ProductAttribute.Name,
+                    StockQuantity = x.StockQuantity,
+                    ReservedQuantity = x.ReservedQuantity,
+                    StockType = x.StockType
+                }).ToList()
 
             };
             result.Data = productModel;
@@ -366,9 +393,19 @@ namespace Hydra.Sale.Api.Services
                         AttributeId = productModel.Inventories[i].AttributeId,
                         StockQuantity = productModel.Inventories[i].StockQuantity,
                         ReservedQuantity = productModel.Inventories[i].ReservedQuantity,
-                        StockType = productModel.Inventories[i].StockType
+                        StockType = StockType.PerAttribute
                     });
                 }
+                await _commandRepository.InsertAsync(new ProductInventory()
+                {
+                    ProductId = product.Id,
+                    AttributeId = null,
+                    StockQuantity = productModel.StockQuantity,
+                    ReservedQuantity = 0,
+                    StockType = StockType.Total
+                });
+
+
 
                 await _commandRepository.SaveChangesAsync();
 
@@ -483,6 +520,10 @@ namespace Hydra.Sale.Api.Services
                 await UpdateProductPicture(product.Id, productModel.PictureIds.ToArray());
 
                 await UpdateProductInventories(product.Id, productModel.Inventories);
+
+                var productInventory = _queryRepository.Table<ProductInventory>().FirstOrDefault(x => x.ProductId == product.Id && x.StockType == StockType.Total);
+                productInventory.StockQuantity = product.StockQuantity;
+
 
                 await UpdateRelatedProducts(product.Id, productModel.RelatedProductIds.ToArray());
 
@@ -603,7 +644,7 @@ namespace Hydra.Sale.Api.Services
 
                 var currentAttributes = productAttributes.Select(x => x.AttributeId).ToArray();
 
-                if (!newAttributes.SequenceEqual(newAttributes))
+                if (!newAttributes.SequenceEqual(currentAttributes))
                 {
                     foreach (var cat in productAttributes)
                     {
@@ -680,7 +721,7 @@ namespace Hydra.Sale.Api.Services
             var result = new Result();
             try
             {
-                var productInventories = _queryRepository.Table<ProductInventory>().Where(x => x.ProductId == productId).ToList();
+                var productInventories = _queryRepository.Table<ProductInventory>().Where(x => x.ProductId == productId && x.StockType == StockType.PerAttribute).ToList();
 
                 var notExistInventories = productInventories.Where(x => !inventoris.Select(c => c.Id).Contains(x.Id));
 
@@ -691,12 +732,14 @@ namespace Hydra.Sale.Api.Services
                 {
                     _commandRepository.DeleteAsync(product);
                 }
+
+                existedInventories = existedInventories.Where(x => !notExistInventories.Select(c => c.Id).Contains(x.Id));
+
                 foreach (var product in existedInventories)
                 {
-                    var newProduct = inventoris.FirstOrDefault(x => x.ProductId == product.Id);
+                    var newProduct = inventoris.FirstOrDefault(x => x.Id == product.Id);
 
                     product.StockQuantity = newProduct.StockQuantity;
-                    product.ReservedQuantity = newProduct.ReservedQuantity;
 
                     _commandRepository.UpdateAsync(product);
                 }
@@ -708,9 +751,9 @@ namespace Hydra.Sale.Api.Services
                     {
                         ProductId = productId,
                         AttributeId = newInv.AttributeId,
-                        StockType = newInv.StockType,
+                        StockType = StockType.PerAttribute,
                         StockQuantity = newInv.StockQuantity,
-                        ReservedQuantity = newInv.ReservedQuantity
+                        ReservedQuantity = 0
                     });
                 }
 

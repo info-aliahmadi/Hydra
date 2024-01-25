@@ -20,6 +20,10 @@ namespace Hydra.Sale.Core.Models
         /// 
         /// </summary>
         public int? AttributeId { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string? AttributeName { get; set; }
 
         /// <summary>
         /// 
