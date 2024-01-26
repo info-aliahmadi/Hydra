@@ -1,4 +1,5 @@
-﻿using Hydra.FileStorage.Core.Models;
+﻿using EFCoreSecondLevelCacheInterceptor;
+using Hydra.FileStorage.Core.Models;
 using Hydra.Infrastructure.Data.Extension;
 using Hydra.Infrastructure.Security.Domain;
 using Hydra.Kernel.Extensions;
@@ -32,7 +33,14 @@ namespace Hydra.Sale.Api.Services
         {
             var result = new Result<PaginatedList<ProductModel>>();
 
-            var list = await (from product in _queryRepository.Table<Product>().Include(x => x.Currency).Where(x => !x.Deleted)
+            var list = await (from product in _queryRepository.Table<Product>()
+                                .Include(x => x.ProductInventories)
+                                .ThenInclude(x => x.ProductAttribute)
+                                .Include(x => x.Currency)
+                                .Include(x => x.ProductCategories)
+                                .Include(x => x.ProductManufacturers)
+                                .Include(x => x.ProductAttributes)
+                                .Where(x => !x.Deleted)
                               select new ProductModel()
                               {
                                   Id = product.Id,
@@ -45,7 +53,9 @@ namespace Hydra.Sale.Api.Services
                                   AdminComment = product.AdminComment,
                                   MetaDescription = product.MetaDescription,
                                   DeliveryDateId = product.DeliveryDateId,
+                                  DeliveryDateName = product.DeliveryDate.Name,
                                   TaxCategoryId = product.TaxCategoryId,
+                                  TaxCategoryName = product.TaxCategory.Name,
                                   StockQuantity = product.StockQuantity,
                                   MinStockQuantity = product.MinStockQuantity,
                                   NotifyAdminForQuantityBelow = product.NotifyAdminForQuantityBelow,
@@ -88,19 +98,21 @@ namespace Hydra.Sale.Api.Services
                                       Directory = image.Picture.Directory,
                                       Thumbnail = image.Picture.Thumbnail,
                                   }).FirstOrDefault(),
-                                  //OrderItems = product.OrderItems,
-                                  //ProductCategories = product.ProductCategories,
-                                  //ProductInventories = product.ProductInventories,
-                                  //ProductManufacturers = product.ProductManufacturers,
-                                  //ProductPictures = product.ProductPictures,
-                                  //ProductReviews = product.ProductReviews,
-                                  //RelatedProductProductId1Navigations = product.RelatedProductProductId1Navigations,
-                                  //RelatedProductProductId2Navigations = product.RelatedProductProductId2Navigations,
-                                  //ShoppingCartItems = product.ShoppingCartItems,
-                                  //Discounts = product.Discounts,
-                                  //ProductTags = product.ProductTags,
+                                  CategoryNames = product.ProductCategories.Select(c => c.Category.Name).ToList(),
+                                  ManufacturerNames = product.ProductManufacturers.Select(c => c.Manufacturer.Name).ToList(),
+                                  AttributeNames = product.ProductAttributes.Select(c => c.Attribute.Name).ToList(),
+                                  Inventories = product.ProductInventories.Where(c => c.StockType == StockType.PerAttribute).Select(x => new ProductInventoryModel()
+                                  {
+                                      Id = x.Id,
+                                      ProductId = x.ProductId,
+                                      AttributeId = x.AttributeId,
+                                      AttributeName = x.ProductAttribute.Name,
+                                      StockQuantity = x.StockQuantity,
+                                      ReservedQuantity = x.ReservedQuantity,
+                                      StockType = x.StockType
+                                  }).ToList()
 
-                              }).OrderByDescending(x => x.Id).ToPaginatedListAsync(dataGrid);
+                              }).OrderByDescending(x => x.Id).Cacheable().ToPaginatedListAsync(dataGrid);
 
             result.Data = list;
 

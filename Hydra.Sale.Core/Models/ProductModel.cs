@@ -98,6 +98,11 @@ namespace Hydra.Sale.Core.Models
         /// </summary>
         /// <returns></returns>
         public int DeliveryDateId { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public string DeliveryDateName { get; set; }
 
 
         /// <summary>
@@ -105,6 +110,11 @@ namespace Hydra.Sale.Core.Models
         /// </summary>
         /// <returns></returns>
         public int TaxCategoryId { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public string TaxCategoryName { get; set; }
 
 
         /// <summary>
@@ -384,19 +394,38 @@ namespace Hydra.Sale.Core.Models
         /// 
         /// </summary>
         /// <returns></returns>
-        public List<int> CategoryIds { get; set; } = new List<int>();
+        public List<int> CategoryIds { get; set; } = new();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public List<string> CategoryNames { get; set; } = new();
 
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public List<int> ManufacturerIds { get; set; } = new List<int>();
+        public List<int> ManufacturerIds { get; set; } = new();
+
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public List<int> AttributeIds { get; set; } = new List<int>();
+        public List<string> ManufacturerNames { get; set; } = new();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public List<int> AttributeIds { get; set; } = new();
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public List<string> AttributeNames { get; set; } = new();
+
         /// <summary>
         /// 
         /// </summary>
@@ -408,28 +437,28 @@ namespace Hydra.Sale.Core.Models
         /// 
         /// </summary>
         /// <returns></returns>
-        public List<int> PictureIds { get; set; } = new List<int>();
+        public List<int> PictureIds { get; set; } = new();
 
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public List<int> ReviewIds { get; set; } = new List<int>();
+        public List<int> ReviewIds { get; set; } = new();
 
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public List<int> RelatedProductIds { get; set; } = new List<int>();
+        public List<int> RelatedProductIds { get; set; } = new();
 
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public List<string> ProductTags { get; set; } = new List<string>();
+        public List<string> ProductTags { get; set; } = new();
 
 
     }
