@@ -61,6 +61,18 @@ namespace Hydra.Sale.Api.Handler
         {
             var result = await orderService.GetById(orderId);
             return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+        }        
+        
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="orderService"></param>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetOrderPaymentById(IOrderService orderService, int orderId)
+        {
+            var result = await orderService.GetOrderPaymentById(orderId);
+            return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
         }
 
         /// <summary>

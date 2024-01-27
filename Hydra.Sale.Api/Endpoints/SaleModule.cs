@@ -103,6 +103,7 @@ namespace Hydra.Sale.Api.Endpoints
 
             endpoints.MapPost(API_SCHEMA + "/GetOrderList", OrderHandler.GetList).RequirePermission("SALE.");
             endpoints.MapGet(API_SCHEMA + "/GetOrderById", OrderHandler.GetOrderById).RequirePermission("SALE.");
+            endpoints.MapGet(API_SCHEMA + "/GetOrderPaymentById", OrderHandler.GetOrderPaymentById).RequirePermission("SALE.");
             endpoints.MapGet(API_SCHEMA + "/GetAllOrderStatus", OrderHandler.GetAllOrderStatus).AllowAnonymous();
             endpoints.MapGet(API_SCHEMA + "/GetAllShippingStatus", OrderHandler.GetAllShippingStatus).AllowAnonymous();
             endpoints.MapPost(API_SCHEMA + "/AddOrder", OrderHandler.AddOrder).RequirePermission("SALE.");
