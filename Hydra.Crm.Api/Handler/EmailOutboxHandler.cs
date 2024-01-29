@@ -45,6 +45,19 @@ namespace Hydra.Crm.Api.Handler
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="_emailOutboxService"></param>
+        /// <param name="emailOutboxModel"></param>
+        /// <returns></returns>
+        public static IResult GetAddressForSelect(IEmailOutboxService _emailOutboxService)
+        {
+            var result = _emailOutboxService.GetAddressForSelect();
+
+            return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+
+        }
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="userClaim"></param>
         /// <param name="_emailOutboxService"></param>
         /// <param name="emailOutboxId"></param>

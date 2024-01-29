@@ -25,6 +25,12 @@ namespace Hydra.Crm.Core.Interfaces
         /// <summary>
         /// 
         /// </summary>
+        /// <returns></returns>
+        Result<List<string>> GetAddressForSelect();
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="emailOutboxId"></param>
         /// <param name="emailAddress"></param>
         /// <returns></returns>

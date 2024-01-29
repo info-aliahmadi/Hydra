@@ -59,17 +59,21 @@ namespace Hydra.Crm.Core.Models.Email
         /// <summary>
         /// 
         /// </summary>
-        public List<EmailInboxFromAddressModel> EmailInboxFromAddress { get; set; } = new();
+        public List<EmailInboxFromAddressModel> FromAddress { get; set; } = new();
 
         /// <summary>
         /// 
         /// </summary>
-        public List<EmailInboxToAddressModel> EmailInboxToAddress { get; set; } = new();
+        public List<EmailInboxToAddressModel> ToAddress { get; set; } = new();
 
         /// <summary>
         /// 
         /// </summary>
         public List<int> Attachments { get; set; } = new();
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool HaveAttachment { get; set; } = false;
 
 
     }

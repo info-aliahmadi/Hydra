@@ -3,6 +3,7 @@ using Hydra.Crm.Core.Domain.Email;
 using Hydra.Crm.Core.Interfaces;
 using Hydra.Crm.Core.Models.Email;
 using Hydra.FileStorage.Core.Interfaces;
+using Hydra.Infrastructure.Data;
 using Hydra.Infrastructure.Data.Extension;
 using Hydra.Infrastructure.Email.Service;
 using Hydra.Kernel.Extensions;
@@ -146,16 +147,17 @@ namespace Hydra.Crm.Api.Services
                                       IsRead = emailInbox.IsRead,
                                       IsPin = emailInbox.IsPin,
                                       ReplayedOutboxId = emailInbox.EmailOutboxs.FirstOrDefault()!.Id,
-                                      EmailInboxFromAddress = emailInbox.EmailInboxFromAddress.Select(fromAddress => new EmailInboxFromAddressModel()
+                                      FromAddress = emailInbox.EmailInboxFromAddress.Select(fromAddress => new EmailInboxFromAddressModel()
                                       {
                                           Name = fromAddress.Name,
                                           Address = fromAddress.Address
                                       }).ToList(),
-                                      EmailInboxToAddress = emailInbox.EmailInboxFromAddress.Select(fromAddress => new EmailInboxToAddressModel()
+                                      ToAddress = emailInbox.EmailInboxFromAddress.Select(fromAddress => new EmailInboxToAddressModel()
                                       {
                                           Name = fromAddress.Name,
                                           Address = fromAddress.Address
                                       }).ToList(),
+                                      HaveAttachment = emailInbox.EmailInboxAttachments.Any()
 
                                   }).OrderByDescending(x => x.IsPin).ThenByDescending(x => x.RegisterDate).ToPaginatedListAsync(dataGrid);
 
@@ -200,16 +202,17 @@ namespace Hydra.Crm.Api.Services
                                       IsRead = userEmailInbox.IsRead,
                                       IsPin = userEmailInbox.IsPin,
                                       ReplayedOutboxId = userEmailInbox.EmailOutboxs.FirstOrDefault()!.Id,
-                                      EmailInboxFromAddress = userEmailInbox.EmailInboxFromAddress.Select(fromAddress => new EmailInboxFromAddressModel()
+                                      FromAddress = userEmailInbox.EmailInboxFromAddress.Select(fromAddress => new EmailInboxFromAddressModel()
                                       {
                                           Name = fromAddress.Name,
                                           Address = fromAddress.Address
                                       }).ToList(),
-                                      EmailInboxToAddress = userEmailInbox.EmailInboxFromAddress.Select(fromAddress => new EmailInboxToAddressModel()
+                                      ToAddress = userEmailInbox.EmailInboxFromAddress.Select(fromAddress => new EmailInboxToAddressModel()
                                       {
                                           Name = fromAddress.Name,
                                           Address = fromAddress.Address
                                       }).ToList(),
+                                      HaveAttachment = userEmailInbox.EmailInboxAttachments.Any()
 
                                   }).OrderByDescending(x => x.IsPin).ThenByDescending(x => x.RegisterDate).ToPaginatedListAsync(dataGrid);
 
@@ -254,16 +257,17 @@ namespace Hydra.Crm.Api.Services
                                       IsRead = userEmailInbox.IsRead,
                                       IsPin = userEmailInbox.IsPin,
                                       ReplayedOutboxId = userEmailInbox.EmailOutboxs.FirstOrDefault()!.Id,
-                                      EmailInboxFromAddress = userEmailInbox.EmailInboxFromAddress.Select(fromAddress => new EmailInboxFromAddressModel()
+                                      FromAddress = userEmailInbox.EmailInboxFromAddress.Select(fromAddress => new EmailInboxFromAddressModel()
                                       {
                                           Name = fromAddress.Name,
                                           Address = fromAddress.Address
                                       }).ToList(),
-                                      EmailInboxToAddress = userEmailInbox.EmailInboxFromAddress.Select(fromAddress => new EmailInboxToAddressModel()
+                                      ToAddress = userEmailInbox.EmailInboxFromAddress.Select(fromAddress => new EmailInboxToAddressModel()
                                       {
                                           Name = fromAddress.Name,
                                           Address = fromAddress.Address
                                       }).ToList(),
+                                      HaveAttachment = userEmailInbox.EmailInboxAttachments.Any()
 
                                   }).OrderByDescending(x => x.IsPin).ThenByDescending(x => x.RegisterDate).ToPaginatedListAsync(dataGrid);
 
@@ -306,12 +310,12 @@ namespace Hydra.Crm.Api.Services
                                                  IsRead = userEmailInbox.IsRead,
                                                  IsPin = userEmailInbox.IsPin,
                                                  ReplayedOutboxId = userEmailInbox.EmailOutboxs.FirstOrDefault()!.Id,
-                                                 EmailInboxFromAddress = userEmailInbox.EmailInboxFromAddress.Select(fromAddress => new EmailInboxFromAddressModel()
+                                                 FromAddress = userEmailInbox.EmailInboxFromAddress.Select(fromAddress => new EmailInboxFromAddressModel()
                                                  {
                                                      Name = fromAddress.Name,
                                                      Address = fromAddress.Address
                                                  }).ToList(),
-                                                 EmailInboxToAddress = userEmailInbox.EmailInboxFromAddress.Select(fromAddress => new EmailInboxToAddressModel()
+                                                 ToAddress = userEmailInbox.EmailInboxFromAddress.Select(fromAddress => new EmailInboxToAddressModel()
                                                  {
                                                      Name = fromAddress.Name,
                                                      Address = fromAddress.Address
@@ -358,12 +362,12 @@ namespace Hydra.Crm.Api.Services
                                                  IsRead = userEmailInbox.IsRead,
                                                  IsPin = userEmailInbox.IsPin,
                                                  ReplayedOutboxId = userEmailInbox.EmailOutboxs.FirstOrDefault()!.Id,
-                                                 EmailInboxFromAddress = userEmailInbox.EmailInboxFromAddress.Select(fromAddress => new EmailInboxFromAddressModel()
+                                                 FromAddress = userEmailInbox.EmailInboxFromAddress.Select(fromAddress => new EmailInboxFromAddressModel()
                                                  {
                                                      Name = fromAddress.Name,
                                                      Address = fromAddress.Address
                                                  }).ToList(),
-                                                 EmailInboxToAddress = userEmailInbox.EmailInboxFromAddress.Select(fromAddress => new EmailInboxToAddressModel()
+                                                 ToAddress = userEmailInbox.EmailInboxFromAddress.Select(fromAddress => new EmailInboxToAddressModel()
                                                  {
                                                      Name = fromAddress.Name,
                                                      Address = fromAddress.Address
@@ -407,6 +411,7 @@ namespace Hydra.Crm.Api.Services
                 var emailInbox = await _queryRepository.Table<EmailInbox>().FirstOrDefaultAsync(x => x.Id == emailInboxId);
                 emailInbox.IsDeleted = true;
 
+                _commandRepository.UpdateAsync(emailInbox);
                 _commandRepository.SaveChanges();
 
                 return result;
@@ -440,6 +445,7 @@ namespace Hydra.Crm.Api.Services
                 var emailInbox = await _queryRepository.Table<EmailInbox>().FirstOrDefaultAsync(x => x.Id == emailInboxId);
                 emailInbox.IsPin = !emailInbox.IsPin;
 
+                _commandRepository.UpdateAsync(emailInbox);
                 _commandRepository.SaveChanges();
 
                 return result;
@@ -473,6 +479,7 @@ namespace Hydra.Crm.Api.Services
                 var emailInbox = await _queryRepository.Table<EmailInbox>().FirstOrDefaultAsync(x => x.Id == emailInboxId);
                 emailInbox.IsRead = true;
 
+                _commandRepository.UpdateAsync(emailInbox);
                 _commandRepository.SaveChanges();
 
                 return result;

@@ -73,6 +73,7 @@ namespace Hydra.Crm.Api.Endpoints
 
             endpoints.MapPost(API_SCHEMA + "/GetAllEmailOutbox", EmailOutboxHandler.GetAllEmailOutbox).RequirePermission("CRM.GET_ALL_EMAIL_OUTBOX");
             endpoints.MapPost(API_SCHEMA + "/GetEmailOutbox", EmailOutboxHandler.GetEmailOutbox).RequirePermission("CRM.GET_EMAIL_OUTBOX");
+            endpoints.MapGet(API_SCHEMA + "/GetAddressForSelect", EmailOutboxHandler.GetAddressForSelect).RequirePermission("CRM.GET_ADDRESS_FOR_SELECT");
             endpoints.MapGet(API_SCHEMA + "/GetEmailOutboxByIdForSender", EmailOutboxHandler.GetEmailOutboxByIdForSender).RequirePermission("CRM.GET_EMAIL_OUTBOX_BY_ID_FOR_SENDER");
             endpoints.MapGet(API_SCHEMA + "/RemoveEmailOutbox", EmailOutboxHandler.RemoveEmailOutbox).RequirePermission("CRM.REMOVE_EMAIL_OUTBOX");
             

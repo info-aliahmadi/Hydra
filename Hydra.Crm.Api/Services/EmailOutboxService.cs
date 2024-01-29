@@ -12,8 +12,7 @@ using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Net.Mail;
+using System.Linq;
 
 
 namespace Hydra.Crm.Api.Services
@@ -59,16 +58,8 @@ namespace Hydra.Crm.Api.Services
                                       Content = emailInbox.Content,
                                       RegisterDate = emailInbox.RegisterDate,
                                       IsDraft = emailInbox.IsDraft,
-                                      EmailOutboxFromAddress = emailInbox.EmailOutboxFromAddress.Select(fromAddress => new EmailOutboxFromAddressModel()
-                                      {
-                                          Name = fromAddress.Name,
-                                          Address = fromAddress.Address
-                                      }).ToList(),
-                                      EmailOutboxToAddress = emailInbox.EmailOutboxFromAddress.Select(fromAddress => new EmailOutboxToAddressModel()
-                                      {
-                                          Name = fromAddress.Name,
-                                          Address = fromAddress.Address
-                                      }).ToList(),
+                                      FromAddress = emailInbox.EmailOutboxFromAddress.Select(x => x.Address).ToList(),
+                                      ToAddress = emailInbox.EmailOutboxFromAddress.Select(x => x.Address).ToList(),
 
                                   }).OrderByDescending(x => x.RegisterDate).ToPaginatedListAsync(dataGrid);
 
@@ -111,16 +102,8 @@ namespace Hydra.Crm.Api.Services
                                       Content = userEmailInbox.Content,
                                       RegisterDate = userEmailInbox.RegisterDate,
                                       IsDraft = userEmailInbox.IsDraft,
-                                      EmailOutboxFromAddress = userEmailInbox.EmailOutboxFromAddress.Select(fromAddress => new EmailOutboxFromAddressModel()
-                                      {
-                                          Name = fromAddress.Name,
-                                          Address = fromAddress.Address
-                                      }).ToList(),
-                                      EmailOutboxToAddress = userEmailInbox.EmailOutboxFromAddress.Select(fromAddress => new EmailOutboxToAddressModel()
-                                      {
-                                          Name = fromAddress.Name,
-                                          Address = fromAddress.Address
-                                      }).ToList(),
+                                      FromAddress = userEmailInbox.EmailOutboxFromAddress.Select(x => x.Address).ToList(),
+                                      ToAddress = userEmailInbox.EmailOutboxFromAddress.Select(x => x.Address).ToList(),
 
                                   }).OrderByDescending(x => x.RegisterDate).ToPaginatedListAsync(dataGrid);
 
@@ -135,6 +118,21 @@ namespace Hydra.Crm.Api.Services
                 result.Status = ResultStatusEnum.ExceptionThrowed;
                 return result;
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public Result<List<string>> GetAddressForSelect()
+        {
+            var result = new Result<List<string>>();
+
+            var list = _queryRepository.Table<EmailOutboxToAddress>().Select(x => x.Address).Distinct().ToList();
+
+            result.Data = list;
+
+            return result;
         }
 
         /// <summary>
@@ -160,16 +158,8 @@ namespace Hydra.Crm.Api.Services
                                                   Content = userEmailInbox.Content,
                                                   RegisterDate = userEmailInbox.RegisterDate,
                                                   IsDraft = userEmailInbox.IsDraft,
-                                                  EmailOutboxFromAddress = userEmailInbox.EmailOutboxFromAddress.Select(fromAddress => new EmailOutboxFromAddressModel()
-                                                  {
-                                                      Name = fromAddress.Name,
-                                                      Address = fromAddress.Address
-                                                  }).ToList(),
-                                                  EmailOutboxToAddress = userEmailInbox.EmailOutboxFromAddress.Select(fromAddress => new EmailOutboxToAddressModel()
-                                                  {
-                                                      Name = fromAddress.Name,
-                                                      Address = fromAddress.Address
-                                                  }).ToList(),
+                                                  FromAddress = userEmailInbox.EmailOutboxFromAddress.Select(x => x.Address).ToList(),
+                                                  ToAddress = userEmailInbox.EmailOutboxToAddress.Select(x => x.Address).ToList(),
 
                                               }).FirstOrDefaultAsync();
 
@@ -200,23 +190,9 @@ namespace Hydra.Crm.Api.Services
                 var dateTime = DateTime.UtcNow;
 
                 // Add Current User Email to Senders if not Exist
-                if (!emailOutboxModel.EmailOutboxFromAddress.Any(x => x.Address == fromUser.Email))
+                if (!emailOutboxModel.FromAddress.Any(x => x == fromUser.Email))
                 {
-                    emailOutboxModel.EmailOutboxFromAddress.Add(new EmailOutboxFromAddressModel()
-                    {
-                        Name = fromUser.Email,
-                        Address = fromUser.Email
-                    });
-                }
-
-                // Add Or Update
-                if (emailOutboxModel.Id > 0)
-                {
-                    await Update(emailOutboxModel, fromUser.Email);
-                }
-                else
-                {
-                    await Add(emailOutboxModel);
+                    emailOutboxModel.FromAddress.Add(fromUser.Email);
                 }
 
                 try
@@ -227,35 +203,47 @@ namespace Hydra.Crm.Api.Services
                         Date = dateTime.Date,
                         Subject = emailOutboxModel.Subject,
                         Content = emailOutboxModel.Content,
-                        FromAddresses = emailOutboxModel.EmailOutboxFromAddress.Distinct().Select(x => new EmailAddress()
+                        FromAddresses = emailOutboxModel.FromAddress.Distinct().Select(x => new EmailAddress()
                         {
-                            Name = x.Name,
-                            Address = x.Address
+                            Name = x,
+                            Address = x
                         }).ToList(),
-                        ToAddresses = emailOutboxModel.EmailOutboxToAddress.Distinct().Select(x => new EmailAddress()
+                        ToAddresses = emailOutboxModel.ToAddress.Distinct().Select(x => new EmailAddress()
                         {
-                            Name = x.Name,
-                            Address = x.Address
+                            Name = x,
+                            Address = x
                         }).ToList(),
                     };
-                    if (emailOutboxModel.EmailOutboxAttachments.Any())
+                    if (emailOutboxModel.Attachments.Any())
                     {
-                        foreach (var attach in emailOutboxModel.EmailOutboxAttachments)
+                        foreach (var attach in emailOutboxModel.Attachments)
                         {
-                            var fileInfo = _fileStorageService.GetFileInfoById(attach.AttachmentId).Result;
+                            var fileInfo = _fileStorageService.GetFileInfoById(attach).Result;
                             var path = HydraHelper.GetCurrentDomain(context) + fileInfo.Data.FileName;
                             email.AttachmentPaths.Add(path);
                         }
                     }
 
                     _emailService.Send(email);
+
+
+                    // Add Or Update
+                    if (emailOutboxModel.Id > 0)
+                    {
+                        await Update(emailOutboxModel, fromUser.Email);
+                    }
+                    else
+                    {
+                        await Add(emailOutboxModel);
+                    }
+
                 }
                 catch
                 {
                     // If SMTP Operation failed take another chance to try again send the message
-                    var emailOutbox = await _queryRepository.Table<EmailOutbox>().FirstAsync(x => x.Id == emailOutboxModel.Id);
-                    emailOutbox.IsDraft = true;
-                    await _commandRepository.SaveChangesAsync();
+                    //var emailOutbox = await _queryRepository.Table<EmailOutbox>().FirstAsync(x => x.Id == emailOutboxModel.Id);
+                    //emailOutbox.IsDraft = true;
+                    //await _commandRepository.SaveChangesAsync();
 
                     result.Message = "SMTP Operation Failed";
                     result.Status = ResultStatusEnum.ExceptionThrowed;
@@ -291,13 +279,9 @@ namespace Hydra.Crm.Api.Services
                 var dateTime = DateTime.UtcNow;
 
                 // Add Current User Email to Senders if not Exist
-                if (!emailOutboxModel.EmailOutboxFromAddress.Any(x => x.Address == fromUser.Email))
+                if (!emailOutboxModel.FromAddress.Any(x => x == fromUser.Email))
                 {
-                    emailOutboxModel.EmailOutboxFromAddress.Add(new EmailOutboxFromAddressModel()
-                    {
-                        Name = fromUser.Email,
-                        Address = fromUser.Email
-                    });
+                    emailOutboxModel.FromAddress.Add(fromUser.Email);
                 }
 
                 // Add Or Update
@@ -351,33 +335,33 @@ namespace Hydra.Crm.Api.Services
 
 
                 // Add Email Senders
-                foreach (var address in emailOutboxModel.EmailOutboxFromAddress.Distinct())
+                foreach (var address in emailOutboxModel.FromAddress.Distinct())
                 {
                     await _commandRepository.InsertAsync(new EmailOutboxFromAddress()
                     {
                         EmailOutboxId = emailOutbox.Id,
-                        Name = address.Name,
-                        Address = address.Address
+                        Name = address,
+                        Address = address
                     });
                 }
                 // Add Email Receivers
-                foreach (var address in emailOutboxModel.EmailOutboxToAddress.Distinct())
+                foreach (var address in emailOutboxModel.ToAddress.Distinct())
                 {
                     await _commandRepository.InsertAsync(new EmailOutboxToAddress()
                     {
                         EmailOutboxId = emailOutbox.Id,
-                        Name = address.Name,
-                        Address = address.Address
+                        Name = address,
+                        Address = address
                     });
                 }
 
                 // Add Email Attachments
-                foreach (var attachment in emailOutboxModel.EmailOutboxAttachments.Distinct())
+                foreach (var attachment in emailOutboxModel.Attachments.Distinct())
                 {
                     await _commandRepository.InsertAsync(new EmailOutboxAttachment()
                     {
                         EmailOutboxId = emailOutbox.Id,
-                        AttachmentId = attachment.AttachmentId
+                        AttachmentId = attachment
                     });
                 }
 
@@ -449,9 +433,9 @@ namespace Hydra.Crm.Api.Services
                 // Update Email Senders
                 var existedFromAddresses = emailOutbox.EmailOutboxFromAddress.Select(x => x.Address);
 
-                var newFromAddresses = emailOutboxModel.EmailOutboxFromAddress.Select(x => x.Address);
+                var newFromAddresses = emailOutboxModel.FromAddress.Select(x => x);
 
-                if (existedFromAddresses != newFromAddresses)
+                if (!existedFromAddresses.SequenceEqual(newFromAddresses))
                 {
 
                     foreach (var fromAddress in emailOutbox.EmailOutboxFromAddress)
@@ -459,13 +443,13 @@ namespace Hydra.Crm.Api.Services
                         _commandRepository.DeleteAsync(fromAddress);
                     }
 
-                    foreach (var fromAddress in emailOutboxModel.EmailOutboxFromAddress)
+                    foreach (var fromAddress in emailOutboxModel.FromAddress)
                     {
                         await _commandRepository.InsertAsync(new EmailOutboxFromAddress()
                         {
                             EmailOutboxId = emailOutbox.Id,
-                            Name = fromAddress.Name,
-                            Address = fromAddress.Address
+                            Name = fromAddress,
+                            Address = fromAddress
                         });
                     }
                 }
@@ -473,9 +457,9 @@ namespace Hydra.Crm.Api.Services
                 // Update Email Receiver
                 var existedToAddresses = emailOutbox.EmailOutboxToAddress.Select(x => x.Address);
 
-                var newToAddresses = emailOutboxModel.EmailOutboxToAddress.Select(x => x.Address);
+                var newToAddresses = emailOutboxModel.ToAddress.Select(x => x);
 
-                if (existedToAddresses != newToAddresses)
+                if (!existedToAddresses.SequenceEqual(newToAddresses))
                 {
 
                     foreach (var toAddress in emailOutbox.EmailOutboxToAddress)
@@ -483,22 +467,22 @@ namespace Hydra.Crm.Api.Services
                         _commandRepository.DeleteAsync(toAddress);
                     }
 
-                    foreach (var toAddress in emailOutboxModel.EmailOutboxToAddress)
+                    foreach (var toAddress in emailOutboxModel.ToAddress)
                     {
                         await _commandRepository.InsertAsync(new EmailOutboxToAddress()
                         {
                             EmailOutboxId = emailOutbox.Id,
-                            Name = toAddress.Name,
-                            Address = toAddress.Address
+                            Name = toAddress,
+                            Address = toAddress
                         });
                     }
                 }
                 // Update Attachments
                 var existedAttachments = emailOutbox.EmailOutboxAttachments.Select(x => x.AttachmentId);
 
-                var newAttachments = emailOutboxModel.EmailOutboxAttachments.Select(x => x.AttachmentId);
+                var newAttachments = emailOutboxModel.Attachments.Select(x => x);
 
-                if (existedAttachments != newAttachments)
+                if (!existedAttachments.SequenceEqual(newAttachments))
                 {
 
                     foreach (var attachment in emailOutbox.EmailOutboxAttachments)
@@ -506,12 +490,12 @@ namespace Hydra.Crm.Api.Services
                         _commandRepository.DeleteAsync(attachment);
                     }
 
-                    foreach (var attachment in emailOutboxModel.EmailOutboxAttachments)
+                    foreach (var attachment in emailOutboxModel.Attachments)
                     {
                         await _commandRepository.InsertAsync(new EmailOutboxAttachment()
                         {
                             EmailOutboxId = emailOutbox.Id,
-                            AttachmentId = attachment.AttachmentId
+                            AttachmentId = attachment
                         });
                     }
                 }
