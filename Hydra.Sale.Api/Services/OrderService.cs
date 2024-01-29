@@ -127,6 +127,32 @@ namespace Hydra.Sale.Api.Services
         /// <summary>
         ///
         /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Result<PaymentViewModel>> GetOrderPaymentById(int id)
+        {
+            var result = new Result<PaymentViewModel>();
+            var payment = await _queryRepository.Table<Payment>().FirstAsync(x => x.OrderId == id);
+
+            var paymentModel = new PaymentViewModel
+            {
+                Id = payment.Id,
+                TransactionTrackingCode = payment.TransactionTrackingCode,
+                PaymentTrackingCode = payment.PaymentTrackingCode,
+                PaymentDateUtc = payment.PaymentDateUtc,
+                PaymentTypeId = payment.PaymentTypeId,
+                Status = payment.Status,
+                CardName = payment.CardName,
+                CardNumber = payment.CardNumber
+            };
+            result.Data = paymentModel;
+
+            return result;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
         /// <param name="orderModel"></param>
         /// <returns></returns>
         public async Task<Result<OrderModel>> Add(OrderModel orderModel)

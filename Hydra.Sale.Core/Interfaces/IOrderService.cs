@@ -60,5 +60,12 @@ namespace Hydra.Sale.Core.Interfaces
         /// </summary>
         /// <returns></returns>
         Task<Result<List<ShippingStatusModel>>> GetAllShippingStatus();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<Result<PaymentViewModel>> GetOrderPaymentById(int id);
     }
 }
