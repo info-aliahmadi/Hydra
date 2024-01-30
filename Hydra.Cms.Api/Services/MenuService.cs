@@ -1,4 +1,5 @@
-﻿using Hydra.Cms.Core.Domain;
+﻿using EFCoreSecondLevelCacheInterceptor;
+using Hydra.Cms.Core.Domain;
 using Hydra.Cms.Core.Interfaces;
 using Hydra.Cms.Core.Models;
 using Hydra.Infrastructure.Security.Domain;
@@ -38,7 +39,7 @@ namespace Hydra.Cms.Api.Services
                 PreviewImageId = x.PreviewImageId,
                 Order = x.Order,
                 ParentId = x.ParentId
-            }).OrderBy(x => x.Order).ToListAsync();
+            }).OrderBy(x => x.Order).Cacheable().ToListAsync();
 
             result.Data = list;
 

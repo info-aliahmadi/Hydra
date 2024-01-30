@@ -1,4 +1,5 @@
-﻿using Hydra.Cms.Core.Domain;
+﻿using EFCoreSecondLevelCacheInterceptor;
+using Hydra.Cms.Core.Domain;
 using Hydra.Cms.Core.Interfaces;
 using Hydra.Cms.Core.Models;
 using Hydra.Infrastructure.Data.Extension;
@@ -58,7 +59,7 @@ namespace Hydra.Cms.Api.Services
                                   Id = article.Id,
                                   Title = article.Title
 
-                              }).ToListAsync();
+                              }).Cacheable().ToListAsync();
 
             result.Data = list;
 

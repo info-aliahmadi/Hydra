@@ -68,6 +68,8 @@ namespace Hydra.Cms.Api.Services
                 if (pageSize <= 0)
                 {
                     pageSize = _sittingService.GetSettings().Data.NumberOfPostsPerList;
+
+                    pageSize = pageSize == 0 ? 10 : pageSize;
                 }
                 var itemsCount = query.Count();
                 var listItems = await query.OrderByDescending(x => x.PublishDate).ThenByDescending(x => x.RegisterDate).ToPaginatedQuery(pageIndex - 1, pageSize).Select(article => new ArticleModel()
@@ -107,7 +109,7 @@ namespace Hydra.Cms.Api.Services
                     Topics = article.Topics.Select(x => x.Title).ToList(),
                     Tags = article.Tags.Select(x => x.Title).ToList()
 
-                }).ToListAsync();
+                }).Cacheable().ToListAsync();
 
 
 
@@ -184,7 +186,7 @@ namespace Hydra.Cms.Api.Services
                     Topics = article.Topics.Select(x => x.Title).ToList(),
                     Tags = article.Tags.Select(x => x.Title).ToList()
 
-                }).ToListAsync();
+                }).Cacheable().ToListAsync();
 
 
 
@@ -249,7 +251,7 @@ namespace Hydra.Cms.Api.Services
                     Topics = article.Topics.Select(x => x.Title).ToList(),
                     Tags = article.Tags.Select(x => x.Title).ToList()
 
-                }).FirstOrDefaultAsync();
+                }).Cacheable().FirstOrDefaultAsync();
 
                 result.Data = article;
 

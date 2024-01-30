@@ -1,6 +1,4 @@
-﻿using Hydra.Auth.Core.Interfaces;
-using Hydra.Auth.Core.Models;
-using Hydra.Cms.Core.Interfaces;
+﻿using Hydra.Cms.Core.Interfaces;
 using Hydra.Cms.Core.Models;
 using Hydra.Kernel.Extensions;
 using Microsoft.AspNetCore.Http;
@@ -11,6 +9,22 @@ namespace Hydra.Cms.Api.Handler
 {
     public static class PageHandler
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_articleService"></param>
+        /// <param name="articleId"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetPageByIdForVisitors(
+            IPageService _pageService,
+            int pageId
+            )
+        {
+            var result = await _pageService.GetById(pageId);
+
+            return result.Succeeded ? Results.Ok(result) : Results.BadRequest(result);
+        }
+
         /// <summary>
         /// 
         /// </summary>
