@@ -25,40 +25,53 @@ namespace Hydra.Infrastructure.Email.Service
         {
             using (var client = new ImapClient())
             {
-                client.Connect(_imapSetting.ImapServer, _imapSetting.ImapPort, SecureSocketOptions.SslOnConnect);
-
-                // Authenticate with the server
-                client.Authenticate(_imapSetting.ImapUsername, _imapSetting.ImapPassword);
-
-                // Select the INBOX folder
-                client.Inbox.Open(FolderAccess.ReadOnly);
-
-                List<EmailMessage> emails = new List<EmailMessage>();
-
-                // Search for unread messages
-                foreach (var uid in client.Inbox.Search(SearchQuery.NotSeen))
+                try
                 {
-                    var message = client.Inbox.GetMessage(uid);
+                    client.Connect(_imapSetting.ImapServer, _imapSetting.ImapPort, SecureSocketOptions.None);
 
-                    var emailMessage = new EmailMessage
+                    // Authenticate with the server
+                    client.Authenticate(_imapSetting.ImapUsername, _imapSetting.ImapPassword);
+
+                    // Select the INBOX folder
+                    client.Inbox.Open(FolderAccess.ReadWrite);
+
+                    List<EmailMessage> emails = new List<EmailMessage>();
+
+                    // Search for unread messages
+                    foreach (var uid in client.Inbox.Search(SearchQuery.NotSeen))
                     {
-                        UID = uid.ToString(),
-                        Subject = message.Subject,
-                        Date = message.Date,
-                        Content = !string.IsNullOrEmpty(message.HtmlBody) ? message.HtmlBody : message.TextBody,
-                        FromAddresses = message.From.Mailboxes.Select(x => new EmailAddress { Address = x.Address, Name = x.Name }).ToList(),
-                        ToAddresses = message.To.Mailboxes.Select(x => new EmailAddress { Address = x.Address, Name = x.Name }).ToList(),
-                        Attachments = message.Attachments.ToList()
-                    };
-                    emailMessage.ToAddresses.AddRange(message.To.Select(x => (MailboxAddress)x).Select(x => new EmailAddress { Address = x.Address, Name = x.Name }));
-                    emailMessage.FromAddresses.AddRange(message.From.Select(x => (MailboxAddress)x).Select(x => new EmailAddress { Address = x.Address, Name = x.Name }));
-                    emails.Add(emailMessage);
+                        var message = client.Inbox.GetMessage(uid);
+
+                        var emailMessage = new EmailMessage
+                        {
+                            UID = uid.ToString(),
+                            Subject = message.Subject,
+                            Date = message.Date,
+                            Content = !string.IsNullOrEmpty(message.HtmlBody) ? message.HtmlBody : message.TextBody,
+                            FromAddresses = message.From.Mailboxes.Select(x => new EmailAddress { Address = x.Address, Name = x.Name }).ToList(),
+                            ToAddresses = message.To.Mailboxes.Select(x => new EmailAddress { Address = x.Address, Name = x.Name }).ToList(),
+                            Attachments = message.Attachments.ToList()
+                        };
+                        emails.Add(emailMessage);
+
+                        client.Inbox.AddFlags(uid, MessageFlags.Seen, true);
+                    }
+
+                    // Disconnect from the server
+                    client.Disconnect(true);
+
+                    return emails;
+                }
+                catch (Exception e)
+                {
+                    var loc = HydraHelper.GetApplicationDirectory() + @"\" + "AMigrationErrors.txt";
+                    var dateNow = DateTime.Now;
+                    string inform = dateNow + " | Load Emails : " + e.Message + "----------------------" + e.InnerException.Message;
+                    File.WriteAllText(loc, inform);
+
+                    throw;
                 }
 
-                // Disconnect from the server
-                client.Disconnect(true);
-
-                return emails;
             }
         }
 

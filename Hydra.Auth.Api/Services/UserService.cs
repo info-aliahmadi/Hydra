@@ -241,7 +241,8 @@ namespace Hydra.Auth.Api.Services
                     Email = userModel.Email,
                     PhoneNumber = userModel.PhoneNumber,
                     DefaultLanguage = userModel.DefaultLanguage,
-                    RegisterDate = DateTime.UtcNow
+                    RegisterDate = DateTime.UtcNow,
+                    DefaultTheme = "light"
                 };
 
                 if (!string.IsNullOrEmpty(userModel.AvatarFile))

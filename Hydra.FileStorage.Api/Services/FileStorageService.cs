@@ -529,10 +529,10 @@ namespace Hydra.FileStorage.Api.Services
             try
             {
 
-                //var validBuffer = new byte[64];
-                //await stream.ReadAsync(validBuffer, 0, validBuffer.Length);
-                //stream.Position = 0;
-                //var firstBytes = validBuffer.Take(64).ToArray();
+
+                // for email files
+                stream.Position = 0;
+
 
                 var validateWhiteList = _validationService.ValidateFileWhiteList(fileName);
                 if (validateWhiteList != ValidationFileEnum.Ok)
@@ -597,7 +597,6 @@ namespace Hydra.FileStorage.Api.Services
                     }
 
                 }
-                stream.Close();
                 stream.Close();
 
                 if (totalLength > _fileStorageSetting.MaxSizeLimitLargeFile && fileSize == FileSizeEnum.Large)
@@ -784,7 +783,7 @@ namespace Hydra.FileStorage.Api.Services
         public async Task<Result> Delete(int userId, int fileId)
         {
             var result = new Result();
-            var fileUpload = await _queryRepository.Table<FileUpload>().FirstOrDefaultAsync(x => x.Id == fileId && x.UserId== userId);
+            var fileUpload = await _queryRepository.Table<FileUpload>().FirstOrDefaultAsync(x => x.Id == fileId && x.UserId == userId);
             if (fileUpload is null)
             {
                 result.Status = ResultStatusEnum.NotFound;

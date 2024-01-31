@@ -218,8 +218,8 @@ namespace Hydra.Crm.Api.Services
                     {
                         foreach (var attach in emailOutboxModel.Attachments)
                         {
-                            var fileInfo = _fileStorageService.GetFileInfoById(attach).Result;
-                            var path = HydraHelper.GetCurrentDomain(context) + fileInfo.Data.FileName;
+                            var fileInfo = _fileStorageService.GetFileInfoById(attach).Result.Data;
+                            var path = HydraHelper.GetUploadsDirectory() + fileInfo.Directory + "/" + fileInfo.FileName;
                             email.AttachmentPaths.Add(path);
                         }
                     }

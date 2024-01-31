@@ -582,6 +582,8 @@ namespace Hydra.Cms.Api.Services
                 article.PreviewImageId = articleModel.PreviewImageId;
                 article.PreviewImageUrl = articleModel.PreviewImageUrl;
 
+                await _commandRepository.SaveChangesAsync();
+
                 var newTagIds = (await _tagService.GetListByTitle(articleModel.Tags.ToArray())).Data.Select(x => x.Id).ToArray();
 
                 // remove then add new relationship

@@ -3,6 +3,7 @@ using Hydra.Crm.Core.Domain.Email;
 using Hydra.Crm.Core.Interfaces;
 using Hydra.Crm.Core.Models.Email;
 using Hydra.FileStorage.Core.Interfaces;
+using Hydra.Infrastructure;
 using Hydra.Infrastructure.Data;
 using Hydra.Infrastructure.Data.Extension;
 using Hydra.Infrastructure.Email.Service;
@@ -10,6 +11,8 @@ using Hydra.Kernel.Extensions;
 using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;
 using Microsoft.EntityFrameworkCore;
+using MimeKit;
+using static System.Net.Mime.MediaTypeNames;
 
 
 namespace Hydra.Crm.Api.Services
@@ -42,19 +45,13 @@ namespace Hydra.Crm.Api.Services
             try
             {
                 var list = _emailService.ReceiveEmail();
-                var UIDsList = list.Select(c => c.UID).ToArray();
-                var isEmailExist = _queryRepository.Table<EmailInbox>().Any(x => UIDsList.Contains(x.UID));
 
-                if (isEmailExist)
-                {
-                    foreach (var email in list)
-                    {
-                        if (_queryRepository.Table<EmailInbox>().Any(x => x.UID == email.UID))
-                        {
-                            list.Remove(email);
-                        }
-                    }
-                }
+                var UIDsList = list.Select(c => c.UID).ToArray();
+
+
+                var existedUIDs = _queryRepository.Table<EmailInbox>().Where(x => UIDsList.Contains(x.UID)).Select(x=>x.UID);
+
+                list = list.Where(x => !existedUIDs.Contains(x.UID)).ToList();
 
                 var dateTime = DateTime.Now;
                 foreach (var email in list)
@@ -101,8 +98,8 @@ namespace Hydra.Crm.Api.Services
                     foreach (var attachment in email.Attachments)
                     {
                         var stream = new MemoryStream();
-                        attachment.WriteTo(stream);
-                        var attachmentUploaded = await _fileStorageService.UploadFromStreamAsync(userId, attachment.ContentId, "Rename", FileStorage.Core.Settings.FileSizeEnum.Small, stream, attachment.ContentType.Name);
+                        await ((MimePart)attachment).Content.DecodeToAsync(stream);
+                        var attachmentUploaded = await _fileStorageService.UploadFromStreamAsync(userId, attachment.ContentType.Name, "Rename", FileStorage.Core.Settings.FileSizeEnum.Small, stream, attachment.ContentType.Name);
                         if (attachmentUploaded.Succeeded)
                         {
                             await _commandRepository.InsertAsync(new EmailInboxAttachment()
