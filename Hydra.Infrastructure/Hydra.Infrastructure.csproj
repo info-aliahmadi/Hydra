@@ -38,8 +38,4 @@
     <ProjectReference Include="..\Hydra.Kernel\Hydra.Kernel.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Payment\" />
-  </ItemGroup>
-
 </Project>
