@@ -27,11 +27,11 @@ namespace Hydra.Crm.Api.Services
             var result = new Result<MessageSettingModel>();
             var setting = new MessageSettingModel();
 
-            var recipientIdsForContactMessageValue = _settingService.GetByKey(key: nameof(setting.RecipientIdsForContactMessage))?.Value;
-            var recipientIdsForRequestMessage = _settingService.GetByKey(key: nameof(setting.RecipientIdsForRequestMessage))?.Value;
+            var recipientIdsForContactMessageValue = _settingService.GetByKey(key: nameof(setting.RecipientIdsForContactMessage))?.Value ?? null;
+            var recipientIdsForRequestMessage = _settingService.GetByKey(key: nameof(setting.RecipientIdsForRequestMessage))?.Value ?? null;
 
-            setting.RecipientIdsForContactMessage = recipientIdsForContactMessageValue != null ? recipientIdsForContactMessageValue.Split(';').Select(int.Parse).ToArray() : new int[0];
-            setting.RecipientIdsForRequestMessage = recipientIdsForRequestMessage != null ? recipientIdsForRequestMessage.Split(';').Select(int.Parse).ToArray() : new int[0];
+            setting.RecipientIdsForContactMessage = !string.IsNullOrEmpty(recipientIdsForContactMessageValue) ? recipientIdsForContactMessageValue.Split(',').Select(int.Parse).ToArray() : Array.Empty<int>();
+            setting.RecipientIdsForRequestMessage = !string.IsNullOrEmpty(recipientIdsForRequestMessage) ? recipientIdsForRequestMessage.Split(',').Select(int.Parse).ToArray() : Array.Empty<int>();
 
 
             result.Data = setting;
@@ -52,13 +52,13 @@ namespace Hydra.Crm.Api.Services
                 _settingService.AddOrUpdate(new SiteSetting()
                 {
                     Key = nameof(messageSettingModel.RecipientIdsForContactMessage),
-                    Value = string.Join(";", messageSettingModel.RecipientIdsForContactMessage),
+                    Value = messageSettingModel.RecipientIdsForContactMessage.Length > 0 ? string.Join(",", messageSettingModel.RecipientIdsForContactMessage) : null,
                     ValueType = Infrastructure.Setting.SettingValueTypeEnum.IntegerArray
                 });
                 _settingService.AddOrUpdate(new SiteSetting()
                 {
                     Key = nameof(messageSettingModel.RecipientIdsForRequestMessage),
-                    Value = string.Join(";", messageSettingModel.RecipientIdsForRequestMessage),
+                    Value = messageSettingModel.RecipientIdsForRequestMessage.Length > 0 ? string.Join(",", messageSettingModel.RecipientIdsForRequestMessage) : null,
                     ValueType = Infrastructure.Setting.SettingValueTypeEnum.IntegerArray
                 });
 
