@@ -15,6 +15,7 @@ using Hydra.Infrastructure.Email;
 using Hydra.Kernel.Interfaces.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.DataProtection;
+using Hydra.Infrastructure.Payment.Paypal;
 
 namespace Hydra.Infrastructure.Configuration
 {
@@ -48,6 +49,7 @@ namespace Hydra.Infrastructure.Configuration
             services.AddServices();
 
             services.AddEmailConfig(builder.Configuration);
+            services.AddPaypalConfig(builder.Configuration);
 
 
 
