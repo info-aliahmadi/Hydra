@@ -242,7 +242,8 @@ namespace Hydra.Auth.Api.Services
                     PhoneNumber = userModel.PhoneNumber,
                     DefaultLanguage = userModel.DefaultLanguage,
                     RegisterDate = DateTime.UtcNow,
-                    DefaultTheme = "light"
+                    DefaultTheme = "light",
+                    LockoutEnabled = false,
                 };
 
                 if (!string.IsNullOrEmpty(userModel.AvatarFile))
@@ -294,7 +295,7 @@ namespace Hydra.Auth.Api.Services
 
                 bool isExist = false;
 
-                var user = await _queryRepository.Table<User>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == userModel.Id);
+                var user = await _userManager.FindByIdAsync(userModel.Id.ToString());// await _queryRepository.Table<User>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == userModel.Id);
                 if (user is null)
                 {
                     result.Status = ResultStatusEnum.NotFound;
@@ -331,17 +332,14 @@ namespace Hydra.Auth.Api.Services
                         return result;
                     }
                 }
-
+                
                 user.Id = userModel.Id;
                 user.UserName = userModel.UserName;
                 user.Email = userModel.Email;
                 user.Name = userModel.Name;
                 user.PhoneNumber = userModel.PhoneNumber;
-                user.AccessFailedCount = userModel.AccessFailedCount;
                 user.DefaultLanguage = userModel.DefaultLanguage;
                 user.EmailConfirmed = userModel.EmailConfirmed;
-                user.LockoutEnabled = userModel.LockoutEnabled;
-                user.LockoutEnd = userModel.LockoutEnd;
                 user.PhoneNumberConfirmed = userModel.PhoneNumberConfirmed;
 
                 if (string.IsNullOrEmpty(userModel.Avatar) && !string.IsNullOrEmpty(user.Avatar))
@@ -357,10 +355,16 @@ namespace Hydra.Auth.Api.Services
                         user.Avatar = saveFileResult.Data;
                     }
                 }
+                await _userManager.UpdateAsync(user);
+                //_commandRepository.UpdateAsync(user);
+                //await _commandRepository.SaveChangesAsync();
 
-                _commandRepository.UpdateAsync(user);
-                await _commandRepository.SaveChangesAsync();
 
+                if (userModel.LockoutEnabled != user.LockoutEnabled)
+                {
+                    await _userManager.SetLockoutEnabledAsync(user, userModel.LockoutEnabled);
+                    await _userManager.SetLockoutEndDateAsync(user, null);
+                }
 
                 var assigntResult = await AssignRolesToUser(userModel.Id, userModel.RoleIds.ToArray());
 
@@ -371,7 +375,8 @@ namespace Hydra.Auth.Api.Services
 
                 if (!string.IsNullOrEmpty(userModel.Password))
                 {
-                    await _userManager.AddPasswordAsync(user, userModel.Password);
+                    var token =  await _userManager.GeneratePasswordResetTokenAsync(user);
+                    await _userManager.ResetPasswordAsync(user, token, userModel.Password);
                 }
 
                 result.Data = userModel;

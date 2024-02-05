@@ -21,7 +21,7 @@ namespace Hydra.Infrastructure.Security
                 options.AddPolicy("ReactOrigin",
                         builder =>
                         {
-                            builder.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+                            builder.WithOrigins(configuration["Authentication:Schemes:Bearer:Authority"]).AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
                         });
             });
 
@@ -104,7 +104,7 @@ namespace Hydra.Infrastructure.Security
                 // Lockout settings.
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
                 options.Lockout.MaxFailedAccessAttempts = 5;
-                options.Lockout.AllowedForNewUsers = true;
+                options.Lockout.AllowedForNewUsers = false;
 
                 // User settings.
                 options.User.AllowedUserNameCharacters =
