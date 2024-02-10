@@ -6,6 +6,7 @@ using Hydra.Infrastructure.ModuleExtension;
 using Hydra.Infrastructure.Security.Extensions;
 using Microsoft.Extensions.FileProviders;
 using Hydra.Infrastructure.StaticFiles;
+using Hydra.Infrastructure.Social;
 
 namespace Hydra.Infrastructure.Configuration
 {
@@ -30,6 +31,8 @@ namespace Hydra.Infrastructure.Configuration
             app.UseHttpsRedirection();
 
             app.UseStaticFiles();
+
+            app.UseScheduler();
 
             app.UseCors("ReactOrigin");
             app.UseAuthentication();
