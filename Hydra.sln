@@ -39,9 +39,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hydra.Crm.Core", "Hydra.Crm
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sale", "Sale", "{E02034C3-D421-4E40-BDE0-ABB762DE25E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hydra.Sale.Api", "Hydra.Sale.Api\Hydra.Sale.Api.csproj", "{F4B3D0EE-11ED-4FEA-958E-1AA5FBFFA7E3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hydra.Sale.Api", "Hydra.Sale.Api\Hydra.Sale.Api.csproj", "{F4B3D0EE-11ED-4FEA-958E-1AA5FBFFA7E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hydra.Sale.Core", "Hydra.Sale.Core\Hydra.Sale.Core.csproj", "{B586A00B-0852-4B59-B896-041C44DB9745}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hydra.Sale.Core", "Hydra.Sale.Core\Hydra.Sale.Core.csproj", "{B586A00B-0852-4B59-B896-041C44DB9745}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

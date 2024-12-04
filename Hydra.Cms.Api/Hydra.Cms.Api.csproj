@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Hydra.Cms.Core\Hydra.Cms.Core.csproj" />
+    <ProjectReference Include="..\Hydra.Crm.Core\Hydra.Crm.Core.csproj" />
     <ProjectReference Include="..\Hydra.Infrastructure\Hydra.Infrastructure.csproj" />
   </ItemGroup>
 

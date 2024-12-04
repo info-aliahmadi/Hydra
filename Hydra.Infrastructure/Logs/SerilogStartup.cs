@@ -18,6 +18,7 @@ namespace Hydra.Infrastructure.Logs
                     $"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json",
                     optional: true);
             }).UseSerilog();
+
              
         }
         public static void ConfigureLogging()
@@ -39,9 +40,6 @@ namespace Hydra.Infrastructure.Logs
                 .Enrich.WithProperty("Environment", environment)
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger();
-
-
-
         }
         private static ElasticsearchSinkOptions ConfigureElasticSink(IConfigurationRoot configuration, string? environment)
         {

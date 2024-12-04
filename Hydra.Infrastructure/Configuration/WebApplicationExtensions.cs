@@ -32,7 +32,7 @@ namespace Hydra.Infrastructure.Configuration
 
             app.UseStaticFiles();
 
-            app.UseScheduler();
+            //app.UseScheduler();
 
             app.UseCors("ReactOrigin");
             app.UseAuthentication();

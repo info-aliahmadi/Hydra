@@ -64,11 +64,7 @@ namespace Hydra.Cms.Api.Handler
         /// 
         /// </summary>
         /// <param name="_articleService"></param>
-        /// <param name="searchInput"></param>
-        /// <param name="categoryName"></param>
-        /// <param name="tagName"></param>
-        /// <param name="pageIndex"></param>
-        /// <param name="pageSize"></param>
+        /// <param name="articleId"></param>
         /// <returns></returns>
         public static async Task<IResult> GetRelatedArticlesForVisitors(
              IArticleService _articleService, int articleId)
@@ -87,12 +83,10 @@ namespace Hydra.Cms.Api.Handler
 
         }
 
-
         /// <summary>
         /// 
         /// </summary>
         /// <param name="_articleService"></param>
-        /// <param name="articleId"></param>
         /// <returns></returns>
         public static async Task<IResult> GetTopArticleForVisitors(
             IArticleService _articleService
