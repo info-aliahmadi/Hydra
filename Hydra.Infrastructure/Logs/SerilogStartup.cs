@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Hangfire;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Exceptions;
 using Serilog.Sinks.Elasticsearch;
@@ -18,7 +20,8 @@ namespace Hydra.Infrastructure.Logs
                     $"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json",
                     optional: true);
             }).UseSerilog();
-             
+
+
         }
         public static void ConfigureLogging()
         {
@@ -29,19 +32,26 @@ namespace Hydra.Infrastructure.Logs
                     $"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json",
                     optional: true)
                 .Build();
-
-            Log.Logger = new LoggerConfiguration()
-                .Enrich.FromLogContext()
-                .Enrich.WithExceptionDetails()
-                .WriteTo.Debug()
-                .WriteTo.Console()
-                .WriteTo.Elasticsearch(ConfigureElasticSink(configuration, environment))
-                .Enrich.WithProperty("Environment", environment)
-                .ReadFrom.Configuration(configuration)
-                .CreateLogger();
-
-
-
+            if (configuration["ElasticConfiguration:Enable"] == "true")
+            {
+                Log.Logger = new LoggerConfiguration()
+                    .Enrich.FromLogContext()
+                    .Enrich.WithExceptionDetails()
+                    .WriteTo.Debug()
+                    .WriteTo.Console()
+                    .WriteTo.Elasticsearch(ConfigureElasticSink(configuration, environment))
+                    .Enrich.WithProperty("Environment", environment)
+                    .ReadFrom.Configuration(configuration)
+                    .CreateLogger();
+            }
+            else
+            {
+                Log.Logger = new LoggerConfiguration()
+                    .WriteTo.Console()
+                    .Enrich.WithExceptionDetails()
+                    .WriteTo.Debug()
+                            .WriteTo.File("log.txt", rollingInterval: RollingInterval.Hour).CreateLogger();
+            }
         }
         private static ElasticsearchSinkOptions ConfigureElasticSink(IConfigurationRoot configuration, string? environment)
         {
@@ -50,6 +60,17 @@ namespace Hydra.Infrastructure.Logs
                 AutoRegisterTemplate = true,
                 IndexFormat = $"{Assembly.GetExecutingAssembly().GetName().Name?.ToLower().Replace(".", "-")}-{environment?.ToLower().Replace(".", "-")}-{DateTime.UtcNow:yyyy-MM}"
             };
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="app"></param>
+        public static void UseSerilogExceptionHandler(this WebApplication app)
+        {
+            // All about exceptional handler and logging
+            app.UseSerilogRequestLogging();
+            app.UseStatusCodePages();
+
         }
     }
 }

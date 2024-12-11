@@ -7,6 +7,8 @@ using Hydra.Infrastructure.Security.Extensions;
 using Microsoft.Extensions.FileProviders;
 using Hydra.Infrastructure.StaticFiles;
 using Hydra.Infrastructure.Social;
+using Serilog;
+using Hydra.Infrastructure.Logs;
 
 namespace Hydra.Infrastructure.Configuration
 {
@@ -22,17 +24,20 @@ namespace Hydra.Infrastructure.Configuration
         public static void ConfigureRequestPipeline(this WebApplication app)
         {
             // Configure the HTTP request pipeline.
-            //if (app.Environment.IsDevelopment())
-            //{
+            if (app.Environment.IsDevelopment())
+            {
                 app.UseSwagger();
                 app.UseSwaggerUI();
-            //}
+            }
+            // All about exceptional handler and logging
+
+            app.UseSerilogExceptionHandler();
 
             app.UseHttpsRedirection();
 
             app.UseStaticFiles();
 
-            app.UseScheduler();
+            //app.UseScheduler();
 
             app.UseCors("ReactOrigin");
             app.UseAuthentication();
@@ -42,8 +47,6 @@ namespace Hydra.Infrastructure.Configuration
 
             // Collect all Endpoints from Modules
             app.MapModulesEndpoints();
-
-
 
             app.UseLocalization();
 

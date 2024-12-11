@@ -33,7 +33,7 @@ namespace Hydra.Infrastructure.Configuration
             WebApplicationBuilder builder)
         {
 
-            //builder.AddSerilogConfig();
+            builder.AddSerilogConfig();
 
             // Allow large file upload
             builder.WebHost.ConfigureKestrel(serverOptions =>

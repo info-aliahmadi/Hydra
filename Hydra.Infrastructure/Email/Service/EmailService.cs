@@ -7,6 +7,7 @@ using MailKit.Net.Imap;
 using MailKit.Security;
 using Hydra.Infrastructure.Email.Models;
 using Hydra.Kernel.Interfaces.Settings;
+using Serilog;
 
 namespace Hydra.Infrastructure.Email.Service
 {
@@ -17,7 +18,7 @@ namespace Hydra.Infrastructure.Email.Service
 
         public EmailService(ISmtpSetting smtpSetting, IImapSetting imapSetting)
         {
-            _smtpSetting = smtpSetting;
+            _imapSetting = imapSetting;
             _imapSetting = imapSetting;
         }
 
@@ -64,11 +65,8 @@ namespace Hydra.Infrastructure.Email.Service
                 }
                 catch (Exception e)
                 {
-                    var loc = HydraHelper.GetApplicationDirectory() + @"\" + "AMigrationErrors.txt";
-                    var dateNow = DateTime.Now;
-                    string inform = dateNow + " | Load Emails : " + e.Message + "----------------------" + e.InnerException.Message;
-                    File.WriteAllText(loc, inform);
-
+                    string inform = " | Load Emails : " + e.Message + "----------------------" + e.InnerException.Message;
+                    Log.Fatal(inform);
                     throw;
                 }
 

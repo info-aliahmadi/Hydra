@@ -1,45 +1,51 @@
 using Hydra.Infrastructure;
 using Hydra.Infrastructure.Configuration;
+using Hydra.Infrastructure.Logs;
 using Hydra.Migrations;
 using Microsoft.EntityFrameworkCore;
-//using Serilog;
-
-//SerilogStartup.ConfigureLogging();
+using Serilog;
 
 
-var builder = WebApplication.CreateBuilder(args);
 
+SerilogStartup.ConfigureLogging();
 
-builder.Services.ConfigureApplicationServices(builder);
-
-
-if (builder.Environment.IsProduction())
+var connectionString = string.Empty;
+try
 {
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    var builder = WebApplication.CreateBuilder(args);
 
-    // Update Database
-    builder.Services.AddDbContext<MigrationContext>((serviceProvider, options) =>
-        options.UseSqlServer(connectionString), ServiceLifetime.Transient);
-    try
+    builder.Services.ConfigureApplicationServices(builder);
+
+
+    if (builder.Environment.IsProduction())
     {
+        connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+        // Update Database
+        builder.Services.AddDbContext<MigrationContext>((serviceProvider, options) =>
+            options.UseSqlServer(connectionString), ServiceLifetime.Transient);
+
         using ServiceProvider serviceProvider = builder.Services.BuildServiceProvider();
         var context = serviceProvider.GetRequiredService<MigrationContext>();
         context.Database.Migrate();
+
     }
-    catch (Exception ex)
-    {
-        var loc = HydraHelper.GetApplicationDirectory() + @"\" + "AMigrationErrors.txt";
-        var dateNow = DateTime.Now;
-        string inform = dateNow + " | ConnectionString : " + connectionString + "- - - - - - - - - - - - - - - - - - - - - -" + ex.Source + ex.Message;
-        File.WriteAllText(loc, inform);
-    }
+    var app = builder.Build();
+    app.ConfigureRequestPipeline();
+
+
+    app.Run();
 }
-var app = builder.Build();
-
+catch (Exception ex)
+{
+    string inform = DateTime.Now + " | ConnectionString : " + connectionString;
+    Log.Fatal(ex, "Error during setup! " + inform);
+}
+finally
+{
+    Log.CloseAndFlush();
+}
 // Configure the HTTP request pipeline.
-app.ConfigureRequestPipeline();
 
-
-app.Run();
 
 public partial class Program { }
