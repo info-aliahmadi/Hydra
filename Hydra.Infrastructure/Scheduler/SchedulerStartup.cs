@@ -1,7 +1,7 @@
 ﻿using Hangfire;
 using Microsoft.AspNetCore.Builder;
 
-namespace Hydra.Infrastructure.Social
+namespace Hydra.Infrastructure.Scheduler
 {
     public static class Scheduler
     {

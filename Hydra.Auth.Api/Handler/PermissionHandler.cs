@@ -1,4 +1,4 @@
-﻿using Hydra.Auth.Core.Interfaces;
+﻿using Hydra.Infrastructure.Security.Interfaces;
 using Hydra.Infrastructure.Security.Models;
 using Hydra.Kernel.Extensions;
 using Microsoft.AspNetCore.Http;

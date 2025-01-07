@@ -1,5 +1,4 @@
-﻿using Hydra.Auth.Core.Interfaces;
-using Hydra.Infrastructure;
+﻿using Hydra.Infrastructure;
 using Hydra.Infrastructure.Email.Models;
 using Hydra.Infrastructure.Email.Service;
 using Hydra.Infrastructure.Security.Domain;

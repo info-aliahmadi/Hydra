@@ -2,7 +2,7 @@
 using Hydra.Kernel.Extensions;
 using Hydra.Kernel.Models;
 
-namespace Hydra.Auth.Core.Interfaces
+namespace Hydra.Infrastructure.Security.Interfaces
 {
     public interface IRoleService
     {

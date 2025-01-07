@@ -1,5 +1,4 @@
 ﻿using Hydra.Auth.Api.Handler;
-using Hydra.Auth.Core.Interfaces;
 using Hydra.Infrastructure.ModuleExtension;
 using Hydra.Infrastructure.Security.Extensions;
 using Hydra.Infrastructure.Security.Interfaces;

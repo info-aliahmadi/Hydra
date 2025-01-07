@@ -18,16 +18,16 @@ namespace Hydra.Infrastructure.localization
 
             IList<CultureInfo> supportedCultures = new List<CultureInfo>
             {
-                new CultureInfo("en-US"),
-                new CultureInfo("en-GB"),
-                new CultureInfo("de-DE"),
+                new CultureInfo("en-us"),
+                new CultureInfo("en-gb"),
+                new CultureInfo("de-de"),
                 new CultureInfo("fr"),
                 new CultureInfo("fa")
             };
 
             var requestLocalizationOptions = new RequestLocalizationOptions
             {
-                DefaultRequestCulture = new RequestCulture("en-US"),
+                DefaultRequestCulture = new RequestCulture("en-us"),
                 SupportedCultures = supportedCultures,
                 SupportedUICultures = supportedCultures,
                 RequestCultureProviders = new List<IRequestCultureProvider>

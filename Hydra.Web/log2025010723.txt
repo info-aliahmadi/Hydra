@@ -1,0 +1,43 @@
+2025-01-07 23:15:39.588 +03:30 [FTL] Error during setup! 01/07/2025 23:15:39 | ConnectionString : 
+System.Globalization.CultureNotFoundException: Only the invariant culture is supported in globalization-invariant mode. See https://aka.ms/GlobalizationInvariantMode for more information. (Parameter 'name')
+en-US is an invalid culture identifier.
+   at System.Globalization.CultureInfo..ctor(String name, Boolean useUserOverride)
+   at Hydra.Infrastructure.localization.LocalizationStartup.UseLocalization(WebApplication app) in D:\My Repos\Hydra\Hydra.Infrastructure\Localization\LocalizationStartup.cs:line 19
+   at Hydra.Infrastructure.Configuration.WebApplicationExtensions.ConfigureRequestPipeline(WebApplication app) in D:\My Repos\Hydra\Hydra.Infrastructure\Configuration\WebApplicationExtensions.cs:line 51
+   at Program.<Main>$(String[] args) in D:\My Repos\Hydra\Hydra.Web\Program.cs:line 34
+2025-01-07 23:17:48.522 +03:30 [FTL] Error during setup! 01/07/2025 23:17:48 | ConnectionString : 
+System.Globalization.CultureNotFoundException: Only the invariant culture is supported in globalization-invariant mode. See https://aka.ms/GlobalizationInvariantMode for more information. (Parameter 'name')
+en-US is an invalid culture identifier.
+   at System.Globalization.CultureInfo..ctor(String name, Boolean useUserOverride)
+   at Hydra.Infrastructure.localization.LocalizationStartup.UseLocalization(WebApplication app) in D:\My Repos\Hydra\Hydra.Infrastructure\Localization\LocalizationStartup.cs:line 19
+   at Hydra.Infrastructure.Configuration.WebApplicationExtensions.ConfigureRequestPipeline(WebApplication app) in D:\My Repos\Hydra\Hydra.Infrastructure\Configuration\WebApplicationExtensions.cs:line 51
+   at Program.<Main>$(String[] args) in D:\My Repos\Hydra\Hydra.Web\Program.cs:line 34
+2025-01-07 23:27:42.416 +03:30 [FTL] Error during setup! 01/07/2025 23:27:42 | ConnectionString : 
+System.Globalization.CultureNotFoundException: Only the invariant culture is supported in globalization-invariant mode. See https://aka.ms/GlobalizationInvariantMode for more information. (Parameter 'name')
+en-us is an invalid culture identifier.
+   at System.Globalization.CultureInfo..ctor(String name, Boolean useUserOverride)
+   at Hydra.Infrastructure.localization.LocalizationStartup.UseLocalization(WebApplication app) in D:\My Repos\Hydra\Hydra.Infrastructure\Localization\LocalizationStartup.cs:line 19
+   at Hydra.Infrastructure.Configuration.WebApplicationExtensions.ConfigureRequestPipeline(WebApplication app) in D:\My Repos\Hydra\Hydra.Infrastructure\Configuration\WebApplicationExtensions.cs:line 51
+   at Program.<Main>$(String[] args) in D:\My Repos\Hydra\Hydra.Web\Program.cs:line 34
+2025-01-07 23:27:48.519 +03:30 [FTL] Error during setup! 01/07/2025 23:27:48 | ConnectionString : 
+System.Globalization.CultureNotFoundException: Only the invariant culture is supported in globalization-invariant mode. See https://aka.ms/GlobalizationInvariantMode for more information. (Parameter 'name')
+en-us is an invalid culture identifier.
+   at System.Globalization.CultureInfo..ctor(String name, Boolean useUserOverride)
+   at Hydra.Infrastructure.localization.LocalizationStartup.UseLocalization(WebApplication app) in D:\My Repos\Hydra\Hydra.Infrastructure\Localization\LocalizationStartup.cs:line 19
+   at Hydra.Infrastructure.Configuration.WebApplicationExtensions.ConfigureRequestPipeline(WebApplication app) in D:\My Repos\Hydra\Hydra.Infrastructure\Configuration\WebApplicationExtensions.cs:line 51
+   at Program.<Main>$(String[] args) in D:\My Repos\Hydra\Hydra.Web\Program.cs:line 34
+2025-01-07 23:27:56.236 +03:30 [INF] User profile is available. Using 'C:\Users\Ali\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-01-07 23:27:56.422 +03:30 [INF] Now listening on: https://localhost:7134
+2025-01-07 23:27:56.424 +03:30 [INF] Now listening on: http://localhost:5230
+2025-01-07 23:27:56.427 +03:30 [INF] Application started. Press Ctrl+C to shut down.
+2025-01-07 23:27:56.429 +03:30 [INF] Hosting environment: Development
+2025-01-07 23:27:56.430 +03:30 [INF] Content root path: D:\My Repos\Hydra\Hydra.Web
+2025-01-07 23:28:08.037 +03:30 [INF] Request starting HTTP/2 GET https://localhost:7134/swagger/index.html - -
+2025-01-07 23:28:08.405 +03:30 [INF] Request finished HTTP/2 GET https://localhost:7134/swagger/index.html - - - 200 - text/html;charset=utf-8 369.6691ms
+2025-01-07 23:28:08.485 +03:30 [INF] Request starting HTTP/2 GET https://localhost:7134/_vs/browserLink - -
+2025-01-07 23:28:08.485 +03:30 [INF] Request starting HTTP/2 GET https://localhost:7134/_framework/aspnetcore-browser-refresh.js - -
+2025-01-07 23:28:08.499 +03:30 [INF] Request finished HTTP/2 GET https://localhost:7134/_framework/aspnetcore-browser-refresh.js - - - 200 12350 application/javascript;+charset=utf-8 13.1345ms
+2025-01-07 23:28:08.534 +03:30 [INF] Request finished HTTP/2 GET https://localhost:7134/_vs/browserLink - - - 200 - text/javascript;+charset=UTF-8 48.4496ms
+2025-01-07 23:28:08.600 +03:30 [INF] Request starting HTTP/2 GET https://localhost:7134/swagger/v1/swagger.json - -
+2025-01-07 23:28:08.609 +03:30 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-01-07 23:28:08.792 +03:30 [INF] Request finished HTTP/2 GET https://localhost:7134/swagger/v1/swagger.json - - - 200 - application/json;charset=utf-8 192.7863ms
