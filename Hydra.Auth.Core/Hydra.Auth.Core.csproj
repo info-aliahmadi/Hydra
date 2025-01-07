@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
@@ -6,6 +6,12 @@
 		<Nullable>enable</Nullable>
 		<OutputPath>$(SolutionDir)Hydra.Web/bin/$(Configuration)/$(OutDir)/</OutputPath>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Domain\**" />
+	  <EmbeddedResource Remove="Domain\**" />
+	  <None Remove="Domain\**" />
+	</ItemGroup>
 	<!--<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 	  <Exec Command="xcopy /y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)Hydra.Web/$(OutDir)&quot;" />
   </Target>-->
@@ -27,10 +33,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Hydra.Infrastructure\Hydra.Infrastructure.csproj" />
 		<ProjectReference Include="..\Hydra.Kernel\Hydra.Kernel.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Domain\" />
 	</ItemGroup>
 
 </Project>
