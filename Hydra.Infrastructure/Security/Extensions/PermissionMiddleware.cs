@@ -1,4 +1,4 @@
-﻿using Hydra.Infrastructure.Security.Service;
+﻿using Hydra.Infrastructure.Security.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 

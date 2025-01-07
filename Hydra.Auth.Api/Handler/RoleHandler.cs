@@ -1,5 +1,5 @@
 ﻿ using Hydra.Auth.Core.Interfaces;
-using Hydra.Auth.Core.Models;
+using Hydra.Infrastructure.Security.Models;
 using Hydra.Kernel.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

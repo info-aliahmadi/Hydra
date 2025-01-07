@@ -1,11 +1,10 @@
 ﻿using Hydra.Auth.Core.Interfaces;
-using Hydra.Auth.Core.Models;
 using Hydra.Infrastructure;
 using Hydra.Infrastructure.Email.Models;
 using Hydra.Infrastructure.Email.Service;
 using Hydra.Infrastructure.Security.Domain;
-using Hydra.Infrastructure.Security.Service;
-using Hydra.Kernel.Interfaces;
+using Hydra.Infrastructure.Security.Interfaces;
+using Hydra.Infrastructure.Security.Models;
 using Hydra.Kernel.Interfaces.Data;
 using Hydra.Kernel.Models;
 using Microsoft.AspNetCore.Http;
