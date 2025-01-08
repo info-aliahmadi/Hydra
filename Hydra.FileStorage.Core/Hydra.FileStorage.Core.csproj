@@ -11,7 +11,6 @@
 	</Target>-->
 	<ItemGroup>
 		<ProjectReference Include="..\Hydra.Infrastructure\Hydra.Infrastructure.csproj" />
-		<ProjectReference Include="..\Hydra.Kernel\Hydra.Kernel.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -1,7 +1,7 @@
 ﻿using EFCoreSecondLevelCacheInterceptor;
+using Hydra.Infrastructure.Data.Interface;
 using Hydra.Infrastructure.Security.Domain;
-using Hydra.Infrastructure.Security.Interfaces;
-using Hydra.Kernel.Interfaces.Data;
+using Hydra.Infrastructure.Security.Interface;
 
 namespace Hydra.Infrastructure.Security.Service
 {

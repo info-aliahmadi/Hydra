@@ -1,4 +1,3 @@
-using Hydra.Infrastructure;
 using Hydra.Infrastructure.Configuration;
 using Hydra.Infrastructure.Logs;
 using Hydra.Migrations;

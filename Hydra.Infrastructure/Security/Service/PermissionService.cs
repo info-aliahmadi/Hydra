@@ -1,11 +1,10 @@
 ﻿using Hydra.Infrastructure.Security.Models;
 using Hydra.Infrastructure.Data.Extension;
 using Hydra.Infrastructure.Security.Domain;
-using Hydra.Kernel.Extensions;
-using Hydra.Kernel.Interfaces.Data;
-using Hydra.Kernel.Models;
 using Microsoft.EntityFrameworkCore;
-using Hydra.Infrastructure.Security.Interfaces;
+using Hydra.Infrastructure.Data.Interface;
+using Hydra.Infrastructure.Security.Interface;
+using Hydra.Infrastructure.GeneralModels;
 
 namespace Hydra.Infrastructure.Security.Service
 {

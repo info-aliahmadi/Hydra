@@ -1,4 +1,5 @@
-﻿using Hydra.Kernel;
+﻿using Hydra.Infrastructure.Data;
+using Hydra.Infrastructure.Setting.Enum;
 
 namespace Hydra.Infrastructure.Setting.Domain
 {

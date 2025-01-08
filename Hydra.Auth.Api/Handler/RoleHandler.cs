@@ -1,6 +1,6 @@
-﻿using Hydra.Infrastructure.Security.Interfaces;
+﻿using Hydra.Infrastructure.Data.Extension;
+using Hydra.Infrastructure.Security.Interface;
 using Hydra.Infrastructure.Security.Models;
-using Hydra.Kernel.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,6 +1,6 @@
 ﻿using Hydra.FileStorage.Core.Models;
 using Hydra.FileStorage.Core.Settings;
-using Hydra.Kernel.Models;
+using Hydra.Infrastructure.GeneralModels;
 using Microsoft.AspNetCore.Http;
 
 

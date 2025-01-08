@@ -1,15 +1,14 @@
 ﻿
 using Hydra.Infrastructure;
-using Hydra.Kernel.Interfaces.Data;
-using Hydra.Kernel.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using Hydra.FileStorage.Core.Interfaces;
 using Hydra.FileStorage.Core.Domain;
 using Hydra.FileStorage.Core.Models;
 using Hydra.FileStorage.Core.Settings;
-using Hydra.Kernel.Extensions;
-using Hydra.Kernel.Interfaces.Settings;
+using Hydra.Infrastructure.Data.Interface;
+using Hydra.Infrastructure.Setting.Interface;
+using Hydra.Infrastructure.GeneralModels;
 
 namespace Hydra.FileStorage.Api.Services
 {
@@ -714,8 +713,8 @@ namespace Hydra.FileStorage.Api.Services
                 var fileInfo = new FileInfo(fileNameWithPath);
                 if (!string.IsNullOrEmpty(base64File.Base64File))
                 {
-                    var fileBytes = base64File.Base64File.Base64FileToBytes();
-                    await File.WriteAllBytesAsync(string.Format(fileNameWithPath, base64File.FileName), fileBytes.FileBytes);
+                    var file = HydraHelper.Base64FileToBytes(base64File.Base64File);
+                    await File.WriteAllBytesAsync(string.Format(fileNameWithPath, base64File.FileName), file.FileBytes);
                 }
                 var registerDate = DateTime.UtcNow;
                 var thumbnail = GenerateThumbnail(fileInfo);

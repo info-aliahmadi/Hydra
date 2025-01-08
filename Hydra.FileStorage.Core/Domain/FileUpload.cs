@@ -1,5 +1,5 @@
-﻿using Hydra.Infrastructure.Security.Domain;
-using Hydra.Kernel;
+﻿using Hydra.Infrastructure.Data;
+using Hydra.Infrastructure.Security.Domain;
 
 namespace Hydra.FileStorage.Core.Domain
 {

@@ -1,4 +1,4 @@
-﻿using Hydra.Kernel;
+﻿using Hydra.Infrastructure.Data;
 
 namespace Hydra.Infrastructure.Security.Domain
 {

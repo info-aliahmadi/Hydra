@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Hydra.Infrastructure.GeneralModels;
+using Microsoft.AspNetCore.Http;
 
 using System.Reflection;
 
@@ -50,6 +51,31 @@ namespace Hydra.Infrastructure
             {
                 Console.WriteLine(ex.Message);
             }
+        }
+        public static FileModel Base64FileToBytes(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
+            int indexOfSemiColon = input.IndexOf(";", StringComparison.OrdinalIgnoreCase);
+
+            string dataLabel = input.Substring(0, indexOfSemiColon);
+
+            string contentType = dataLabel.Split(':').Last();
+
+            var startIndex = input.IndexOf("base64,", StringComparison.OrdinalIgnoreCase) + 7;
+
+            var fileContents = input.Substring(startIndex);
+
+            var bytes = Convert.FromBase64String(fileContents);
+
+            return new FileModel()
+            {
+                ContentType = contentType,
+                FileBytes = bytes
+            };
         }
     }
 }

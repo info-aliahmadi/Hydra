@@ -1,6 +1,6 @@
 ﻿
 
-using Hydra.Kernel.Models;
+using Hydra.Infrastructure.GeneralModels;
 
 namespace Hydra.Infrastructure.Security.Models
 {

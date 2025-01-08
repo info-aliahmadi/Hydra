@@ -1,7 +1,7 @@
 ﻿using EFCoreSecondLevelCacheInterceptor;
+using Hydra.Infrastructure.Data.Interface;
+using Hydra.Infrastructure.GeneralModels;
 using Hydra.Infrastructure.Setting.Domain;
-using Hydra.Kernel.Interfaces.Data;
-using Hydra.Kernel.Models;
 
 namespace Hydra.Infrastructure.Setting.Service
 {

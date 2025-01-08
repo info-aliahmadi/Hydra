@@ -5,7 +5,6 @@
 
 using System.Linq.Dynamic.Core;
 using Microsoft.EntityFrameworkCore;
-using Hydra.Kernel.Extensions;
 
 namespace Hydra.Infrastructure.Data.Extension
 {

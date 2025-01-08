@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Hydra.Infrastructure.localization;
 using Hydra.Infrastructure.ModuleExtension;
-using Hydra.Infrastructure.Security.Extensions;
 using Microsoft.Extensions.FileProviders;
 using Hydra.Infrastructure.StaticFiles;
 using Hydra.Infrastructure.Social;
 using Serilog;
 using Hydra.Infrastructure.Logs;
+using Hydra.Infrastructure.Security.Extension;
 
 namespace Hydra.Infrastructure.Configuration
 {

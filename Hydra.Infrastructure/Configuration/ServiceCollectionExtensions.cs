@@ -11,11 +11,12 @@ using Hydra.Infrastructure.ModuleExtension;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Hydra.Infrastructure.Email;
-using Hydra.Kernel.Interfaces.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.DataProtection;
 using Hydra.Infrastructure.Payment.Paypal;
+using Hydra.Infrastructure.Setting.Interface;
+using Hydra.Infrastructure.Notification.Email;
+using Hydra.Infrastructure.Notification.Sms;
 
 namespace Hydra.Infrastructure.Configuration
 {
@@ -49,6 +50,9 @@ namespace Hydra.Infrastructure.Configuration
             services.AddServices();
 
             services.AddEmailConfig(builder.Configuration);
+            services.AddSmsConfig(builder.Configuration);
+
+
             services.AddPaypalConfig(builder.Configuration);
 
 
@@ -62,10 +66,7 @@ namespace Hydra.Infrastructure.Configuration
 
             services.AddIdentityConfig(builder.Configuration);
 
-
-
             services.AddSwaggerGenConfig();
-
 
         }
 

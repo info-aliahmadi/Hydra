@@ -2,7 +2,6 @@
 // Copyright (c) TanvirArjel. All rights reserved.
 // </copyright>
 
-using Hydra.Kernel.Extensions;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;

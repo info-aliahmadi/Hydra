@@ -7,8 +7,8 @@ using EFCoreSecondLevelCacheInterceptor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
+using Hydra.Infrastructure.Data.Interface;
 using Hydra.Infrastructure.Data.Extension;
-using Hydra.Kernel.Interfaces.Data;
 
 namespace Hydra.Infrastructure.Data
 {

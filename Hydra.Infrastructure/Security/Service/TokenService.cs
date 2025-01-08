@@ -1,5 +1,5 @@
 ﻿using Hydra.Infrastructure.Security.Domain;
-using Hydra.Infrastructure.Security.Interfaces;
+using Hydra.Infrastructure.Security.Interface;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;

@@ -1,7 +1,7 @@
 ﻿using Hydra.Auth.Api.Handler;
 using Hydra.Infrastructure.ModuleExtension;
-using Hydra.Infrastructure.Security.Extensions;
-using Hydra.Infrastructure.Security.Interfaces;
+using Hydra.Infrastructure.Security.Extension;
+using Hydra.Infrastructure.Security.Interface;
 using Hydra.Infrastructure.Security.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;

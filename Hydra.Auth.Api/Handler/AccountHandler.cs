@@ -1,11 +1,13 @@
 ﻿using Hydra.Infrastructure;
-using Hydra.Infrastructure.Email.Models;
-using Hydra.Infrastructure.Email.Service;
+using Hydra.Infrastructure.Data.Interface;
+using Hydra.Infrastructure.GeneralModels;
+using Hydra.Infrastructure.Notification.Email.Interface;
+using Hydra.Infrastructure.Notification.Email.Models;
+using Hydra.Infrastructure.Notification.Sms.Interface;
+using Hydra.Infrastructure.Notification.Sms.Models;
 using Hydra.Infrastructure.Security.Domain;
-using Hydra.Infrastructure.Security.Interfaces;
+using Hydra.Infrastructure.Security.Interface;
 using Hydra.Infrastructure.Security.Models;
-using Hydra.Kernel.Interfaces.Data;
-using Hydra.Kernel.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +24,6 @@ namespace Hydra.Auth.Api.Handler
         /// 
         /// </summary>
         /// <param name="_repository"></param>
-        /// <param name="_emailSender"></param>
         /// <param name="_userManager"></param>
         /// <param name="_roleManager"></param>
         /// <param name="_signInManager"></param>
@@ -881,7 +882,7 @@ namespace Hydra.Auth.Api.Handler
             }
 
             var userFactors = await _userManager.GetValidTwoFactorProvidersAsync(user);
-            var factorOptions = userFactors.Select(purpose => new Kernel.Models.SelectListItem { Text = purpose, Value = purpose })
+            var factorOptions = userFactors.Select(purpose => new SelectListItem { Text = purpose, Value = purpose })
                 .ToList();
             return Results.Ok(new SendCodeModel
             { Providers = factorOptions });
@@ -890,7 +891,7 @@ namespace Hydra.Auth.Api.Handler
 
         public static async Task<IResult> SendCodeHandler(UserManager<User> _userManager, SignInManager<User> _signInManager,
             IStringLocalizer<SharedResource> _sharedlocalizer,
-             ILogger<AccountHandler> _logger, IEmailService _emailSender, [FromBody] SendCodeModel model)
+             ILogger<AccountHandler> _logger, IEmailService _emailSender, ISmsService _smsSender, [FromBody] SendCodeModel model)
         {
             var result = new AccountResult();
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
@@ -943,10 +944,12 @@ namespace Hydra.Auth.Api.Handler
                 emailRequest.ToAddresses.Add(new EmailAddress() { Address = await _userManager.GetEmailAsync(user) });
                 try
                 {
-                    _emailSender.Send(emailRequest);
-
-                    result.Status = AccountStatusEnum.Succeeded;
-                    return Results.Ok(result);
+                    if (_emailSender.IsEnabled())
+                    {
+                        _emailSender.Send(emailRequest);
+                        result.Status = AccountStatusEnum.Succeeded;
+                        return Results.Ok(result);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -957,23 +960,24 @@ namespace Hydra.Auth.Api.Handler
             }
             else if (model.SelectedProvider == "Phone")
             {
-                var smsRequest = new SmsRequestRecord()
+                if (_smsSender.IsEnabled())
                 {
-                    ToNumber = await _userManager.GetPhoneNumberAsync(user),
-                    Message = message
-                };
-                try
-                {
-                    //await _smsSender.SendSmsAsync(smsRequest);
+                    var smsRequest = new SmsMessage();
+                    smsRequest.ToNumbers.Add(await _userManager.GetPhoneNumberAsync(user));
+                    smsRequest.Text = message;
+                    try
+                    {
+                        _smsSender.Send(smsRequest);
 
-                    result.Status = AccountStatusEnum.Succeeded;
-                    return Results.Ok(result);
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError(e.InnerException + "_" + e.Message);
-                    result.Errors.Add(_sharedlocalizer["Send sms action throws an error"]);
-                    return Results.BadRequest(result);
+                        result.Status = AccountStatusEnum.Succeeded;
+                        return Results.Ok(result);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogError(e.InnerException + "_" + e.Message);
+                        result.Errors.Add(_sharedlocalizer["Send sms action throws an error"]);
+                        return Results.BadRequest(result);
+                    }
                 }
             }
 
