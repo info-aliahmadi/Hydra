@@ -11,7 +11,7 @@ namespace Hydra.Infrastructure.Notification.Sms
         public static void AddSmsConfig(this IServiceCollection services,
             IConfiguration configuration)
         {
-            services.AddSingleton<ISmsSetting>(configuration.GetSection("NotificationSetting.SmsSetting").Get<SmsSetting>());
+            services.AddSingleton<ISmsSetting>(configuration.GetSection("NotificationSetting:SmsSetting").Get<SmsSetting>());
 
             services.AddTransient<ISmsService, SmsService>();
         }

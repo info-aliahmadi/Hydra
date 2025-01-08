@@ -11,7 +11,7 @@ namespace Hydra.Infrastructure.Notification.Email
         public static void AddEmailConfig(this IServiceCollection services,
             IConfiguration configuration)
         {
-            services.AddSingleton<IEmailSetting>(configuration.GetSection("NotificationSetting.EmailSetting").Get<EmailSetting>());
+            services.AddSingleton<IEmailSetting>(configuration.GetSection("NotificationSetting:EmailSetting").Get<EmailSetting>());
 
             services.AddTransient<IEmailService, EmailService>();
         }
