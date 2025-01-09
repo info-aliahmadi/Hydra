@@ -22,8 +22,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Hydra.Auth.Api\Hydra.Auth.Api.csproj" />
 		<ProjectReference Include="..\Hydra.Infrastructure\Hydra.Infrastructure.csproj" />
-		<ProjectReference Include="..\Hydra.Migrations\Hydra.Migrations.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

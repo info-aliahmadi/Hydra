@@ -3,32 +3,38 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Hydra.Migrations.Migrations
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
+namespace Hydra.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class dbVersion_1 : Migration
+    public partial class dbVersion_01 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.EnsureSchema(
-                name: "Cms");
+                name: "FS");
 
             migrationBuilder.EnsureSchema(
                 name: "Auth");
 
+            migrationBuilder.EnsureSchema(
+                name: "Infra");
+
             migrationBuilder.CreateTable(
-                name: "Category",
-                schema: "Cms",
+                name: "Permission",
+                schema: "Auth",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    NormalizedName = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Category", x => x.Id);
+                    table.PrimaryKey("PK_Permission", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -38,13 +44,29 @@ namespace Hydra.Migrations.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Name = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: true),
+                    NormalizedName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Role", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Setting",
+                schema: "Infra",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Key = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ValueType = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Setting", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -54,17 +76,20 @@ namespace Hydra.Migrations.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DOB = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    RegisterDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DefaultLanguage = table.Column<string>(type: "nvarchar(6)", maxLength: 6, nullable: true),
+                    DefaultTheme = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
+                    Avatar = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PasswordHash = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    SecurityStamp = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
@@ -77,6 +102,33 @@ namespace Hydra.Migrations.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PermissionRole",
+                schema: "Auth",
+                columns: table => new
+                {
+                    PermissionsId = table.Column<int>(type: "int", nullable: false),
+                    RolesId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PermissionRole", x => new { x.PermissionsId, x.RolesId });
+                    table.ForeignKey(
+                        name: "FK_PermissionRole_Permission_PermissionsId",
+                        column: x => x.PermissionsId,
+                        principalSchema: "Auth",
+                        principalTable: "Permission",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PermissionRole_Role_RolesId",
+                        column: x => x.RolesId,
+                        principalSchema: "Auth",
+                        principalTable: "Role",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "RoleClaim",
                 schema: "Auth",
                 columns: table => new
@@ -84,7 +136,7 @@ namespace Hydra.Migrations.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RoleId = table.Column<int>(type: "int", nullable: false),
-                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClaimType = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
                     ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -100,21 +152,27 @@ namespace Hydra.Migrations.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Author",
-                schema: "Cms",
+                name: "FileUpload",
+                schema: "FS",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    FileName = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    Directory = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    Thumbnail = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
+                    Extension = table.Column<string>(type: "nvarchar(6)", maxLength: 6, nullable: false),
+                    Size = table.Column<long>(type: "bigint", nullable: false),
+                    Tags = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Alt = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    UploadDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Author", x => x.Id);
+                    table.PrimaryKey("PK_FileUpload", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Author_User_UserId",
+                        name: "FK_FileUpload_User_UserId",
                         column: x => x.UserId,
                         principalSchema: "Auth",
                         principalTable: "User",
@@ -130,8 +188,8 @@ namespace Hydra.Migrations.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    ClaimType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    ClaimValue = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -152,7 +210,7 @@ namespace Hydra.Migrations.Migrations
                 {
                     LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ProviderDisplayName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -202,7 +260,7 @@ namespace Hydra.Migrations.Migrations
                     UserId = table.Column<int>(type: "int", nullable: false),
                     LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Value = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -216,73 +274,55 @@ namespace Hydra.Migrations.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Content",
-                schema: "Cms",
-                columns: table => new
+            migrationBuilder.InsertData(
+                schema: "Auth",
+                table: "Permission",
+                columns: new[] { "Id", "Name", "NormalizedName" },
+                values: new object[,]
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Subject = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Body = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AuthorId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Content", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Content_Author_AuthorId",
-                        column: x => x.AuthorId,
-                        principalSchema: "Cms",
-                        principalTable: "Author",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                    { 1, "AUTH.CHANGE_PASSWORD", "AUTH.CHANGE_PASSWORD" },
+                    { 2, "AUTH.GET_USER_LIST", "AUTH.GET_USER_LIST" },
+                    { 3, "AUTH.GET_USER_BY_ID", "AUTH.GET_USER_BY_ID" },
+                    { 4, "AUTH.ADD_USER", "AUTH.ADD_USER" },
+                    { 5, "AUTH.UPDATE_USER", "AUTH.UPDATE_USER" },
+                    { 6, "AUTH.DELETE_USER", "AUTH.DELETE_USER" },
+                    { 7, "AUTH.ASSIGN_PERMISSION_TO_ROLE_BY_ROLE_ID", "AUTH.ASSIGN_PERMISSION_TO_ROLE_BY_ROLE_ID" },
+                    { 8, "AUTH.GET_ROLE_LIST", "AUTH.GET_ROLE_LIST" },
+                    { 9, "AUTH.GET_ROLE_BY_ID", "AUTH.GET_ROLE_BY_ID" },
+                    { 10, "AUTH.ADD_ROLE", "AUTH.ADD_ROLE" },
+                    { 11, "AUTH.UPDATE_ROLE", "AUTH.UPDATE_ROLE" },
+                    { 12, "AUTH.DELETE_ROLE", "AUTH.DELETE_ROLE" },
+                    { 13, "AUTH.GET_PERMISSION_LIST", "AUTH.GET_PERMISSION_LIST" },
+                    { 14, "AUTH.GET_PERMISSION_BY_ID", "AUTH.GET_PERMISSION_BY_ID" },
+                    { 15, "AUTH.ADD_PERMISSION", "AUTH.ADD_PERMISSION" },
+                    { 16, "AUTH.UPDATE_PERMISSION", "AUTH.UPDATE_PERMISSION" },
+                    { 17, "AUTH.DELETE_PERMISSION", "AUTH.DELETE_PERMISSION" }
                 });
 
-            migrationBuilder.CreateTable(
-                name: "CategoryContent",
-                schema: "Cms",
-                columns: table => new
+            migrationBuilder.InsertData(
+                schema: "Auth",
+                table: "Role",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
                 {
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
-                    ContentId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CategoryContent", x => new { x.CategoryId, x.ContentId });
-                    table.ForeignKey(
-                        name: "FK_CategoryContent_Category_CategoryId",
-                        column: x => x.CategoryId,
-                        principalSchema: "Cms",
-                        principalTable: "Category",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CategoryContent_Content_ContentId",
-                        column: x => x.ContentId,
-                        principalSchema: "Cms",
-                        principalTable: "Content",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                    { 1, null, "SuperAdmin", "SUPERADMIN" },
+                    { 2, null, "Admin", "ADMIN" },
+                    { 3, null, "User", "USER" },
+                    { 4, null, "Superviser", "SUPERVISER" },
+                    { 5, null, "Guest", "GUEST" }
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Author_UserId",
-                schema: "Cms",
-                table: "Author",
+                name: "IX_FileUpload_UserId",
+                schema: "FS",
+                table: "FileUpload",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CategoryContent_ContentId",
-                schema: "Cms",
-                table: "CategoryContent",
-                column: "ContentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Content_AuthorId",
-                schema: "Cms",
-                table: "Content",
-                column: "AuthorId");
+                name: "IX_PermissionRole_RolesId",
+                schema: "Auth",
+                table: "PermissionRole",
+                column: "RolesId");
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
@@ -335,12 +375,20 @@ namespace Hydra.Migrations.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "CategoryContent",
-                schema: "Cms");
+                name: "FileUpload",
+                schema: "FS");
+
+            migrationBuilder.DropTable(
+                name: "PermissionRole",
+                schema: "Auth");
 
             migrationBuilder.DropTable(
                 name: "RoleClaim",
                 schema: "Auth");
+
+            migrationBuilder.DropTable(
+                name: "Setting",
+                schema: "Infra");
 
             migrationBuilder.DropTable(
                 name: "UserClaim",
@@ -359,20 +407,12 @@ namespace Hydra.Migrations.Migrations
                 schema: "Auth");
 
             migrationBuilder.DropTable(
-                name: "Category",
-                schema: "Cms");
-
-            migrationBuilder.DropTable(
-                name: "Content",
-                schema: "Cms");
+                name: "Permission",
+                schema: "Auth");
 
             migrationBuilder.DropTable(
                 name: "Role",
                 schema: "Auth");
-
-            migrationBuilder.DropTable(
-                name: "Author",
-                schema: "Cms");
 
             migrationBuilder.DropTable(
                 name: "User",

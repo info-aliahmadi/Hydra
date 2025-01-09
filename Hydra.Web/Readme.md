@@ -8,12 +8,12 @@ http://localhost:5601
 Test the redis container :
 
 
-Add-Migration dbVersion_30 -Context MigrationContext -StartupProject Hydra.Web
+Add-Migration dbVersion_01 -Context ApplicationDbContext -StartupProject Hydra.Web
 
-Update-Database -Context MigrationContext -verbose
+Update-Database -Context ApplicationDbContext -verbose -StartupProject Hydra.Web
 
 
-
+Remove-Migration -Context ApplicationDbContext -StartupProject Hydra.Web
 
 
 
@@ -23,3 +23,11 @@ Update-Database -Context MigrationContext -verbose
 Update-Database dbVersion_ -Context MigrationContext -verbose
 
 Remove-Migration -Context MigrationContext -StartupProject Hydra.Web
+
+
+Update-database MyInitialMigration -Context MigrationContext -verbose
+
+
+-- remove migration
+Update-Database -Migration 0 -Context ApplicationDbContext -verbose
+Remove-Migration -Context ApplicationDbContext -StartupProject Hydra.Web

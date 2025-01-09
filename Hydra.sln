@@ -13,8 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hydra.Auth.Api", "Hydra.Aut
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hydra.Infrastructure", "Hydra.Infrastructure\Hydra.Infrastructure.csproj", "{33B51B73-03A1-455F-B239-2ADB9CB6C772}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hydra.Migrations", "Hydra.Migrations\Hydra.Migrations.csproj", "{3B406EA3-3D40-4A65-9F51-9042320917E2}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FileStorage", "FileStorage", "{E5CA66FF-C441-4AD5-A892-34FD640A288D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hydra.FileStorage.Api", "Hydra.FileStorage.Api\Hydra.FileStorage.Api.csproj", "{CB54DED5-124F-42B8-809D-CAE79799EB53}"
@@ -39,10 +37,6 @@ Global
 		{33B51B73-03A1-455F-B239-2ADB9CB6C772}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33B51B73-03A1-455F-B239-2ADB9CB6C772}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{33B51B73-03A1-455F-B239-2ADB9CB6C772}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3B406EA3-3D40-4A65-9F51-9042320917E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3B406EA3-3D40-4A65-9F51-9042320917E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3B406EA3-3D40-4A65-9F51-9042320917E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3B406EA3-3D40-4A65-9F51-9042320917E2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CB54DED5-124F-42B8-809D-CAE79799EB53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CB54DED5-124F-42B8-809D-CAE79799EB53}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CB54DED5-124F-42B8-809D-CAE79799EB53}.Release|Any CPU.ActiveCfg = Release|Any CPU

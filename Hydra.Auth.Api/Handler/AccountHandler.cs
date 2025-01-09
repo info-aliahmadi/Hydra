@@ -9,6 +9,7 @@ using Hydra.Infrastructure.Security.Domain;
 using Hydra.Infrastructure.Security.Interface;
 using Hydra.Infrastructure.Security.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
@@ -20,6 +21,10 @@ namespace Hydra.Auth.Api.Handler
 {
     public class AccountHandler
     {
+        public static async Task<IResult> ApiTest()
+        {
+            return Results.Ok();
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -341,7 +346,7 @@ namespace Hydra.Auth.Api.Handler
             try
             {
 
-                var userIdentity = userPrincipal.FindFirst("identity").Value;
+                var userIdentity = userPrincipal.GetUserId();
 
                 if (userIdentity == null)
                 {
@@ -373,11 +378,11 @@ namespace Hydra.Auth.Api.Handler
         /// <returns></returns>
         public static IResult GetPermissionsOfCurrentUser(
             IPermissionChecker permission,
-            ClaimsPrincipal user)
+            ClaimsPrincipal userPrincipal)
         {
             try
             {
-                var userIdentity = user.FindFirst("identity").Value;
+                var userIdentity = userPrincipal.GetUserId();
 
                 if (userIdentity == null)
                 {
@@ -443,7 +448,7 @@ namespace Hydra.Auth.Api.Handler
         public static async Task<IResult> GetCurrentUserHandler(
             ClaimsPrincipal userClaim, UserManager<User> _userManager)
         {
-            var userId = userClaim?.FindFirst("identity")?.Value;
+            var userId = userClaim?.GetUserId();
             if (userId == null)
             {
                 return Results.BadRequest("ERROR: PLEASE LOGIN");
@@ -474,7 +479,7 @@ namespace Hydra.Auth.Api.Handler
         {
             try
             {
-                var userId = userClaim?.FindFirst("identity")?.Value;
+                var userId = userClaim?.GetUserId();
 
                 if (userId == null)
                 {
@@ -518,7 +523,7 @@ namespace Hydra.Auth.Api.Handler
         public static async Task<IResult> GetDefaultLanguageHandler(
             ClaimsPrincipal userClaim, UserManager<User> _userManager)
         {
-            var userId = userClaim?.FindFirst("identity")?.Value;
+            var userId = userClaim?.GetUserId();
 
             if (userId == null)
             {
@@ -540,7 +545,7 @@ namespace Hydra.Auth.Api.Handler
         public static async Task<IResult> SetDefaultLanguageHandler(string defaultLanguage, UserManager<User> _userManager,
             ClaimsPrincipal userClaim)
         {
-            var userId = userClaim?.FindFirst("identity")?.Value;
+            var userId = userClaim?.GetUserId();
 
             if (userId == null)
             {
@@ -562,7 +567,7 @@ namespace Hydra.Auth.Api.Handler
         public static async Task<IResult> GetDefaultThemeHandler(
             ClaimsPrincipal userClaim, UserManager<User> _userManager)
         {
-            var userId = userClaim?.FindFirst("identity")?.Value;
+            var userId = userClaim?.GetUserId();
             if (userId == null)
             {
                 return Results.BadRequest("ERROR: PLEASE LOGIN");
@@ -583,7 +588,7 @@ namespace Hydra.Auth.Api.Handler
         public static async Task<IResult> SetDefaultThemeHandler(string defaultTheme, UserManager<User> _userManager,
             ClaimsPrincipal userClaim)
         {
-            var userId = userClaim?.FindFirst("identity")?.Value;
+            var userId = userClaim?.GetUserId();
             if (userId == null)
             {
                 return Results.BadRequest("ERROR: PLEASE LOGIN");
@@ -753,7 +758,7 @@ namespace Hydra.Auth.Api.Handler
             var result = new AccountResult();
             if (MiniValidator.TryValidate(model, out var errors))
             {
-                var userId = userClaim?.FindFirst("identity")?.Value;
+                var userId = userClaim?.GetUserId();
                 var user = await _userManager.FindByIdAsync(userId);
                 if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
                 {
@@ -1001,7 +1006,7 @@ namespace Hydra.Auth.Api.Handler
             var result = new AccountResult();
             if (MiniValidator.TryValidate(model, out var errors))
             {
-                _logger.LogError(_sharedlocalizer["Input data are invalid.; Requested By: "] + user.Identity?.Name);
+                _logger.LogError(_sharedlocalizer["Input data are invalid.; Requested By: "] + user.GetIdentityName());
                 result.Status = AccountStatusEnum.Invalid;
                 result.Errors.Add("");
 
@@ -1018,14 +1023,14 @@ namespace Hydra.Auth.Api.Handler
 
             if (signInResult.IsLockedOut)
             {
-                _logger.LogWarning(7, _sharedlocalizer["User account locked out..; Requested By: {0}"], user.Identity?.Name);
+                _logger.LogWarning(7, _sharedlocalizer["User account locked out..; Requested By: {0}"], user.GetIdentityName());
 
                 result.Status = AccountStatusEnum.IsLockedOut;
                 return Results.Ok(result);
             }
             else
             {
-                _logger.LogWarning(_sharedlocalizer["Code is invalid.; Requested By: {0}"], user.Identity?.Name);
+                _logger.LogWarning(_sharedlocalizer["Code is invalid.; Requested By: {0}"], user.GetIdentityName());
                 result.Status = AccountStatusEnum.InvalidCode;
 
                 return Results.BadRequest(result);

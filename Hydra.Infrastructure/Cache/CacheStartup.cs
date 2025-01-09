@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Hydra.Infrastructure.Cache;
 
 namespace Hydra.Infrastructure.Cache
 {
@@ -10,24 +9,19 @@ namespace Hydra.Infrastructure.Cache
             IConfiguration configuration)
         {
             string cacheProvider = configuration.GetSection("CacheProvider").Value;
-            if (!string.IsNullOrEmpty(cacheProvider))
+
+            var providerName = EFCacheProvider.ProviderName;
+
+            services.AddEFCacheProvider();
+
+            if (cacheProvider == "redis")
             {
-                const string providerName = "DefaultHydra";
-                services.AddEFCacheProvider(providerName);
+                services.AddRedisCacheProvider(configuration, providerName);
 
-                if (cacheProvider == "redis")
-                {
-                    services.AddRedisCacheProvider(configuration, providerName);
-
-                }
-                else if (cacheProvider == "inmemory")
-                {
-                    services.AddInMemoryCacheProvider(configuration, providerName);
-                }
             }
-            else
+            else if (cacheProvider == "inmemory")
             {
-                services.AddInMemoryEFCacheProvider();
+                services.AddInMemoryCacheProvider(configuration, providerName);
             }
         }
 

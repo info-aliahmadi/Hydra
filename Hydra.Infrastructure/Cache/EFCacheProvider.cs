@@ -10,15 +10,17 @@ namespace Hydra.Infrastructure.Cache
     /// </summary>
     public static class EFCacheProvider
     {
+        public const string CacheKeyPrefix = "Hydra_C";
+        public const string ProviderName = "Hydra_P";
         /// <summary>
         /// Add EF Second Level Cache By EasyCaching
         /// In-Memory Or Redis
         /// </summary>
         /// <param name="services"></param>
-        public static void AddEFCacheProvider(this IServiceCollection services, string providerName)
+        public static void AddEFCacheProvider(this IServiceCollection services)
         {
             services.AddEFSecondLevelCache(options =>
-               options.UseEasyCachingCoreProvider(providerName).DisableLogging(true).UseCacheKeyPrefix("NITRO_")
+               options.UseEasyCachingCoreProvider(ProviderName).DisableLogging(true).UseCacheKeyPrefix(CacheKeyPrefix)
            // Please use the `CacheManager.Core` or `EasyCaching.Redis` for the Redis cache provider.
            );
         }
@@ -29,7 +31,7 @@ namespace Hydra.Infrastructure.Cache
         public static void AddInMemoryEFCacheProvider(this IServiceCollection services)
         {
             services.AddEFSecondLevelCache(options =>
-               options.UseMemoryCacheProvider().DisableLogging(true).UseCacheKeyPrefix("NITRO_")
+               options.UseMemoryCacheProvider().DisableLogging(true).UseCacheKeyPrefix(CacheKeyPrefix)
            // Please use the `CacheManager.Core` or `EasyCaching.Redis` for the Redis cache provider.
            );
         }

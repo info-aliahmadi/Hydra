@@ -123,7 +123,7 @@ namespace Hydra.FileStorage.Api.Handler
         /// <returns></returns>
         public static async Task<IResult> UploadFile(ClaimsPrincipal userClaim, IFileStorageService _fileStorageService, HttpContext _context, IFormFile file, CancellationToken cancellationToken)
         {
-            var userId = int.Parse(userClaim?.FindFirst("identity")?.Value);
+            var userId = int.Parse(userClaim?.GetUserId());
 
             var uploadAction = _context.Request.Headers["UploadAction"]; // none / Rename / Replace
             var result =
@@ -140,7 +140,7 @@ namespace Hydra.FileStorage.Api.Handler
         /// <returns></returns>
         public static async Task<IResult> UploadBase64File(ClaimsPrincipal userClaim, IFileStorageService _fileStorageService, HttpContext _context, [FromBody] Base64FileUploadModel base64File, CancellationToken cancellationToken)
         {
-            var userId = int.Parse(userClaim?.FindFirst("identity")?.Value);
+            var userId = int.Parse(userClaim?.GetUserId());
             var uploadAction = _context.Request.Headers["UploadAction"]; // none / Rename / Replace
             var result =
                 await _fileStorageService.UploadBase64File(userId, base64File, uploadAction);
@@ -149,7 +149,7 @@ namespace Hydra.FileStorage.Api.Handler
 
         public static async Task<IResult> UploadSmallFile(ClaimsPrincipal userClaim, IFileStorageService _fileStorageService, HttpContext _context, IFormFile file, CancellationToken cancellationToken)
         {
-            var userId = int.Parse(userClaim?.FindFirst("identity")?.Value);
+            var userId = int.Parse(userClaim?.GetUserId());
 
             var uploadAction = _context.Request.Headers["UploadAction"]; // none / Rename / Replace
             var filename = file.FileName;
@@ -170,7 +170,7 @@ namespace Hydra.FileStorage.Api.Handler
         /// <returns></returns>
         public static async Task<IResult> UploadLargeFile(ClaimsPrincipal userClaim, IFileStorageService _fileStorageService, HttpContext _context, CancellationToken cancellationToken, HttpContext context)
         {
-            var userId = int.Parse(userClaim?.FindFirst("identity")?.Value);
+            var userId = int.Parse(userClaim?.GetUserId());
             var uploadAction = _context.Request.Headers["UploadAction"]; // none / Rename / Replace
             var result = new Result<FileUploadModel>();
             try

@@ -19,21 +19,25 @@ namespace Hydra.Infrastructure.Security
             base.OnModelCreating(modelBuilder);
             #region Auth Builder
 
+            modelBuilder.ApplyConfiguration(new RoleConfiguration());
+            modelBuilder.ApplyConfiguration(new RoleClaimConfiguration());
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new UserClaimConfiguration());
             modelBuilder.ApplyConfiguration(new UserLoginConfiguration());
-            modelBuilder.ApplyConfiguration(new RoleClaimConfiguration());
             modelBuilder.ApplyConfiguration(new UserTokenConfiguration());
+            modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
+            modelBuilder.ApplyConfiguration(new PermissionConfiguration());
 
             #endregion
 
         }
         public DbSet<Permission> Permissions { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<RoleClaim> RoleClaims { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<UserClaim> UserClaims { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<UserLogin> UserLogins { get; set; }
-        public DbSet<RoleClaim> RoleClaims { get; set; }
         public DbSet<UserToken> UserTokens { get; set; }
 
     }

@@ -5,14 +5,11 @@ using Hydra.Infrastructure.Security;
 using Hydra.Infrastructure.Logs;
 using Hydra.Infrastructure.localization;
 using Hydra.Infrastructure.ServiceRegistrar;
-using Hydra.Infrastructure.Setting;
 using Hydra.Infrastructure.Cache;
 using Hydra.Infrastructure.ModuleExtension;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.DataProtection;
 using Hydra.Infrastructure.Payment.Paypal;
 using Hydra.Infrastructure.Setting.Interface;
 using Hydra.Infrastructure.Notification.Email;
@@ -44,27 +41,25 @@ namespace Hydra.Infrastructure.Configuration
             services.AddSingleton<IUploadFileSetting>((serviceProvider) =>
                     builder.Configuration.GetSection("UploadFileSetting").Get<UploadFileSetting>());
 
+            builder.AddDbContextConfig();
+
+            builder.AddAutoMigrate();
+
 
             services.AddlocalizationConfig();
 
             services.AddServices();
 
             services.AddEmailConfig(builder.Configuration);
-            services.AddSmsConfig(builder.Configuration);
 
+            services.AddSmsConfig(builder.Configuration);
 
             services.AddPaypalConfig(builder.Configuration);
 
-
+            services.AddIdentityConfig(builder.Configuration);
 
             // Collect all services from Modules
             services.AddModulesService();
-
-            services.AddCacheProvider(builder.Configuration);
-
-            services.AddDbContextConfig(builder.Configuration);
-
-            services.AddIdentityConfig(builder.Configuration);
 
             services.AddSwaggerGenConfig();
 
@@ -104,7 +99,6 @@ namespace Hydra.Infrastructure.Configuration
                      }
                  });
             });
-
         }
 
 
