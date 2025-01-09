@@ -2,7 +2,7 @@
 {
     public interface IEmailSetting
     {
-        bool Enabled { get; set; }
+        bool IsEnabled { get; set; }
         string SmtpServer { get; set; }
         string SmtpUsername { get; set; }
         int SmtpPort { get; set; }
@@ -14,7 +14,7 @@
     }
     public class EmailSetting : IEmailSetting
     {
-        public bool Enabled { get; set; }
+        public bool IsEnabled { get; set; }
         public string SmtpServer { get; set; }
         public int SmtpPort { get; set; }
         public string SmtpUsername { get; set; }

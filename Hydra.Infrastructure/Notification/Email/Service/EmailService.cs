@@ -23,7 +23,7 @@ namespace Hydra.Infrastructure.Notification.Email.Service
         }
         public bool IsEnabled()
         {
-            return _emailSetting.Enabled;
+            return _emailSetting.IsEnabled;
         }
 
         public List<EmailMessage> ReceiveEmail()

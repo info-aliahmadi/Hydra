@@ -1,7 +1,5 @@
-﻿using Hangfire;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Exceptions;
 using Serilog.Sinks.Elasticsearch;
@@ -32,7 +30,8 @@ namespace Hydra.Infrastructure.Logs
                     $"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json",
                     optional: true)
                 .Build();
-            if (configuration["ElasticConfiguration:Enable"] == "true")
+            var provider = configuration["Logging:Provider"];
+            if (provider == "Elastic")
             {
                 Log.Logger = new LoggerConfiguration()
                     .Enrich.FromLogContext()
@@ -44,23 +43,40 @@ namespace Hydra.Infrastructure.Logs
                     .ReadFrom.Configuration(configuration)
                     .CreateLogger();
             }
-            else
+            else if (provider == "SQLight")
             {
+                var rootDirecrtory = HydraHelper.GetApplicationDirectory() + "//";
+                var dbName = configuration["Logging:Configuration:SQLight:DbName"];
+                var tableName = configuration["Logging:Configuration:SQLight:TableName"];
+                Log.Logger = new LoggerConfiguration()
+                    .Enrich.FromLogContext()
+                    .Enrich.WithExceptionDetails()
+                    .WriteTo.Debug()
+                    .WriteTo.Console()
+                    .WriteTo.SQLite(sqliteDbPath: rootDirecrtory + dbName, tableName: tableName, batchSize: 1)
+                    .Enrich.WithProperty("Environment", environment)
+                    .ReadFrom.Configuration(configuration)
+                    .CreateLogger();
+            }
+            else if (provider == "File")
+            {
+                var fileName = configuration["Logging:Configuration:File:FileName"];
                 Log.Logger = new LoggerConfiguration()
                     .WriteTo.Console()
                     .Enrich.WithExceptionDetails()
                     .WriteTo.Debug()
-                            .WriteTo.File("log.txt", rollingInterval: RollingInterval.Hour).CreateLogger();
+                    .WriteTo.File(fileName, rollingInterval: RollingInterval.Day).CreateLogger();
             }
         }
         private static ElasticsearchSinkOptions ConfigureElasticSink(IConfigurationRoot configuration, string? environment)
         {
-            return new ElasticsearchSinkOptions(new Uri(configuration["ElasticConfiguration:Uri"]))
+            return new ElasticsearchSinkOptions(new Uri(configuration["Logging:Configuration:Elastic:Uri"]))
             {
                 AutoRegisterTemplate = true,
                 IndexFormat = $"{Assembly.GetExecutingAssembly().GetName().Name?.ToLower().Replace(".", "-")}-{environment?.ToLower().Replace(".", "-")}-{DateTime.UtcNow:yyyy-MM}"
             };
         }
+
         /// <summary>
         /// 
         /// </summary>

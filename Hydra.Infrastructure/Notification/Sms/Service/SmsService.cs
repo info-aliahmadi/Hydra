@@ -15,7 +15,7 @@ namespace Hydra.Infrastructure.Notification.Sms.Service
 
         public bool IsEnabled()
         {
-            return _smsSetting.Enabled;
+            return _smsSetting.IsEnabled;
         }
 
         public List<SmsMessage> ReceiveSms()

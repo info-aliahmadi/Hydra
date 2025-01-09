@@ -1,5 +1,4 @@
 ﻿using Hydra.Infrastructure.Security;
-using Hydra.Infrastructure.Security.EntityConfiguration;
 using Hydra.Infrastructure.Setting.Domain;
 using Hydra.Infrastructure.Setting.EntityConfiguration;
 //using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
