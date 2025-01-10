@@ -5,7 +5,6 @@ using Hydra.Infrastructure.Security;
 using Hydra.Infrastructure.Logs;
 using Hydra.Infrastructure.localization;
 using Hydra.Infrastructure.ServiceRegistrar;
-using Hydra.Infrastructure.Cache;
 using Hydra.Infrastructure.ModuleExtension;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Hosting;
@@ -14,6 +13,7 @@ using Hydra.Infrastructure.Payment.Paypal;
 using Hydra.Infrastructure.Setting.Interface;
 using Hydra.Infrastructure.Notification.Email;
 using Hydra.Infrastructure.Notification.Sms;
+using Microsoft.Extensions.Hosting;
 
 namespace Hydra.Infrastructure.Configuration
 {
@@ -43,8 +43,10 @@ namespace Hydra.Infrastructure.Configuration
 
             builder.AddDbContextConfig();
 
-            builder.AddAutoMigrate();
-
+            if (builder.Environment.IsProduction())
+            {
+                builder.AddAutoMigrate();
+            }
 
             services.AddlocalizationConfig();
 
