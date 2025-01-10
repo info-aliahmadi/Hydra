@@ -4,6 +4,7 @@ using Hydra.Infrastructure.Security.Service;
 using Hydra.Infrastructure.Setting.Service;
 using Hydra.Infrastructure.Data.Interface;
 using Hydra.Infrastructure.Security.Interface;
+using Hydra.Infrastructure.Scheduler.Service;
 
 namespace Hydra.Infrastructure.ServiceRegistrar
 {
@@ -17,6 +18,7 @@ namespace Hydra.Infrastructure.ServiceRegistrar
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IPermissionChecker, PermissionChecker>();
             services.AddScoped<ISettingService, SettingService>();
+            services.AddScoped<IScheduleService, ScheduleService>();
 
         }
     }

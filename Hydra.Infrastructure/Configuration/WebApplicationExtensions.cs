@@ -3,10 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Hydra.Infrastructure.localization;
 using Hydra.Infrastructure.ModuleExtension;
-using Microsoft.Extensions.FileProviders;
 using Hydra.Infrastructure.StaticFiles;
-using Hydra.Infrastructure.Social;
-using Serilog;
 using Hydra.Infrastructure.Logs;
 using Hydra.Infrastructure.Security.Extension;
 
@@ -37,10 +34,10 @@ namespace Hydra.Infrastructure.Configuration
 
             app.UseStaticFiles();
 
-            //app.UseScheduler();
-
             app.UseCors("ReactOrigin");
+
             app.UseAuthentication();
+
             app.UseAuthorization();
 
             app.UsePermission();

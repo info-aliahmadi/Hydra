@@ -17,7 +17,8 @@
     <PackageReference Include="EFCoreSecondLevelCacheInterceptor" Version="5.0.0" />
     <PackageReference Include="EFCoreSecondLevelCacheInterceptor.EasyCaching.Core" Version="5.0.0" />
     <PackageReference Include="EFCoreSecondLevelCacheInterceptor.MemoryCache" Version="5.0.0" />
-    <PackageReference Include="Hangfire" Version="1.8.17" />
+    <PackageReference Include="Hangfire.Core" Version="1.8.17" />
+    <PackageReference Include="Hangfire.SqlServer" Version="1.8.17" />
     <PackageReference Include="InstagramApiSharp" Version="1.7.4" />
     <PackageReference Include="MailKit" Version="4.9.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11" />

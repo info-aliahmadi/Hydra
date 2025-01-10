@@ -14,6 +14,7 @@ using Hydra.Infrastructure.Setting.Interface;
 using Hydra.Infrastructure.Notification.Email;
 using Hydra.Infrastructure.Notification.Sms;
 using Microsoft.Extensions.Hosting;
+using Hydra.Infrastructure.Scheduler;
 
 namespace Hydra.Infrastructure.Configuration
 {
@@ -62,6 +63,8 @@ namespace Hydra.Infrastructure.Configuration
 
             // Collect all services from Modules
             services.AddModulesService();
+
+            services.AddScheduler(builder.Configuration);
 
             services.AddSwaggerGenConfig();
 
