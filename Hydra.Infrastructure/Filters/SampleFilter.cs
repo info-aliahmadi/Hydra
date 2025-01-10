@@ -1,10 +1,5 @@
-﻿using CacheManager.Core.Logging;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace Hydra.Infrastructure.Filters
 {
@@ -26,7 +21,7 @@ namespace Hydra.Infrastructure.Filters
 
             if (!string.IsNullOrEmpty(validationError))
             {
-                _logger.LogWarn(validationError);
+                _logger.LogWarning(validationError);
                 return Results.Problem(validationError);
             }
             // before filter
