@@ -29,5 +29,5 @@ Update-database MyInitialMigration -Context MigrationContext -verbose
 
 
 -- remove migration
-Update-Database -Migration 0 -Context ApplicationDbContext -verbose
+Update-Database -Migration 0 -Context ApplicationDbContext  -StartupProject Hydra.Web
 Remove-Migration -Context ApplicationDbContext -StartupProject Hydra.Web
