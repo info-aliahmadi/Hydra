@@ -1,4 +1,6 @@
 ﻿using Hydra.Infrastructure.GeneralModels;
+using Hydra.Infrastructure.Security.Constants;
+using Hydra.Infrastructure.Security.Domain;
 using Microsoft.AspNetCore.Http;
 
 using System.Reflection;
@@ -79,6 +81,10 @@ namespace Hydra.Infrastructure
         public static string? GetIdentityName(this ClaimsPrincipal userPrincipal)
         {
             return userPrincipal.Identity.Name;
+        }
+        public static DateTime? GetExpiration(this ClaimsPrincipal userPrincipal)
+        {
+            return DateTimeOffset.FromUnixTimeSeconds(long.Parse(userPrincipal.FindFirst(CustomClaimTypes.Expiration).Value)).DateTime;
         }
 
     }

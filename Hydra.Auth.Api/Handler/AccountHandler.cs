@@ -332,9 +332,7 @@ namespace Hydra.Auth.Api.Handler
             }
             var user = await _userManager.FindByIdAsync(userIdentity);
 
-            var expireDate = DateTimeOffset.FromUnixTimeSeconds(long.Parse(userPrincipal.FindFirst(CustomClaimTypes.Expiration).Value)).DateTime;
-
-            var token = tokenService.CreateToken(user, expireDate);
+            var token = tokenService.CreateToken(user, userPrincipal.GetExpiration());
 
             return Results.Ok(token);
         }
@@ -451,9 +449,7 @@ namespace Hydra.Auth.Api.Handler
 
             var result = await _userManager.UpdateAsync(user);
 
-            var expireDate = DateTimeOffset.FromUnixTimeSeconds(long.Parse(userClaim.FindFirst(CustomClaimTypes.Expiration).Value)).DateTime;
-
-            var token = tokenService.CreateToken(user, expireDate);
+            var token = tokenService.CreateToken(user, userClaim.GetExpiration());
 
             userModel.AccessToken = token;
 
