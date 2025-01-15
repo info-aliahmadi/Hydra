@@ -69,7 +69,7 @@ namespace Hydra.Infrastructure.Notification.Email.Service
                 }
                 catch (Exception e)
                 {
-                    string inform = " | Load Emails : " + e.Message + "----------------------" + e.InnerException.Message;
+                    string inform = "Load Emails : " + e.Message + " | " + e.InnerException.Message;
                     Log.Fatal(inform);
                     throw;
                 }

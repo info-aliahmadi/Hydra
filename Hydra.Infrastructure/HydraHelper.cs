@@ -36,21 +36,14 @@ namespace Hydra.Infrastructure
         }
         public static void DirectorySearch(string dir)
         {
-            try
+            foreach (string f in Directory.GetFiles(dir))
             {
-                foreach (string f in Directory.GetFiles(dir))
-                {
-                    Console.WriteLine(Path.GetFileName(f));
-                }
-                foreach (string d in Directory.GetDirectories(dir))
-                {
-                    Console.WriteLine(Path.GetFileName(d));
-                    DirectorySearch(d);
-                }
+                Console.WriteLine(Path.GetFileName(f));
             }
-            catch (System.Exception ex)
+            foreach (string d in Directory.GetDirectories(dir))
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine(Path.GetFileName(d));
+                DirectorySearch(d);
             }
         }
         public static FileModel Base64FileToBytes(string input)

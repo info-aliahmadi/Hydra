@@ -18,9 +18,10 @@ namespace Hydra.Infrastructure.Logs
                     $"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json",
                     optional: true);
             }).UseSerilog();
-
-
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static void ConfigureLogging()
         {
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
@@ -33,49 +34,72 @@ namespace Hydra.Infrastructure.Logs
             var provider = configuration["Logging:Provider"];
             if (provider == "Elastic")
             {
-                Log.Logger = new LoggerConfiguration()
-                    .Enrich.FromLogContext()
-                    .Enrich.WithExceptionDetails()
-                    .WriteTo.Debug()
-                    .WriteTo.Console()
-                    .WriteTo.Elasticsearch(ConfigureElasticSink(configuration, environment))
-                    .Enrich.WithProperty("Environment", environment)
-                    .ReadFrom.Configuration(configuration)
-                    .CreateLogger();
+                ElasticConfig(environment, configuration);
             }
             else if (provider == "SQLight")
             {
-                var rootDirecrtory = HydraHelper.GetApplicationDirectory() + "//";
-                var dbName = configuration["Logging:Configuration:SQLight:DbName"];
-                var tableName = configuration["Logging:Configuration:SQLight:TableName"];
-                Log.Logger = new LoggerConfiguration()
-                    .Enrich.FromLogContext()
-                    .Enrich.WithExceptionDetails()
-                    .WriteTo.Debug()
-                    .WriteTo.Console()
-                    .WriteTo.SQLite(sqliteDbPath: rootDirecrtory + dbName, tableName: tableName, batchSize: 1)
-                    .Enrich.WithProperty("Environment", environment)
-                    .ReadFrom.Configuration(configuration)
-                    .CreateLogger();
+                SqlightConfig(environment, configuration);
             }
             else if (provider == "File")
             {
-                var fileName = configuration["Logging:Configuration:File:FileName"];
-                Log.Logger = new LoggerConfiguration()
-                    .WriteTo.Console()
-                    .Enrich.WithExceptionDetails()
-                    .WriteTo.Debug()
-                    .WriteTo.File(fileName, rollingInterval: RollingInterval.Day).CreateLogger();
+                FileConfig(configuration);
             }
         }
-        private static ElasticsearchSinkOptions ConfigureElasticSink(IConfigurationRoot configuration, string? environment)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="configuration"></param>
+        private static void FileConfig(IConfigurationRoot configuration)
         {
-            return new ElasticsearchSinkOptions(new Uri(configuration["Logging:Configuration:Elastic:Uri"]))
-            {
-                AutoRegisterTemplate = true,
-                IndexFormat = $"{Assembly.GetExecutingAssembly().GetName().Name?.ToLower().Replace(".", "-")}-{environment?.ToLower().Replace(".", "-")}-{DateTime.UtcNow:yyyy-MM}"
-            };
+            var fileName = configuration["Logging:Configuration:File:FileName"];
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console()
+                .Enrich.WithExceptionDetails()
+                .WriteTo.Debug()
+                .WriteTo.File(fileName, rollingInterval: RollingInterval.Day).CreateLogger();
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="environment"></param>
+        /// <param name="configuration"></param>
+        private static void SqlightConfig(string? environment, IConfigurationRoot configuration)
+        {
+            var rootDirecrtory = HydraHelper.GetApplicationDirectory() + "//";
+            var dbName = configuration["Logging:Configuration:SQLight:DbName"];
+            var tableName = configuration["Logging:Configuration:SQLight:TableName"];
+            Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .Enrich.WithExceptionDetails()
+                .WriteTo.Debug()
+                .WriteTo.Console()
+                .WriteTo.SQLite(sqliteDbPath: rootDirecrtory + dbName, tableName: tableName, batchSize: 1)
+                .Enrich.WithProperty("Environment", environment)
+                .ReadFrom.Configuration(configuration)
+                .CreateLogger();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="environment"></param>
+        /// <param name="configuration"></param>
+        private static void ElasticConfig(string? environment, IConfigurationRoot configuration)
+        {
+            Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .Enrich.WithExceptionDetails()
+                .WriteTo.Debug()
+                .WriteTo.Console()
+                .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(configuration["Logging:Configuration:Elastic:Uri"]))
+                {
+                    AutoRegisterTemplate = true,
+                    IndexFormat = $"{Assembly.GetExecutingAssembly().GetName().Name?.ToLower().Replace(".", "-")}-{environment?.ToLower().Replace(".", "-")}-{DateTime.UtcNow:yyyy-MM}"
+                })
+                .Enrich.WithProperty("Environment", environment)
+                .ReadFrom.Configuration(configuration)
+                .CreateLogger();
+        }
+
 
         /// <summary>
         /// 
@@ -85,7 +109,7 @@ namespace Hydra.Infrastructure.Logs
         {
             // All about exceptional handler and logging
             app.UseSerilogRequestLogging();
-            app.UseStatusCodePages();
+            app.UseMiddleware<UseErrorHandling>();
 
         }
     }

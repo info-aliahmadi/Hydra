@@ -161,35 +161,26 @@ namespace Hydra.Infrastructure.Security.Service
         public async Task<Result> Delete(int id)
         {
             var result = new Result();
-            try
+            var permission = await _queryRepository.Table<Permission>().Include(x => x.Roles).FirstOrDefaultAsync(x => x.Id == id);
+            if (permission == null)
             {
-                var permission = await _queryRepository.Table<Permission>().Include(x => x.Roles).FirstOrDefaultAsync(x => x.Id == id);
-                if (permission == null)
-                {
-                    result.Status = ResultStatusEnum.NotFound;
-                    result.Message = _sharedlocalizer["The permission not found"];
-                    return result;
-                }
-
-                if (permission.Roles.Any())
-                {
-                    result.Status = ResultStatusEnum.IsNotAllowed;
-                    result.Message = _sharedlocalizer["Is Not Allowed. because this permission have role"];
-                    return result;
-                }
-
-                _commandRepository.DeleteAsync(permission);
-
-                await _commandRepository.SaveChangesAsync();
-
+                result.Status = ResultStatusEnum.NotFound;
+                result.Message = _sharedlocalizer["The permission not found"];
                 return result;
             }
-            catch (Exception e)
+
+            if (permission.Roles.Any())
             {
-                result.Status = ResultStatusEnum.ExceptionThrowed;
-                result.Message = e.Message;
+                result.Status = ResultStatusEnum.IsNotAllowed;
+                result.Message = _sharedlocalizer["Is Not Allowed. because this permission have role"];
                 return result;
             }
+
+            _commandRepository.DeleteAsync(permission);
+
+            await _commandRepository.SaveChangesAsync();
+
+            return result;
         }
     }
 }
