@@ -1,4 +1,5 @@
-﻿using Hydra.Infrastructure.Security.Domain;
+﻿using Hydra.Infrastructure.Security.Constants;
+using Hydra.Infrastructure.Security.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -19,28 +20,28 @@ namespace Hydra.Infrastructure.Security.EntityConfiguration
             builder.HasData(new Role()
             {
                 Id = 1,
-                Name = "SuperAdmin",
-                NormalizedName = "SUPERADMIN",
+                Name = RoleTypes.SUPERADMIN,
+                NormalizedName = RoleTypes.SUPERADMIN,
             }, new Role()
             {
                 Id = 2,
-                Name = "Admin",
-                NormalizedName = "ADMIN",
+                Name = RoleTypes.ADMIN,
+                NormalizedName = RoleTypes.ADMIN,
             }, new Role()
             {
                 Id = 3,
-                Name = "User",
-                NormalizedName = "USER",
+                Name = RoleTypes.USER,
+                NormalizedName = RoleTypes.USER,
             }, new Role()
             {
                 Id = 4,
-                Name = "Superviser",
-                NormalizedName = "SUPERVISER",
+                Name = RoleTypes.SUPERVISER,
+                NormalizedName = RoleTypes.SUPERVISER,
             }, new Role()
             {
                 Id = 5,
-                Name = "Guest",
-                NormalizedName = "GUEST",
+                Name = RoleTypes.GUEST,
+                NormalizedName = RoleTypes.GUEST,
             });
 
 

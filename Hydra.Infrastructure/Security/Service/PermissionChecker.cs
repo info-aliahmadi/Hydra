@@ -1,5 +1,6 @@
 ﻿using EFCoreSecondLevelCacheInterceptor;
 using Hydra.Infrastructure.Data.Interface;
+using Hydra.Infrastructure.Security.Constants;
 using Hydra.Infrastructure.Security.Domain;
 using Hydra.Infrastructure.Security.Interface;
 
@@ -33,7 +34,7 @@ namespace Hydra.Infrastructure.Security.Service
                                    }).Cacheable().ToList();
 
             //SuperAdmin Role Have All Permissions
-            if (permissionsList.Any(s => s.UserId == userId && s.RoleNormalizedName == "SUPERADMIN"))
+            if (permissionsList.Any(s => s.UserId == userId && s.RoleNormalizedName == RoleTypes.SUPERADMIN))
                 return true;
 
             var userPermissions = permissionsList.Where(s => s.UserId == userId).SelectMany(x => x.Permissions);
@@ -61,7 +62,7 @@ namespace Hydra.Infrastructure.Security.Service
                                    }).Cacheable().ToList();
 
             //SuperAdmin Role Have All Permissions
-            if (permissionsList.Any(s => s.UserId == userId && s.RoleNormalizedName == "SUPERADMIN"))
+            if (permissionsList.Any(s => s.UserId == userId && s.RoleNormalizedName == RoleTypes.SUPERADMIN))
                 return _queryRepository.Table<Permission>().Select(x => x.NormalizedName).Cacheable().ToList();
 
 
@@ -69,7 +70,7 @@ namespace Hydra.Infrastructure.Security.Service
 
             return userPermissions;
         }
-        
+
         /// <summary>
         /// 
         /// </summary>

@@ -5,6 +5,7 @@ using Hydra.Infrastructure.Notification.Email.Interface;
 using Hydra.Infrastructure.Notification.Email.Models;
 using Hydra.Infrastructure.Notification.Sms.Interface;
 using Hydra.Infrastructure.Notification.Sms.Models;
+using Hydra.Infrastructure.Security.Constants;
 using Hydra.Infrastructure.Security.Domain;
 using Hydra.Infrastructure.Security.Interface;
 using Hydra.Infrastructure.Security.Models;
@@ -50,15 +51,15 @@ namespace Hydra.Auth.Api.Handler
             { RegisterDate = DateTime.UtcNow, Name = "admin", UserName = "admin", Email = "admin@admin.com", EmailConfirmed = true, DefaultTheme = "dark", DefaultLanguage = "en" };
 
 
-            if (!await _roleManager.RoleExistsAsync("SuperAdmin"))
-                await _roleManager.CreateAsync(new Role() { Name = "SuperAdmin", NormalizedName = "SUPERADMIN" });
+            if (!await _roleManager.RoleExistsAsync(RoleTypes.SUPERVISER))
+                await _roleManager.CreateAsync(new Role() { Name = RoleTypes.SUPERVISER, NormalizedName = RoleTypes.SUPERVISER });
 
 
             var isExist = _repository.Table<User>().Any(x => x.UserName == "admin");
             if (!isExist)
             {
                 var identityResult = await _userManager.CreateAsync(user, "admin");
-                await _userManager.AddToRoleAsync(user, "SuperAdmin");
+                await _userManager.AddToRoleAsync(user, RoleTypes.SUPERVISER);
 
                 if (identityResult.Succeeded)
                 {
@@ -88,7 +89,18 @@ namespace Hydra.Auth.Api.Handler
 
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_repository"></param>
+        /// <param name="_emailSender"></param>
+        /// <param name="_userManager"></param>
+        /// <param name="_roleManager"></param>
+        /// <param name="_signInManager"></param>
+        /// <param name="_sharedlocalizer"></param>
+        /// <param name="_logger"></param>
+        /// <param name="registerModel"></param>
+        /// <returns></returns>
         public static async Task<IResult> RegisterHandler(
              IQueryRepository _repository,
              IEmailService _emailSender,
@@ -106,8 +118,8 @@ namespace Hydra.Auth.Api.Handler
             { RegisterDate = DateTime.UtcNow, Name = registerModel.Name, UserName = registerModel.UserName, Email = registerModel.Email };
 
 
-            if (!await _roleManager.RoleExistsAsync("user"))
-                await _roleManager.CreateAsync(new Role() { Name = "user" });
+            if (!await _roleManager.RoleExistsAsync(RoleTypes.USER))
+                await _roleManager.CreateAsync(new Role() { Name = RoleTypes.USER });
 
 
             var isExist = _repository.Table<User>().Any(x => x.UserName == registerModel.UserName || x.Email == registerModel.Email);
@@ -118,7 +130,7 @@ namespace Hydra.Auth.Api.Handler
 
                 if (identityResult.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, "User");
+                    await _userManager.AddToRoleAsync(user, RoleTypes.USER);
                     if (_userManager.Options.SignIn.RequireConfirmedEmail)
                     {
                         result.Status = AccountStatusEnum.RequireConfirmedEmail;
@@ -320,7 +332,7 @@ namespace Hydra.Auth.Api.Handler
             }
             var user = await _userManager.FindByIdAsync(userIdentity);
 
-            var expireDate = DateTimeOffset.FromUnixTimeSeconds(long.Parse(userPrincipal.FindFirst("exp").Value)).DateTime;
+            var expireDate = DateTimeOffset.FromUnixTimeSeconds(long.Parse(userPrincipal.FindFirst(CustomClaimTypes.Expiration).Value)).DateTime;
 
             var token = tokenService.CreateToken(user, expireDate);
 
@@ -439,7 +451,7 @@ namespace Hydra.Auth.Api.Handler
 
             var result = await _userManager.UpdateAsync(user);
 
-            var expireDate = DateTimeOffset.FromUnixTimeSeconds(long.Parse(userClaim.FindFirst("exp").Value)).DateTime;
+            var expireDate = DateTimeOffset.FromUnixTimeSeconds(long.Parse(userClaim.FindFirst(CustomClaimTypes.Expiration).Value)).DateTime;
 
             var token = tokenService.CreateToken(user, expireDate);
 
@@ -544,6 +556,17 @@ namespace Hydra.Auth.Api.Handler
         }
 
 
+        /// <summary>
+        /// Signs in a user via a previously registered third party login, as an asynchronous operation.
+        /// </summary>
+        /// <param name="_signInManager"></param>
+        /// <param name="context"></param>
+        /// <param name="_sharedlocalizer"></param>
+        /// <param name="_logger"></param>
+        /// <param name="returnUrl"></param>
+        /// <param name="remoteError"></param>
+        /// <returns>The task object representing the asynchronous operation containing the <see name="SignInResult"/>
+        /// for the sign-in attempt.</returns>
         public static async Task<IResult> ExternalLoginCallbackHandler(SignInManager<User> _signInManager,
             HttpContext context,
             IStringLocalizer<SharedResource> _sharedlocalizer,
@@ -605,6 +628,15 @@ namespace Hydra.Auth.Api.Handler
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_userManager"></param>
+        /// <param name="_sharedlocalizer"></param>
+        /// <param name="_logger"></param>
+        /// <param name="_signInManager"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public static async Task<IResult> ExternalLoginConfirmationHandler(UserManager<User> _userManager,
             IStringLocalizer<SharedResource> _sharedlocalizer,
              ILogger<AccountHandler> _logger, SignInManager<User> _signInManager, [FromBody] ExternalLoginConfirmationModel model)
@@ -678,7 +710,17 @@ namespace Hydra.Auth.Api.Handler
             return Results.Redirect(returnUrl + "&status" + (result.Succeeded ? "succeeded" : "error"));
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_userManager"></param>
+        /// <param name="context"></param>
+        /// <param name="_sharedlocalizer"></param>
+        /// <param name="_logger"></param>
+        /// <param name="_emailSender"></param>
+        /// <param name="userClaim"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public static async Task<IResult> ChangePasswordHandler(UserManager<User> _userManager,
             HttpContext context,
             IStringLocalizer<SharedResource> _sharedlocalizer,
@@ -716,6 +758,16 @@ namespace Hydra.Auth.Api.Handler
             return Results.BadRequest(errors);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_userManager"></param>
+        /// <param name="context"></param>
+        /// <param name="_sharedlocalizer"></param>
+        /// <param name="_logger"></param>
+        /// <param name="_emailSender"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public static async Task<IResult> ForgotPasswordHandler(UserManager<User> _userManager,
             HttpContext context,
             IStringLocalizer<SharedResource> _sharedlocalizer,
@@ -743,7 +795,7 @@ namespace Hydra.Auth.Api.Handler
                 var callbackUrl = HydraHelper.GetCurrentDomain(context) + $"ConfirmEmail/Account?userId={user.Id}&code={code}&returnUrl=";
 
                 emailRequest.Subject = _sharedlocalizer["ConfirmEmail"];
-                emailRequest.Content = $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>";
+                emailRequest.Content = _sharedlocalizer["Please confirm your account by clicking this link:"] + $"<br><a href='{callbackUrl}'>link</a>";
                 emailRequest.ToAddresses.Add(new EmailAddress() { Address = model.Email });
                 try
                 {
@@ -768,7 +820,14 @@ namespace Hydra.Auth.Api.Handler
             return Results.BadRequest(errors);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_userManager"></param>
+        /// <param name="_sharedlocalizer"></param>
+        /// <param name="_logger"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public static async Task<IResult> ResetPasswordHandler(UserManager<User> _userManager,
             IStringLocalizer<SharedResource> _sharedlocalizer,
              ILogger<AccountHandler> _logger, [FromBody] ResetPasswordModel model)
@@ -790,7 +849,7 @@ namespace Hydra.Auth.Api.Handler
                 return Results.BadRequest(result);
             }
 
-            var resetPasswordResult = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
+            var resetPasswordResult = await _userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
             if (resetPasswordResult.Succeeded)
             {
                 result.Status = AccountStatusEnum.Succeeded;
@@ -803,10 +862,19 @@ namespace Hydra.Auth.Api.Handler
             return Results.BadRequest(result);
         }
 
-
-        public static async Task<IResult> GetTwoFactorProvidersAsyncHandler(UserManager<User> _userManager,
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_userManager"></param>
+        /// <param name="_sharedlocalizer"></param>
+        /// <param name="_logger"></param>
+        /// <param name="_signInManager"></param>
+        /// <returns></returns>
+        public static async Task<IResult> GetTwoFactorProvidersAsyncHandler(
+            UserManager<User> _userManager,
             IStringLocalizer<SharedResource> _sharedlocalizer,
-             ILogger<AccountHandler> _logger, SignInManager<User> _signInManager)
+            ILogger<AccountHandler> _logger,
+            SignInManager<User> _signInManager)
         {
             var result = new AccountResult();
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
@@ -824,7 +892,17 @@ namespace Hydra.Auth.Api.Handler
             { Providers = factorOptions });
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_userManager"></param>
+        /// <param name="_signInManager"></param>
+        /// <param name="_sharedlocalizer"></param>
+        /// <param name="_logger"></param>
+        /// <param name="_emailSender"></param>
+        /// <param name="_smsSender"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public static async Task<IResult> SendCodeHandler(UserManager<User> _userManager, SignInManager<User> _signInManager,
             IStringLocalizer<SharedResource> _sharedlocalizer,
              ILogger<AccountHandler> _logger, IEmailService _emailSender, ISmsService _smsSender, [FromBody] SendCodeModel model)

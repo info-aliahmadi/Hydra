@@ -1,4 +1,5 @@
-﻿using Hydra.Infrastructure.Security.Domain;
+﻿using Hydra.Infrastructure.Security.Constants;
+using Hydra.Infrastructure.Security.Domain;
 using Hydra.Infrastructure.Security.Interface;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -10,7 +11,6 @@ namespace Hydra.Infrastructure.Security.Service
 {
     public class TokenService : ITokenService
     {
-        private const int ExpirationMinutes = 30;
         private readonly IConfiguration _iConfiguration;
         public TokenService(IConfiguration iConfiguration)
         {
@@ -19,19 +19,20 @@ namespace Hydra.Infrastructure.Security.Service
         }
         public string CreateToken(User user, DateTime? expirationDate = null)
         {
+            var expirationMinutes = int.Parse(_iConfiguration["Authentication:Schemes:Bearer:ExpirationMinutes"]);
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenKey = Encoding.UTF8.GetBytes(_iConfiguration["Authentication:Schemes:Bearer:Secret"]);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
                                               {
-                                                  new Claim("identity", user.Id.ToString()),
+                                                  new Claim(CustomClaimTypes.Identity, user.Id.ToString()),
                                                   new Claim(ClaimTypes.Name, user.UserName ?? ""),
                                                   new Claim(ClaimTypes.Email, user.Email ?? ""),
                                                   new Claim(ClaimTypes.Surname, user.Name ?? ""),
-                                                  new Claim("avatar", user.Avatar ?? "")
+                                                  new Claim(CustomClaimTypes.Avatar, user.Avatar ?? "")
                                               }),
-                Expires = expirationDate != null ? expirationDate.Value : DateTime.UtcNow.AddMinutes(ExpirationMinutes),
+                Expires = expirationDate != null ? expirationDate.Value : DateTime.UtcNow.AddMinutes(expirationMinutes),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);

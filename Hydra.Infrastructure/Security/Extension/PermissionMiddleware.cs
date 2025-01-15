@@ -1,4 +1,5 @@
-﻿using Hydra.Infrastructure.Security.Interface;
+﻿using Hydra.Infrastructure.Security.Constants;
+using Hydra.Infrastructure.Security.Interface;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 
@@ -39,7 +40,7 @@ namespace Hydra.Infrastructure.Security.Extension
                 // if it is not serving, redirect 
                 if (null != perAttr && !string.IsNullOrEmpty(perAttr.PermissionName))
                 {
-                    var identity = context.User.FindFirst("identity").Value;
+                    var identity = context.User.FindFirst(CustomClaimTypes.Identity).Value;
                     if (identity == null)
                     {
                         context.Response.StatusCode = 405;
