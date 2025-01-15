@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Hydra.Infrastructure.Localization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.DependencyInjection;
 using System.Globalization;
@@ -17,16 +18,17 @@ namespace Hydra.Infrastructure.localization
 
             IList<CultureInfo> supportedCultures = new List<CultureInfo>
             {
-                new CultureInfo("en-us"),
-                new CultureInfo("en-gb"),
-                new CultureInfo("de-de"),
-                new CultureInfo("fr"),
-                new CultureInfo("fa")
+                new CultureInfo(CultureInfoTypes.ENGLISH_US),
+                new CultureInfo(CultureInfoTypes.ENGLISH_GB),
+                new CultureInfo(CultureInfoTypes.GERMAN_DE),
+                new CultureInfo(CultureInfoTypes.FRENCH),
+                new CultureInfo(CultureInfoTypes.ARABIC),
+                new CultureInfo(CultureInfoTypes.FARSI)
             };
 
             var requestLocalizationOptions = new RequestLocalizationOptions
             {
-                DefaultRequestCulture = new RequestCulture("en-us"),
+                DefaultRequestCulture = new RequestCulture(CultureInfoTypes.ENGLISH_US),
                 SupportedCultures = supportedCultures,
                 SupportedUICultures = supportedCultures,
                 RequestCultureProviders = new List<IRequestCultureProvider>

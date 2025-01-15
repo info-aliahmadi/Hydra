@@ -10,7 +10,6 @@ using Hydra.Infrastructure.Security.Domain;
 using Hydra.Infrastructure.Security.Interface;
 using Hydra.Infrastructure.Security.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
@@ -22,9 +21,10 @@ namespace Hydra.Auth.Api.Handler
 {
     public class AccountHandler
     {
-        public static async Task<IResult> ApiTest()
+        public static async Task<IResult> ApiTest(IStringLocalizer<SharedResource> _sharedlocalizer)
         {
-            return Results.Ok();
+            var sss = _sharedlocalizer["{0}; Requested By: {1}"];
+            return Results.Ok(sss);
         }
         /// <summary>
         /// 
