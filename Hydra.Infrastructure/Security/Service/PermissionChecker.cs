@@ -22,17 +22,6 @@ namespace Hydra.Infrastructure.Security.Service
         /// <returns></returns>
         public bool IsAuthorized(int userId, string permissionName)
         {
-
-            //var permissionRoleQuery = (from PermissionRoleTable in _queryRepository.Table<PermissionRole>()
-
-            //                           select new
-            //                           {
-            //                               PermissionRoleTable.PermissionId,
-            //                               PermissionName = PermissionRoleTable.Permission.Name,
-            //                               PermissionRoleTable.RoleId,
-            //                               RoleName = PermissionRoleTable.Role.Name
-            //                           }).Cacheable();
-
             var permissionsList = (from userRoleTable in _queryRepository.Table<UserRole>()
                                    join role in _queryRepository.Table<Role>()
                                    on userRoleTable.RoleId equals role.Id
@@ -47,9 +36,7 @@ namespace Hydra.Infrastructure.Security.Service
             if (permissionsList.Any(s => s.UserId == userId && s.RoleNormalizedName == "SUPERADMIN"))
                 return true;
 
-
             var userPermissions = permissionsList.Where(s => s.UserId == userId).SelectMany(x => x.Permissions);
-
 
             var checkUserPermission = userPermissions.Any(s => s.NormalizedName == permissionName);
 
@@ -89,8 +76,6 @@ namespace Hydra.Infrastructure.Security.Service
         /// <returns></returns>
         public IList<string> GetPermissions()
         {
-
-
             var permissionsList = (from userRoleTable in _queryRepository.Table<UserRole>()
                                    join role in _queryRepository.Table<Role>()
                                    on userRoleTable.RoleId equals role.Id
@@ -106,6 +91,5 @@ namespace Hydra.Infrastructure.Security.Service
 
             return userPermissions;
         }
-
     }
 }

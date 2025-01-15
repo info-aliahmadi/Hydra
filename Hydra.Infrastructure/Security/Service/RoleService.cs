@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Hydra.Infrastructure.Data.Interface;
 using Hydra.Infrastructure.Security.Interface;
 using Hydra.Infrastructure.GeneralModels;
+using Microsoft.Extensions.Localization;
 
 namespace Hydra.Infrastructure.Security.Service
 {
@@ -14,11 +15,13 @@ namespace Hydra.Infrastructure.Security.Service
     {
         private readonly IQueryRepository _queryRepository;
         private readonly ICommandRepository _commandRepository;
+        private readonly IStringLocalizer<SharedResource> _sharedlocalizer;
 
-        public RoleService(IQueryRepository queryRepository, ICommandRepository commandRepository)
+        public RoleService(IQueryRepository queryRepository, ICommandRepository commandRepository, IStringLocalizer<SharedResource> sharedlocalizer)
         {
             _queryRepository = queryRepository;
             _commandRepository = commandRepository;
+            _sharedlocalizer = sharedlocalizer;
         }
 
         /// <summary>
@@ -107,8 +110,8 @@ namespace Hydra.Infrastructure.Security.Service
                 if (isExist)
                 {
                     result.Status = ResultStatusEnum.ItsDuplicate;
-                    result.Message = "The role existed";
-                    result.Errors.Add(new Error(nameof(roleModel.Name), "The role existed"));
+                    result.Message = _sharedlocalizer["The role existed"];
+                    result.Errors.Add(new Error(nameof(roleModel.Name), _sharedlocalizer["The role existed"]));
                     return result;
                 }
 
@@ -149,8 +152,8 @@ namespace Hydra.Infrastructure.Security.Service
                 if (permission is null)
                 {
                     result.Status = ResultStatusEnum.NotFound;
-                    result.Message = "The permission Not Found";
-                    result.Errors.Add(new Error(nameof(roleId), "The role existed"));
+                    result.Message = _sharedlocalizer["The permission Not Found"];
+                    result.Errors.Add(new Error(nameof(roleId), _sharedlocalizer["The role existed"]));
                     return result;
                 }
 
@@ -158,7 +161,7 @@ namespace Hydra.Infrastructure.Security.Service
                 if (role is null)
                 {
                     result.Status = ResultStatusEnum.NotFound;
-                    result.Message = "The role Not Found";
+                    result.Message = _sharedlocalizer["The role Not Found"];
                     return result;
                 }
 
@@ -196,8 +199,8 @@ namespace Hydra.Infrastructure.Security.Service
                 if (isExist)
                 {
                     result.Status = ResultStatusEnum.ItsDuplicate;
-                    result.Errors.Add(new Error(nameof(permissionId), "The role and permission assigned already"));
-                    result.Message = "The role and permission assigned already";
+                    result.Errors.Add(new Error(nameof(permissionId), _sharedlocalizer["The role and permission assigned already"]));
+                    result.Message = _sharedlocalizer["The role and permission assigned already"];
                     return result;
                 }
                 role.Permissions.Add(permission);
@@ -233,7 +236,7 @@ namespace Hydra.Infrastructure.Security.Service
                 if (role is null)
                 {
                     result.Status = ResultStatusEnum.NotFound;
-                    result.Message = "The role not found";
+                    result.Message = _sharedlocalizer["The role not found"];
                     return result;
                 }
 
@@ -242,8 +245,8 @@ namespace Hydra.Infrastructure.Security.Service
                 if (isExist)
                 {
                     result.Status = ResultStatusEnum.ItsDuplicate;
-                    result.Errors.Add(new Error(nameof(roleModel.Name), "The role name existed"));
-                    result.Message = "The role name existed";
+                    result.Errors.Add(new Error(nameof(roleModel.Name), _sharedlocalizer["The role name existed"]));
+                    result.Message = _sharedlocalizer["The role name existed"];
                     return result;
                 }
 
@@ -279,21 +282,21 @@ namespace Hydra.Infrastructure.Security.Service
                 if (role is null)
                 {
                     result.Status = ResultStatusEnum.NotFound;
-                    result.Message = "The role not found";
+                    result.Message = _sharedlocalizer["The role not found"];
                     return result;
                 }
 
                 if (role.Permissions.Any())
                 {
                     result.Status = ResultStatusEnum.IsNotAllowed;
-                    result.Message = "Is Not Allowed. because this role have permission";
+                    result.Message = _sharedlocalizer["Is Not Allowed. because this role have permission"];
                     return result;
                 }
 
                 if (role.UserRoles.Any())
                 {
                     result.Status = ResultStatusEnum.IsNotAllowed;
-                    result.Message = "Is Not Allowed. because this role have User";
+                    result.Message = _sharedlocalizer["Is Not Allowed. because this role have User"];
                     return result;
                 }
 

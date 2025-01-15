@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Hydra.Infrastructure.Data.Interface;
 using Hydra.Infrastructure.Security.Interface;
 using Hydra.Infrastructure.GeneralModels;
+using Microsoft.Extensions.Localization;
 
 namespace Hydra.Infrastructure.Security.Service
 {
@@ -15,13 +16,20 @@ namespace Hydra.Infrastructure.Security.Service
         private readonly ICommandRepository _commandRepository;
         UserManager<User> _userManager;
         RoleManager<Role> _roleManager;
+        private readonly IStringLocalizer<SharedResource> _sharedlocalizer;
 
-        public UserService(IQueryRepository queryRepository, ICommandRepository commandRepository, UserManager<User> userManager, RoleManager<Role> roleManager)
+        public UserService(
+            IQueryRepository queryRepository,
+            ICommandRepository commandRepository,
+            UserManager<User> userManager,
+            RoleManager<Role> roleManager,
+            IStringLocalizer<SharedResource> sharedlocalizer)
         {
             _queryRepository = queryRepository;
             _commandRepository = commandRepository;
             _userManager = userManager;
             _roleManager = roleManager;
+            _sharedlocalizer = sharedlocalizer;
         }
 
         /// <summary>
@@ -125,8 +133,8 @@ namespace Hydra.Infrastructure.Security.Service
             if (!isExist)
             {
                 result.Status = ResultStatusEnum.ItsDuplicate;
-                result.Message = "The User Not Found";
-                result.Errors.Add(new Error(nameof(id), "The User Not Found"));
+                result.Message = _sharedlocalizer["The User Not Found"];
+                result.Errors.Add(new Error(nameof(id), _sharedlocalizer["The User Not Found"]));
                 return result;
             }
 
@@ -208,16 +216,16 @@ namespace Hydra.Infrastructure.Security.Service
                 if (isExist)
                 {
                     result.Status = ResultStatusEnum.ItsDuplicate;
-                    result.Message = "The Username already exist";
-                    result.Errors.Add(new Error(nameof(userModel.UserName), "The Username already exist"));
+                    result.Message = _sharedlocalizer["The Username already exist"];
+                    result.Errors.Add(new Error(nameof(userModel.UserName), _sharedlocalizer["The Username already exist"]));
                     return result;
                 }
                 isExist = await _queryRepository.Table<User>().AnyAsync(x => x.Email == userModel.Email);
                 if (isExist)
                 {
                     result.Status = ResultStatusEnum.ItsDuplicate;
-                    result.Message = "The Email already exist";
-                    result.Errors.Add(new Error(nameof(userModel.Email), "The Email already exist"));
+                    result.Message = _sharedlocalizer["The Email already exist"];
+                    result.Errors.Add(new Error(nameof(userModel.Email), _sharedlocalizer["The Email already exist"]));
                     return result;
                 }
                 if (!string.IsNullOrEmpty(userModel.PhoneNumber))
@@ -226,8 +234,8 @@ namespace Hydra.Infrastructure.Security.Service
                     if (isExist)
                     {
                         result.Status = ResultStatusEnum.ItsDuplicate;
-                        result.Message = "The PhoneNumber already exist";
-                        result.Errors.Add(new Error(nameof(userModel.PhoneNumber), "The PhoneNumber already exist"));
+                        result.Message = _sharedlocalizer["The PhoneNumber already exist"];
+                        result.Errors.Add(new Error(nameof(userModel.PhoneNumber), _sharedlocalizer["The PhoneNumber already exist"]));
                         return result;
                     }
                 }
@@ -298,8 +306,8 @@ namespace Hydra.Infrastructure.Security.Service
                 {
                     result.Status = ResultStatusEnum.NotFound;
 
-                    result.Errors.Add(new Error(nameof(userModel.Id), "The User Not Found"));
-                    result.Message = "The user not found";
+                    result.Errors.Add(new Error(nameof(userModel.Id), _sharedlocalizer["The User Not Found"]));
+                    result.Message = _sharedlocalizer["The user not found"];
                     return result;
                 }
 
@@ -307,16 +315,16 @@ namespace Hydra.Infrastructure.Security.Service
                 if (isExist)
                 {
                     result.Status = ResultStatusEnum.ItsDuplicate;
-                    result.Message = "The Username already exist";
-                    result.Errors.Add(new Error(nameof(userModel.UserName), "The Username already exist"));
+                    result.Message = _sharedlocalizer["The Username already exist"];
+                    result.Errors.Add(new Error(nameof(userModel.UserName), _sharedlocalizer["The Username already exist"]));
                     return result;
                 }
                 isExist = await _queryRepository.Table<User>().AnyAsync(x => x.Id != userModel.Id && x.Email == userModel.Email);
                 if (isExist)
                 {
                     result.Status = ResultStatusEnum.ItsDuplicate;
-                    result.Message = "The Email already exist";
-                    result.Errors.Add(new Error(nameof(userModel.Email), "The Email already exist"));
+                    result.Message = _sharedlocalizer["The Email already exist"];
+                    result.Errors.Add(new Error(nameof(userModel.Email), _sharedlocalizer["The Email already exist"]));
                     return result;
                 }
                 if (!string.IsNullOrEmpty(userModel.PhoneNumber))
@@ -325,8 +333,8 @@ namespace Hydra.Infrastructure.Security.Service
                     if (isExist)
                     {
                         result.Status = ResultStatusEnum.ItsDuplicate;
-                        result.Message = "The PhoneNumber already exist";
-                        result.Errors.Add(new Error(nameof(userModel.PhoneNumber), "The PhoneNumber already exist"));
+                        result.Message = _sharedlocalizer["The PhoneNumber already exist"];
+                        result.Errors.Add(new Error(nameof(userModel.PhoneNumber), _sharedlocalizer["The PhoneNumber already exist"]));
                         return result;
                     }
                 }
@@ -415,7 +423,7 @@ namespace Hydra.Infrastructure.Security.Service
                 else
                 {
                     result.Status = ResultStatusEnum.NotFound;
-                    result.Message = "The user not found";
+                    result.Message = _sharedlocalizer["The user not found"];
                     return result;
                 }
 
@@ -445,7 +453,7 @@ namespace Hydra.Infrastructure.Security.Service
                 if (user is null)
                 {
                     result.Status = ResultStatusEnum.NotFound;
-                    result.Message = "The user not found";
+                    result.Message = _sharedlocalizer["The user not found"];
                     return result;
                 }
 
