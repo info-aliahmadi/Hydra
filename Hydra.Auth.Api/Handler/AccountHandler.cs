@@ -51,15 +51,41 @@ namespace Hydra.Auth.Api.Handler
             { RegisterDate = DateTime.UtcNow, Name = "admin", UserName = "admin", Email = "admin@admin.com", EmailConfirmed = true, DefaultTheme = "dark", DefaultLanguage = "en" };
 
 
-            if (!await _roleManager.RoleExistsAsync(RoleTypes.SUPERVISER))
-                await _roleManager.CreateAsync(new Role() { Name = RoleTypes.SUPERVISER, NormalizedName = RoleTypes.SUPERVISER });
+            if (!await _roleManager.RoleExistsAsync(RoleTypes.SUPERADMIN))
+                await _roleManager.CreateAsync(new Role() { Name = RoleTypes.SUPERADMIN, NormalizedName = RoleTypes.SUPERADMIN });
 
 
             var isExist = _repository.Table<User>().Any(x => x.UserName == "admin");
             if (!isExist)
             {
                 var identityResult = await _userManager.CreateAsync(user, "admin");
-                await _userManager.AddToRoleAsync(user, RoleTypes.SUPERVISER);
+                await _userManager.AddToRoleAsync(user, RoleTypes.SUPERADMIN);
+
+                if (identityResult.Succeeded)
+                {
+                    return Results.Ok(result);
+                }
+                else
+                {
+                    foreach (var error in identityResult.Errors)
+                    {
+                        _logger.LogError(_sharedlocalizer["{0}; Requested By: {1}"], error.Description,
+                            "admin@admin.com");
+                        result.Errors.Add(error.Description);
+                    }
+
+                    _logger.LogError(_sharedlocalizer["The user could not create a new account.; Requested By: {0}"],
+                        "admin@admin.com");
+                    result.Status = AccountStatusEnum.Failed;
+
+                    return Results.BadRequest(result);
+
+                }
+            }
+            else
+            {
+                var identityResult = await _userManager.UpdateAsync(user);
+                await _userManager.AddToRoleAsync(user, RoleTypes.SUPERADMIN);
 
                 if (identityResult.Succeeded)
                 {
