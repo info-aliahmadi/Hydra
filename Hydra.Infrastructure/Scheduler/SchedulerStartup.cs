@@ -28,20 +28,20 @@ namespace Hydra.Infrastructure.Scheduler
             }
 
             // Only Once
-            var jobId = BackgroundJob.Schedule(
-                            () => Console.WriteLine("Delayed!"),
-                            TimeSpan.FromDays(7));
+            //var jobId = BackgroundJob.Schedule(
+            //                () => Console.WriteLine("Delayed!"),
+            //                TimeSpan.FromDays(7));
 
-            // every day
-            RecurringJob.AddOrUpdate(
-                        "myrecurringjob",
-                        () => Console.WriteLine("Recurring!"),
-                        Cron.Daily);
+            //// every day
+            //RecurringJob.AddOrUpdate(
+            //            "myrecurringjob",
+            //            () => Console.WriteLine("Recurring!"),
+            //            Cron.Daily);
 
             // conditionally
-            BackgroundJob.ContinueJobWith(
-                        jobId,
-                        () => Console.WriteLine("Continuation!"));
+            //BackgroundJob.ContinueJobWith(
+            //            jobId,
+            //            () => Console.WriteLine("Continuation!"));
 
 
         }
