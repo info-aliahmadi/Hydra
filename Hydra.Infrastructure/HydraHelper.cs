@@ -76,7 +76,7 @@ namespace Hydra.Infrastructure
 
         public static string? GetUserId(this ClaimsPrincipal userPrincipal)
         {
-            return userPrincipal.FindFirst("identity").Value;
+            return userPrincipal.FindFirst(CustomClaimTypes.Identity).Value;
         }
         public static string? GetIdentityName(this ClaimsPrincipal userPrincipal)
         {

@@ -82,32 +82,7 @@ namespace Hydra.Auth.Api.Handler
 
                 }
             }
-            else
-            {
-                var identityResult = await _userManager.UpdateAsync(user);
-                await _userManager.AddToRoleAsync(user, RoleTypes.SUPERADMIN);
 
-                if (identityResult.Succeeded)
-                {
-                    return Results.Ok(result);
-                }
-                else
-                {
-                    foreach (var error in identityResult.Errors)
-                    {
-                        _logger.LogError(_sharedlocalizer["{0}; Requested By: {1}"], error.Description,
-                            "admin@admin.com");
-                        result.Errors.Add(error.Description);
-                    }
-
-                    _logger.LogError(_sharedlocalizer["The user could not create a new account.; Requested By: {0}"],
-                        "admin@admin.com");
-                    result.Status = AccountStatusEnum.Failed;
-
-                    return Results.BadRequest(result);
-
-                }
-            }
 
             //var setting = new setting
 
