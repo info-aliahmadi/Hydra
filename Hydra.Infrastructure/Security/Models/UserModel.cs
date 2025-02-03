@@ -17,6 +17,7 @@ namespace Hydra.Infrastructure.Security.Models
         public string? DefaultTheme { get; set; }
         public string? Password { get; set; }
         public string? AccessToken { get; set; }
+        public DateTime? AccessTokenExpires { get; set; }
 
         public bool EmailConfirmed { get; set; }
 
