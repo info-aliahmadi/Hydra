@@ -7,8 +7,9 @@ using System.Linq.Expressions;
 using EFCoreSecondLevelCacheInterceptor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Hydra.Infrastructure.Data.Extension;
-using Hydra.Infrastructure.Data.Interface;
+using Hydra.Kernel.Data.Extension;
+using Hydra.Kernel.Data.Interface;
+using Hydra.Kernel.Data;
 
 namespace Hydra.Infrastructure.Data
 {

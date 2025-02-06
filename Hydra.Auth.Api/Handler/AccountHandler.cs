@@ -1,13 +1,12 @@
-﻿using Hydra.Infrastructure;
-using Hydra.Infrastructure.Data.Interface;
-using Hydra.Infrastructure.GeneralModels;
+﻿using Hydra.Auth.Domain;
+using Hydra.Auth.Models;
+using Hydra.Infrastructure;
+using Hydra.Kernel.Data.Interface;
 using Hydra.Infrastructure.Notification.Email.Interface;
 using Hydra.Infrastructure.Notification.Email.Models;
 using Hydra.Infrastructure.Notification.Sms.Interface;
 using Hydra.Infrastructure.Notification.Sms.Models;
-using Hydra.Infrastructure.Security.Domain;
-using Hydra.Infrastructure.Security.Interface;
-using Hydra.Infrastructure.Security.Models;
+using Hydra.Kernel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +14,8 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using MiniValidation;
 using System.Security.Claims;
+using Hydra.Auth.Interface;
+using Hydra.Kernel.GeneralModels;
 
 namespace Hydra.Auth.Api.Handler
 {
@@ -501,14 +502,6 @@ namespace Hydra.Auth.Api.Handler
                 userModel.Avatar = user.Avatar;
 
                 var identityResult = await _userManager.UpdateAsync(user);
-
-                var expireDate = userClaim.GetExpiration(); 
-
-                var token = tokenService.CreateToken(user, expireDate);
-
-                userModel.AccessToken = token;
-
-                userModel.AccessTokenExpires = expireDate;
 
                 result.Data = userModel;
 

@@ -14,11 +14,8 @@
 	</Target>-->
 
 	<ItemGroup>
+	  <ProjectReference Include="..\Hydra.Auth.Core\Hydra.Auth.Core.csproj" />
 	  <ProjectReference Include="..\Hydra.Infrastructure\Hydra.Infrastructure.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Services\" />
 	</ItemGroup>
 	<!--<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="xcopy /y  &quot;$(TargetPath)&quot; &quot;$(SolutionDir)Hydra.Web\$(OutDir)&quot;" />

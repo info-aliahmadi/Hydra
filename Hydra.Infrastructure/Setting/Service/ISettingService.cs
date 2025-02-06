@@ -1,5 +1,5 @@
-﻿using Hydra.Infrastructure.GeneralModels;
-using Hydra.Infrastructure.Setting.Domain;
+﻿using Hydra.Infrastructure.Setting.Domain;
+using Hydra.Kernel.GeneralModels;
 
 namespace Hydra.Infrastructure.Setting.Service
 {

@@ -1,5 +1,5 @@
-﻿using Hydra.Infrastructure.Security.Domain;
-using Hydra.Infrastructure.Security.EntityConfiguration;
+﻿using Hydra.Auth.Domain;
+using Hydra.Auth.EntityConfiguration;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,19 +17,6 @@ namespace Hydra.Infrastructure.Security
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            #region Auth Builder
-
-            modelBuilder.ApplyConfiguration(new RoleConfiguration());
-            modelBuilder.ApplyConfiguration(new RoleClaimConfiguration());
-            modelBuilder.ApplyConfiguration(new UserConfiguration());
-            modelBuilder.ApplyConfiguration(new UserClaimConfiguration());
-            modelBuilder.ApplyConfiguration(new UserLoginConfiguration());
-            modelBuilder.ApplyConfiguration(new UserTokenConfiguration());
-            modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
-            modelBuilder.ApplyConfiguration(new PermissionConfiguration());
-
-            #endregion
-
         }
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<Role> Roles { get; set; }

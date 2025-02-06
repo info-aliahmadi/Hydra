@@ -17,12 +17,12 @@ namespace Hydra.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.5")
+                .HasAnnotation("ProductVersion", "8.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Hydra.Infrastructure.Security.Domain.Permission", b =>
+            modelBuilder.Entity("Hydra.Auth.Domain.Permission", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -48,108 +48,18 @@ namespace Hydra.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "AUTH.CHANGE_PASSWORD",
-                            NormalizedName = "AUTH.CHANGE_PASSWORD"
+                            Name = "AUTH.USER_MANAGEMENT",
+                            NormalizedName = "AUTH.USER_MANAGEMENT"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "AUTH.GET_USER_LIST",
-                            NormalizedName = "AUTH.GET_USER_LIST"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "AUTH.GET_USER_BY_ID",
-                            NormalizedName = "AUTH.GET_USER_BY_ID"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "AUTH.ADD_USER",
-                            NormalizedName = "AUTH.ADD_USER"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Name = "AUTH.UPDATE_USER",
-                            NormalizedName = "AUTH.UPDATE_USER"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Name = "AUTH.DELETE_USER",
-                            NormalizedName = "AUTH.DELETE_USER"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Name = "AUTH.ASSIGN_PERMISSION_TO_ROLE_BY_ROLE_ID",
-                            NormalizedName = "AUTH.ASSIGN_PERMISSION_TO_ROLE_BY_ROLE_ID"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Name = "AUTH.GET_ROLE_LIST",
-                            NormalizedName = "AUTH.GET_ROLE_LIST"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Name = "AUTH.GET_ROLE_BY_ID",
-                            NormalizedName = "AUTH.GET_ROLE_BY_ID"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Name = "AUTH.ADD_ROLE",
-                            NormalizedName = "AUTH.ADD_ROLE"
-                        },
-                        new
-                        {
-                            Id = 11,
-                            Name = "AUTH.UPDATE_ROLE",
-                            NormalizedName = "AUTH.UPDATE_ROLE"
-                        },
-                        new
-                        {
-                            Id = 12,
-                            Name = "AUTH.DELETE_ROLE",
-                            NormalizedName = "AUTH.DELETE_ROLE"
-                        },
-                        new
-                        {
-                            Id = 13,
-                            Name = "AUTH.GET_PERMISSION_LIST",
-                            NormalizedName = "AUTH.GET_PERMISSION_LIST"
-                        },
-                        new
-                        {
-                            Id = 14,
-                            Name = "AUTH.GET_PERMISSION_BY_ID",
-                            NormalizedName = "AUTH.GET_PERMISSION_BY_ID"
-                        },
-                        new
-                        {
-                            Id = 15,
-                            Name = "AUTH.ADD_PERMISSION",
-                            NormalizedName = "AUTH.ADD_PERMISSION"
-                        },
-                        new
-                        {
-                            Id = 16,
-                            Name = "AUTH.UPDATE_PERMISSION",
-                            NormalizedName = "AUTH.UPDATE_PERMISSION"
-                        },
-                        new
-                        {
-                            Id = 17,
-                            Name = "AUTH.DELETE_PERMISSION",
-                            NormalizedName = "AUTH.DELETE_PERMISSION"
+                            Name = "AUTH.PERMISSION_MANAGEMENT",
+                            NormalizedName = "AUTH.PERMISSION_MANAGEMENT"
                         });
                 });
 
-            modelBuilder.Entity("Hydra.Infrastructure.Security.Domain.Role", b =>
+            modelBuilder.Entity("Hydra.Auth.Domain.Role", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -183,36 +93,36 @@ namespace Hydra.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "SuperAdmin",
+                            Name = "SUPERADMIN",
                             NormalizedName = "SUPERADMIN"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "Admin",
+                            Name = "ADMIN",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 3,
-                            Name = "User",
+                            Name = "USER",
                             NormalizedName = "USER"
                         },
                         new
                         {
                             Id = 4,
-                            Name = "Superviser",
+                            Name = "SUPERVISER",
                             NormalizedName = "SUPERVISER"
                         },
                         new
                         {
                             Id = 5,
-                            Name = "Guest",
+                            Name = "GUEST",
                             NormalizedName = "GUEST"
                         });
                 });
 
-            modelBuilder.Entity("Hydra.Infrastructure.Security.Domain.RoleClaim", b =>
+            modelBuilder.Entity("Hydra.Auth.Domain.RoleClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -237,7 +147,7 @@ namespace Hydra.Infrastructure.Migrations
                     b.ToTable("RoleClaim", "Auth");
                 });
 
-            modelBuilder.Entity("Hydra.Infrastructure.Security.Domain.User", b =>
+            modelBuilder.Entity("Hydra.Auth.Domain.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -328,7 +238,7 @@ namespace Hydra.Infrastructure.Migrations
                     b.ToTable("User", "Auth");
                 });
 
-            modelBuilder.Entity("Hydra.Infrastructure.Security.Domain.UserClaim", b =>
+            modelBuilder.Entity("Hydra.Auth.Domain.UserClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -354,7 +264,7 @@ namespace Hydra.Infrastructure.Migrations
                     b.ToTable("UserClaim", "Auth");
                 });
 
-            modelBuilder.Entity("Hydra.Infrastructure.Security.Domain.UserLogin", b =>
+            modelBuilder.Entity("Hydra.Auth.Domain.UserLogin", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -376,7 +286,7 @@ namespace Hydra.Infrastructure.Migrations
                     b.ToTable("UserLogin", "Auth");
                 });
 
-            modelBuilder.Entity("Hydra.Infrastructure.Security.Domain.UserRole", b =>
+            modelBuilder.Entity("Hydra.Auth.Domain.UserRole", b =>
                 {
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -391,7 +301,7 @@ namespace Hydra.Infrastructure.Migrations
                     b.ToTable("UserRole", "Auth");
                 });
 
-            modelBuilder.Entity("Hydra.Infrastructure.Security.Domain.UserToken", b =>
+            modelBuilder.Entity("Hydra.Auth.Domain.UserToken", b =>
                 {
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -450,42 +360,42 @@ namespace Hydra.Infrastructure.Migrations
                     b.ToTable("PermissionRole", "Auth");
                 });
 
-            modelBuilder.Entity("Hydra.Infrastructure.Security.Domain.RoleClaim", b =>
+            modelBuilder.Entity("Hydra.Auth.Domain.RoleClaim", b =>
                 {
-                    b.HasOne("Hydra.Infrastructure.Security.Domain.Role", null)
+                    b.HasOne("Hydra.Auth.Domain.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Hydra.Infrastructure.Security.Domain.UserClaim", b =>
+            modelBuilder.Entity("Hydra.Auth.Domain.UserClaim", b =>
                 {
-                    b.HasOne("Hydra.Infrastructure.Security.Domain.User", null)
+                    b.HasOne("Hydra.Auth.Domain.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Hydra.Infrastructure.Security.Domain.UserLogin", b =>
+            modelBuilder.Entity("Hydra.Auth.Domain.UserLogin", b =>
                 {
-                    b.HasOne("Hydra.Infrastructure.Security.Domain.User", null)
+                    b.HasOne("Hydra.Auth.Domain.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Hydra.Infrastructure.Security.Domain.UserRole", b =>
+            modelBuilder.Entity("Hydra.Auth.Domain.UserRole", b =>
                 {
-                    b.HasOne("Hydra.Infrastructure.Security.Domain.Role", "Role")
+                    b.HasOne("Hydra.Auth.Domain.Role", "Role")
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Hydra.Infrastructure.Security.Domain.User", "User")
+                    b.HasOne("Hydra.Auth.Domain.User", "User")
                         .WithMany("UserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -496,9 +406,9 @@ namespace Hydra.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Hydra.Infrastructure.Security.Domain.UserToken", b =>
+            modelBuilder.Entity("Hydra.Auth.Domain.UserToken", b =>
                 {
-                    b.HasOne("Hydra.Infrastructure.Security.Domain.User", null)
+                    b.HasOne("Hydra.Auth.Domain.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -507,25 +417,25 @@ namespace Hydra.Infrastructure.Migrations
 
             modelBuilder.Entity("PermissionRole", b =>
                 {
-                    b.HasOne("Hydra.Infrastructure.Security.Domain.Permission", null)
+                    b.HasOne("Hydra.Auth.Domain.Permission", null)
                         .WithMany()
                         .HasForeignKey("PermissionsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Hydra.Infrastructure.Security.Domain.Role", null)
+                    b.HasOne("Hydra.Auth.Domain.Role", null)
                         .WithMany()
                         .HasForeignKey("RolesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Hydra.Infrastructure.Security.Domain.Role", b =>
+            modelBuilder.Entity("Hydra.Auth.Domain.Role", b =>
                 {
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("Hydra.Infrastructure.Security.Domain.User", b =>
+            modelBuilder.Entity("Hydra.Auth.Domain.User", b =>
                 {
                     b.Navigation("UserRoles");
                 });

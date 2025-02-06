@@ -1,4 +1,4 @@
-﻿using Hydra.Infrastructure.GeneralModels;
+﻿using Hydra.Kernel.GeneralModels;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
 

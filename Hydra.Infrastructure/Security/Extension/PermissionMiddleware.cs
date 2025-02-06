@@ -1,5 +1,5 @@
-﻿using Hydra.Infrastructure.Security.Constants;
-using Hydra.Infrastructure.Security.Interface;
+﻿using Hydra.Auth.Interface;
+using Hydra.Kernel.Constants;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 

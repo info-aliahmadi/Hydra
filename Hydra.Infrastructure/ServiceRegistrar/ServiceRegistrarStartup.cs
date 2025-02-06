@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Hydra.Infrastructure.Data;
-using Hydra.Infrastructure.Security.Service;
 using Hydra.Infrastructure.Setting.Service;
-using Hydra.Infrastructure.Data.Interface;
-using Hydra.Infrastructure.Security.Interface;
 using Hydra.Infrastructure.Scheduler.Service;
+using Hydra.Kernel.Data.Interface;
+using Hydra.Auth.Interface;
+using Hydra.Auth.Service;
 
 namespace Hydra.Infrastructure.ServiceRegistrar
 {
