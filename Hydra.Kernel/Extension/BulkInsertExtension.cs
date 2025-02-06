@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 
 
-namespace Hydra.Kernel.Data.Extension
+namespace Hydra.Kernel.Extension
 {
     public static class BulkInsertExtension
     {

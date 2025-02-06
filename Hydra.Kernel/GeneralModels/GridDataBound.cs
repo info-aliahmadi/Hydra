@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 
 
-namespace Hydra.Kernel.Data.Extension
+namespace Hydra.Kernel.Extension
 {
     public class GridDataBound
     {

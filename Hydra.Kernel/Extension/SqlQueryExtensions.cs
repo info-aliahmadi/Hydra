@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Hydra.Kernel.Data.Extension
+namespace Hydra.Kernel.Extension
 {
     public static class SqlQueryExtensions
     {

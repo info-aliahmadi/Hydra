@@ -4,7 +4,7 @@
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Hydra.Kernel.Data.Extension
+namespace Hydra.Kernel.Extension
 {
     /// <summary>
     /// This object holds the pagination query specifications.

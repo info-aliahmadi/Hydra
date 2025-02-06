@@ -1,12 +1,11 @@
 ﻿using System.Data.Common;
 using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Microsoft.EntityFrameworkCore.Storage;
-using System.Data;
-using Hydra.Kernel.Data.Extension;
+using Hydra.Kernel.GeneralModels;
+using Hydra.Kernel.Extension;
+using Hydra.Kernel.Data;
 
-namespace Hydra.Kernel.Data.Interface
+namespace Hydra.Kernel.Interface
 {
     /// <summary>
     /// Contains all the query methods.

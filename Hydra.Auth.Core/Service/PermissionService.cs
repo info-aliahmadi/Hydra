@@ -3,9 +3,9 @@ using Hydra.Auth.Domain;
 using Microsoft.EntityFrameworkCore;
 using Hydra.Auth.Interface;
 using Microsoft.Extensions.Localization;
-using Hydra.Kernel.Data.Interface;
+using Hydra.Kernel.Interface;
 using Hydra.Kernel;
-using Hydra.Kernel.Data.Extension;
+using Hydra.Kernel.Extension;
 using Hydra.Kernel.GeneralModels;
 
 namespace Hydra.Auth.Service

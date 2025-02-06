@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Hydra.Kernel.Data.Interface
+namespace Hydra.Kernel.Interface
 {
     /// <summary>
     /// Contains all the query methods.

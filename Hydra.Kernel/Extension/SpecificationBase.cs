@@ -6,7 +6,7 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.Query;
 
-namespace Hydra.Kernel.Data.Extension
+namespace Hydra.Kernel.Extension
 {
     /// <summary>
     /// This object hold the query specifications.

@@ -1,5 +1,4 @@
 ﻿using Hydra.Auth.Domain;
-using Hydra.Auth.EntityConfiguration;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

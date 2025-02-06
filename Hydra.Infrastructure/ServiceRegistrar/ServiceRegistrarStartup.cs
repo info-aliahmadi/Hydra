@@ -2,7 +2,7 @@
 using Hydra.Infrastructure.Data;
 using Hydra.Infrastructure.Setting.Service;
 using Hydra.Infrastructure.Scheduler.Service;
-using Hydra.Kernel.Data.Interface;
+using Hydra.Kernel.Interface;
 using Hydra.Auth.Interface;
 using Hydra.Auth.Service;
 

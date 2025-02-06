@@ -1,6 +1,6 @@
 ﻿using Hydra.Auth.Models;
 using Hydra.Kernel.GeneralModels;
-using Hydra.Kernel.Data.Extension;
+using Hydra.Kernel.Extension;
 
 namespace Hydra.Auth.Interface
 {

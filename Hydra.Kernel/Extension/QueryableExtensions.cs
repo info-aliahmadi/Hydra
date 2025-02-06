@@ -4,9 +4,10 @@
 
 
 using System.Linq.Dynamic.Core;
+using Hydra.Kernel.GeneralModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace Hydra.Kernel.Data.Extension
+namespace Hydra.Kernel.Extension
 {
     /// <summary>
     /// Contains <see cref="Queryable"/> extension methods for paginated list.

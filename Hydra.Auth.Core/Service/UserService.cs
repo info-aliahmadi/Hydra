@@ -1,12 +1,12 @@
 ﻿using Hydra.Auth.Models;
-using Hydra.Kernel.Data.Extension;
+using Hydra.Kernel.Extension;
 using Hydra.Auth.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Hydra.Auth.Interface;
 using Hydra.Kernel.GeneralModels;
 using Microsoft.Extensions.Localization;
-using Hydra.Kernel.Data.Interface;
+using Hydra.Kernel.Interface;
 using Hydra.Kernel;
 using Hydra.Infrastructure;
 

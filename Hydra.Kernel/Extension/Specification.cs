@@ -2,7 +2,7 @@
 // Copyright (c) TanvirArjel. All rights reserved.
 // </copyright>
 
-namespace Hydra.Kernel.Data.Extension
+namespace Hydra.Kernel.Extension
 {
     /// <summary>
     /// This object hold the query specifications.

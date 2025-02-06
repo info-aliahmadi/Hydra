@@ -1,7 +1,7 @@
 ﻿using Hydra.Auth.Domain;
 using Hydra.Auth.Models;
 using Hydra.Infrastructure;
-using Hydra.Kernel.Data.Interface;
+using Hydra.Kernel.Interface;
 using Hydra.Infrastructure.Notification.Email.Interface;
 using Hydra.Infrastructure.Notification.Email.Models;
 using Hydra.Infrastructure.Notification.Sms.Interface;

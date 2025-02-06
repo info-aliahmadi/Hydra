@@ -2,8 +2,7 @@
 // Copyright (c) TanvirArjel. All rights reserved.
 // </copyright>
 
-
-namespace Hydra.Kernel.Data.Extension
+namespace Hydra.Kernel.GeneralModels
 {
     /// <summary>
     /// The object contains pagination info and items.

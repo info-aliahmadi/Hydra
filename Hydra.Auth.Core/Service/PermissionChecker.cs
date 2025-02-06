@@ -2,7 +2,7 @@
 using Hydra.Auth.Constants;
 using Hydra.Auth.Domain;
 using Hydra.Auth.Interface;
-using Hydra.Kernel.Data.Interface;
+using Hydra.Kernel.Interface;
 
 namespace Hydra.Auth.Service
 {
