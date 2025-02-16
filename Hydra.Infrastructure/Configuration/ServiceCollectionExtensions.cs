@@ -10,11 +10,11 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Hydra.Infrastructure.Payment.Paypal;
-using Hydra.Infrastructure.Setting.Interface;
 using Hydra.Infrastructure.Notification.Email;
 using Hydra.Infrastructure.Notification.Sms;
 using Microsoft.Extensions.Hosting;
 using Hydra.Infrastructure.Scheduler;
+using Hydra.Kernel.Setting.Interface;
 
 namespace Hydra.Infrastructure.Configuration
 {

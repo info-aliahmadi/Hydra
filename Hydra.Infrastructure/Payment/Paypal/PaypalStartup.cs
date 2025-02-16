@@ -1,6 +1,6 @@
 ﻿using Hydra.Infrastructure.Payment.Paypal.Interface;
 using Hydra.Infrastructure.Payment.Paypal.Service;
-using Hydra.Infrastructure.Setting.Interface;
+using Hydra.Kernel.Setting.Interface;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

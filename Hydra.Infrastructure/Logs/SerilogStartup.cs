@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Hydra.Kernel;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Exceptions;

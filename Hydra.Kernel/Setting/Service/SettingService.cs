@@ -1,9 +1,9 @@
 ﻿using EFCoreSecondLevelCacheInterceptor;
 using Hydra.Kernel.Interface;
 using Hydra.Kernel.GeneralModels;
-using Hydra.Infrastructure.Setting.Domain;
+using Hydra.Kernel.Setting.Domain;
 
-namespace Hydra.Infrastructure.Setting.Service
+namespace Hydra.Kernel.Setting.Service
 {
     public class SettingService : ISettingService
     {

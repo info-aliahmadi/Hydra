@@ -1,4 +1,4 @@
-﻿namespace Hydra.Infrastructure.Setting.Interface
+﻿namespace Hydra.Kernel.Setting.Interface
 {
     public interface IUploadFileSetting
     {

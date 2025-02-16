@@ -1,4 +1,4 @@
-﻿namespace Hydra.Infrastructure.Setting.Enum
+﻿namespace Hydra.Kernel.Setting.Enum
 {
     public enum SettingValueTypeEnum
     {

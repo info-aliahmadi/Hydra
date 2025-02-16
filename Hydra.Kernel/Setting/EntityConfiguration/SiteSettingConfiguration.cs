@@ -1,9 +1,9 @@
-﻿using Hydra.Infrastructure.Setting.Domain;
+﻿using Hydra.Kernel.Setting.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 
-namespace Hydra.Infrastructure.Setting.EntityConfiguration;
+namespace Hydra.Kernel.Setting.EntityConfiguration;
 
 public class SiteSettingConfiguration : IEntityTypeConfiguration<SiteSetting>
 {

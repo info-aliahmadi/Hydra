@@ -1,7 +1,7 @@
-﻿using Hydra.Infrastructure.Setting.Enum;
+﻿using Hydra.Kernel.Setting.Enum;
 using Hydra.Kernel.Data;
 
-namespace Hydra.Infrastructure.Setting.Domain
+namespace Hydra.Kernel.Setting.Domain
 {
     public class SiteSetting : BaseEntity<int>
     {

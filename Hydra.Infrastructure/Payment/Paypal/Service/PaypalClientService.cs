@@ -4,7 +4,7 @@ using System.Text;
 using Hydra.Infrastructure.Payment.Paypal.Models;
 using System.Text.Json;
 using Hydra.Infrastructure.Payment.Paypal.Interface;
-using Hydra.Infrastructure.Setting.Interface;
+using Hydra.Kernel.Setting.Interface;
 
 namespace Hydra.Infrastructure.Payment.Paypal.Service
 {

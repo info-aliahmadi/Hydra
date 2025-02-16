@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 
-namespace Hydra.Infrastructure
+namespace Hydra.Kernel
 {
     public static class HydraHelper
     {
@@ -73,14 +73,26 @@ namespace Hydra.Infrastructure
             };
         }
 
-        public static string? GetUserId(this ClaimsPrincipal userPrincipal)
+
+        public static int GetUserId(this ClaimsPrincipal userPrincipal)
         {
-            return userPrincipal.FindFirst(CustomClaimTypes.Identity).Value;
+            var userId = userPrincipal.FindFirst(CustomClaimTypes.Identity).Value;
+            if (userId is null)
+            {
+                throw new Exception("user not found!");
+            }
+            return int.Parse(userId);
         }
-        public static string? GetIdentityName(this ClaimsPrincipal userPrincipal)
+        public static string GetIdentityName(this ClaimsPrincipal userPrincipal)
         {
-            return userPrincipal.Identity.Name;
+            var identityName = userPrincipal.Identity.Name;
+            if (identityName is null)
+            {
+                throw new Exception("user not found!");
+            }
+            return identityName;
         }
+
         public static DateTime? GetExpiration(this ClaimsPrincipal userPrincipal)
         {
             return DateTimeOffset.FromUnixTimeSeconds(long.Parse(userPrincipal.FindFirst(CustomClaimTypes.Expiration).Value)).DateTime;

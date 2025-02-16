@@ -1,6 +1,8 @@
 ﻿using Hydra.Infrastructure.Security;
-using Hydra.Infrastructure.Setting.Domain;
-using Hydra.Infrastructure.Setting.EntityConfiguration;
+using Hydra.Kernel;
+using Hydra.Kernel.Localization.EntityConfiguration;
+using Hydra.Kernel.Setting.Domain;
+using Hydra.Kernel.Setting.EntityConfiguration;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hydra.Infrastructure.Data
@@ -18,6 +20,9 @@ namespace Hydra.Infrastructure.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.ApplyConfiguration(new SiteSettingConfiguration());
+            modelBuilder.ApplyConfiguration(new LanguageConfiguration());
+
             #region Configuration Builder
 
             var assembliesList = HydraHelper.GetAssemblies(x => x.StartsWith("Hydra") && x.Contains("Core"));
@@ -27,7 +32,6 @@ namespace Hydra.Infrastructure.Data
                 modelBuilder.ApplyConfigurationsFromAssembly(assembly);
 
             }
-            modelBuilder.ApplyConfiguration(new SiteSettingConfiguration());
 
             #endregion
         }
